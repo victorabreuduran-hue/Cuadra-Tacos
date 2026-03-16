@@ -2141,46 +2141,55 @@ function checkHasAsistForWeek(city, fechaSemana){
 // Sync asistencia → nómina for current week
 function sincronizarAsistencia(){
   const emps=NCity==='wash'?EW:EC;
+  const dayKeys=['mar','mie','jue','vie','sab','dom'];
+
+  // Asistencia stores one record per city+date with ALL 6 days (mar-dom)
+  // keys inside: "${empIdx}-mar", "${empIdx}-mie", etc.
+  // Find the record that has data for this city (most recent, or matching week)
   const d=new Date(currentFechaNomina+'T12:00:00');
   const day=d.getDay();
   const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
-  const dayKeys=['mar','mie','jue','vie','sab','dom'];
+
+  // Build set of dates in this week (Tue-Sun)
+  const weekDates=new Set();
+  dayKeys.forEach((_,di)=>{
+    const fd=new Date(mon);fd.setDate(mon.getDate()+di+1);
+    weekDates.add(fd.toISOString().split('T')[0]);
+  });
+
+  // Find a DA record for this city that was saved during this week
+  // OR fall back to the most recent record for this city
+  let asistRecord=null;
+  let bestDate='';
+  Object.keys(DA).forEach(k=>{
+    if(!k.startsWith(`asist-city__${NCity}__`)) return;
+    const recDate=k.split('__')[2];
+    if(weekDates.has(recDate)){asistRecord=DA[k];} // exact week match
+    else if(!asistRecord&&recDate>bestDate){bestDate=recDate;asistRecord=DA[k];} // fallback most recent
+  });
+
+  if(!asistRecord){
+    showToast('⚠️ Sin registros de asistencia para esta ciudad');
+    return;
+  }
+
   let syncCount=0;
-
   emps.forEach((emp,i)=>{
-    const empDias={};
-    // For each day Mar-Dom (offsets 1-6 from Monday)
     dayKeys.forEach((dk,di)=>{
-      const fecha=new Date(mon);fecha.setDate(mon.getDate()+di+1);
-      const fechaStr=fecha.toISOString().split('T')[0];
-      const key=`asist-city__${NCity}__${fechaStr}`;
-      const record=DA[key];
-      if(record){
-        const state=record[`${i}-${dk}`];
-        if(state==='P') empDias[`d${di}`]='P';
-        else if(state==='A') empDias[`d${di}`]='A';
-        else if(state==='MD') empDias[`d${di}`]='MD';
-        
-        else empDias[`d${di}`]='P';
-        syncCount++;
-      } else {
-        empDias[`d${di}`]='P'; // sin registro = presente por defecto
-      }
-    });
-
-    // Update the day buttons in the UI
-    Object.entries(empDias).forEach(([k,st])=>{
-      const btn=document.querySelector(`.nday-btn[data-emp="${i}"][data-day="${k}"]`);
+      const state=asistRecord[`${i}-${dk}`];
+      if(state===undefined||state===null) return;
+      const btn=document.querySelector(`.nday-btn[data-emp="${i}"][data-day="d${di}"]`);
       if(btn){
-        const cls=st==='P'?'on':st==='MD'?'half':'off';
-        const icon=st==='P'?'✓':st==='MD'?'½':'✗';
+        const cls=state==='P'?'on':state==='MD'?'half':'off';
+        const icon=state==='P'?'✓':state==='MD'?'½':'✗';
         btn.className=`nday-btn ${cls}`;btn.textContent=icon;
+        syncCount++;
       }
     });
   });
 
   updNT();
-  showToast(syncCount>0?`✅ Asistencia cargada en nómina`:`⚠️ Sin registros de asistencia para esta semana`);
+  showToast(syncCount>0?`✅ Asistencia sincronizada — ${syncCount} estados cargados`:`⚠️ No se encontraron datos de empleados`);
 }
 
 function toggleNDay(btn){
