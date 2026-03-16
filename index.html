@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cuadra Tacos">
 <meta name="theme-color" content="#EA580C">
+<meta name="description" content="Sistema de administración La Cuadra Tacos">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <title>🌮 La Cuadra Tacos</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -223,9 +228,48 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .ename{font-size:.85rem;font-weight:800}.epos{font-size:.68rem;color:var(--t3);font-weight:600}
 .ebtns{display:flex;gap:4px}
 
-/* DASHBOARD PERIOD BUTTONS */
-.dash-period-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.3);color:#d97706;padding:6px 12px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap}
-.dash-period-btn.active{background:var(--n);color:white;border-color:var(--n)}
+/* ── OLD KGRID kept for backward compat ── */
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kcard{background:white;border-radius:var(--Rs);padding:14px 12px;box-shadow:var(--sh);border-top:3px solid;overflow:hidden;position:relative}
+.kcard::after{content:attr(data-i);position:absolute;right:-4px;bottom:-4px;font-size:40px;opacity:.08}
+.kcard.n{border-color:var(--n)}.kcard.r{border-color:var(--r)}.kcard.a{border-color:var(--am)}.kcard.v{border-color:var(--v)}
+.ki{font-size:18px;margin-bottom:6px}
+.kv{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--t);letter-spacing:1px;line-height:1}
+.kl{font-size:.68rem;color:var(--t2);margin-top:4px;font-weight:700}
+
+/* ── NEW DASHBOARD ── */
+.dash-hero{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 16px 12px;gap:10px}
+.dash-greeting{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:.5px;color:var(--t);line-height:1.1}
+.dash-date-lbl{font-size:.7rem;color:var(--t3);font-weight:700;margin-top:3px}
+
+.dash-filter-row{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dash-filter-row::-webkit-scrollbar{display:none}
+.dfilter-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1.5px solid var(--g3);background:white;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;color:var(--t3);cursor:pointer;transition:all .18s;white-space:nowrap}
+.dfilter-btn.active{background:var(--t);color:white;border-color:var(--t)}
+.dash-date-inp{border:1.5px solid var(--g3);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:var(--t);outline:none;background:var(--g2)}
+
+/* KPI 2x2 grid */
+.dash-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--g3);margin:0 16px 16px;border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
+.dash-kpi{background:white;padding:16px 14px;display:flex;flex-direction:column;gap:2px}
+.dash-kpi-icon{font-size:1.1rem;margin-bottom:2px}
+.dash-kpi-val{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.5px;line-height:1}
+.dash-kpi-lbl{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;opacity:.55}
+.dash-kpi-ventas .dash-kpi-val{color:var(--n)}
+.dash-kpi-util .dash-kpi-val{color:var(--v)}
+.dash-kpi-gastos .dash-kpi-val{color:var(--r)}
+.dash-kpi-nom .dash-kpi-val{color:var(--az)}
+
+/* City card with tabs inside */
+.dash-city-card{margin:0 0 14px;padding:0;overflow:hidden}
+.dash-city-tabs{display:flex;border-bottom:1.5px solid var(--g2)}
+.dash-ctab{flex:1;padding:11px 6px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;color:var(--t3);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent;margin-bottom:-1.5px}
+.dash-ctab.active{color:var(--t);border-bottom-color:var(--n)}
+.dash-ctab-total{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--n)}
+.dash-city-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px 14px 0}
+.dash-cstat{text-align:center}
+.dash-cstat-val{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.5px}
+.dash-cstat-lbl{font-size:.6rem;font-weight:800;text-transform:uppercase;color:var(--t3);margin-top:1px}
+#dash-panel-wash,#dash-panel-chi,#dash-panel-comp{padding:0 14px 14px}
 /* CALENDAR */
 .cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:.7rem;font-weight:800;position:relative}
 .cal-day.empty{background:transparent;cursor:default;pointer-events:none}
@@ -255,6 +299,25 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .mp-consumido.zero{background:var(--g2);color:var(--t3)}
 .mp-consumido.negative{background:var(--rs);color:var(--r)}
 
+/* PIN */
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--n);background:transparent;transition:all .2s}
+.pin-dot.filled{background:var(--n)}
+.pin-key{width:64px;height:64px;border-radius:50%;border:2px solid var(--g3);background:white;font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--t)}
+.pin-key:active{background:var(--ns);border-color:var(--n);transform:scale(.93)}
+/* METAS */
+.meta-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g2)}
+.meta-row:last-child{border-bottom:none}
+.meta-bar{flex:1;height:8px;background:var(--g3);border-radius:4px;overflow:hidden}
+.meta-fill{height:100%;border-radius:4px;transition:width .5s}
+/* PROV */
+.prov-card{background:white;border-radius:var(--Rs);padding:14px;box-shadow:var(--sh);margin-bottom:10px;border-left:4px solid var(--v)}
+/* DARK MODE */
+body.dark{--bg:#111827;--t:#f9fafb;--t2:#e5e7eb;--t3:#9ca3af;--g2:#1f2937;--g3:#374151;--sh:0 2px 8px rgba(0,0,0,.4)}
+body.dark .card{background:#1f2937}
+body.dark .modal{background:#1f2937}
+body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#4b5563}
+/* ALERTA FALTANTES */
+.alerta-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--rs);border-radius:10px;margin-bottom:8px}
 /* TOAST */
 .toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:var(--cb);color:white;padding:12px 20px;border-radius:30px;font-size:.85rem;font-weight:700;z-index:9998;display:none;box-shadow:var(--sh2);white-space:nowrap;border:1px solid rgba(234,88,12,.3)}
 
@@ -348,41 +411,130 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 <!-- DASHBOARD -->
 <div class="view active" id="view-dashboard">
 
-  <!-- Greeting -->
-  <div class="tip"><h3 id="tipG">¡Bienvenido! 🔥</h3><p id="tipT">—</p></div>
-
-  <!-- Date filter -->
-  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none;padding:14px 16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-      <div>
-        <div style="font-size:.65rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:6px">📅 Filtrar por Fecha</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="dash-period-btn active" onclick="setDashPeriod('all',this)">Todo</button>
-          <button class="dash-period-btn" onclick="setDashPeriod('today',this)">Hoy</button>
-          <button class="dash-period-btn" onclick="setDashPeriod('week',this)">Esta semana</button>
-          <button class="dash-period-btn" onclick="setDashPeriod('month',this)">Este mes</button>
-          <button class="dash-period-btn" onclick="setDashPeriod('custom',this)">📅 Fecha</button>
-        </div>
-      </div>
-      <div id="dash-custom-wrap" style="display:none">
-        <div style="font-size:.65rem;color:#a16207;font-weight:800;margin-bottom:4px">Rango personalizado</div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <input type="date" id="dash-date-from" style="background:rgba(255,255,255,.12);border:1.5px solid rgba(234,88,12,.4);border-radius:8px;padding:6px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:white;outline:none;color-scheme:dark" onchange="renderDash()">
-          <span style="color:#a16207;font-size:.8rem">→</span>
-          <input type="date" id="dash-date-to" style="background:rgba(255,255,255,.12);border:1.5px solid rgba(234,88,12,.4);border-radius:8px;padding:6px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:white;outline:none;color-scheme:dark" onchange="renderDash()">
-        </div>
-      </div>
-      <div id="dash-period-label" style="font-size:.7rem;color:#fed7aa;font-weight:700;text-align:right"></div>
+  <!-- ① HERO HEADER — saludo + fecha + periodo -->
+  <div class="dash-hero">
+    <div class="dash-hero-left">
+      <div class="dash-greeting" id="tipG">¡Bienvenido!</div>
+      <div class="dash-date-lbl" id="dash-period-label">Todos los registros</div>
+    </div>
+    <div class="dash-hero-right">
+      <p id="tipT" style="font-size:.7rem;color:var(--t3);margin:0;text-align:right;max-width:140px;line-height:1.4"></p>
     </div>
   </div>
 
-  <!-- CALENDARIO — toggle -->
-  <button onclick="toggleCalendar()" id="cal-toggle-btn" style="width:100%;background:white;border:1.5px solid var(--g3);border-radius:var(--R);padding:12px 16px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh);margin-bottom:14px">
-    <span>🗓️ Ver Calendario de Ventas</span>
-    <span id="cal-toggle-icon" style="font-size:.75rem;color:var(--t3)">▼ Abrir</span>
+  <!-- ② FILTRO DE PERIODO — compacto, una sola fila -->
+  <div class="dash-filter-row">
+    <button class="dfilter-btn active" onclick="setDashPeriod('all',this)">Todo</button>
+    <button class="dfilter-btn" onclick="setDashPeriod('today',this)">Hoy</button>
+    <button class="dfilter-btn" onclick="setDashPeriod('week',this)">Semana</button>
+    <button class="dfilter-btn" onclick="setDashPeriod('month',this)">Mes</button>
+    <button class="dfilter-btn" onclick="setDashPeriod('custom',this)">🗓️</button>
+  </div>
+  <div id="dash-custom-wrap" style="display:none;padding:10px 16px 0">
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="date" id="dash-date-from" class="dash-date-inp" onchange="renderDash()">
+      <span style="color:var(--t3)">→</span>
+      <input type="date" id="dash-date-to" class="dash-date-inp" onchange="renderDash()">
+    </div>
+  </div>
+
+  <!-- ③ KPIs — 2×2 hero cards -->
+  <div class="dash-kpi-grid">
+    <div class="dash-kpi dash-kpi-ventas">
+      <div class="dash-kpi-icon">💰</div>
+      <div class="dash-kpi-val" id="kv">$0</div>
+      <div class="dash-kpi-lbl">Ventas</div>
+    </div>
+    <div class="dash-kpi dash-kpi-util">
+      <div class="dash-kpi-icon">📈</div>
+      <div class="dash-kpi-val" id="ku">$0</div>
+      <div class="dash-kpi-lbl">Utilidad</div>
+    </div>
+    <div class="dash-kpi dash-kpi-gastos">
+      <div class="dash-kpi-icon">📤</div>
+      <div class="dash-kpi-val" id="kg">$0</div>
+      <div class="dash-kpi-lbl">Gastos</div>
+    </div>
+    <div class="dash-kpi dash-kpi-nom">
+      <div class="dash-kpi-icon">👷</div>
+      <div class="dash-kpi-val" id="kn">$0</div>
+      <div class="dash-kpi-lbl">Nómina</div>
+    </div>
+  </div>
+
+  <!-- ④ ALERTAS (solo si hay) -->
+  <div id="dash-alertas-banner"></div>
+
+  <!-- ⑤ CIUDADES — tabs en una sola card -->
+  <div class="card dash-city-card" id="dash-city-card">
+    <div class="dash-city-tabs">
+      <button class="dash-ctab active" id="dash-ctab-wash" onclick="switchCityTab('wash',this)">
+        <span>🌲</span> Washington
+        <span class="dash-ctab-total" id="wash-total-badge">$0</span>
+      </button>
+      <button class="dash-ctab" id="dash-ctab-chi" onclick="switchCityTab('chi',this)">
+        <span>🌆</span> Chicago
+        <span class="dash-ctab-total" id="chi-total-badge">$0</span>
+      </button>
+      <button class="dash-ctab" id="dash-ctab-comp" onclick="switchCityTab('comp',this)">
+        🏆 Total
+      </button>
+    </div>
+
+    <!-- Washington panel -->
+    <div id="dash-panel-wash">
+      <div class="dash-city-stats">
+        <div class="dash-cstat">
+          <div class="dash-cstat-val" id="wash-kv" style="color:var(--n)">$0</div>
+          <div class="dash-cstat-lbl">Ventas</div>
+        </div>
+        <div class="dash-cstat">
+          <div class="dash-cstat-val" id="wash-kg" style="color:var(--r)">$0</div>
+          <div class="dash-cstat-lbl">Gastos</div>
+        </div>
+        <div class="dash-cstat">
+          <div class="dash-cstat-val" id="wash-ku" style="color:var(--v)">$0</div>
+          <div class="dash-cstat-lbl">Utilidad</div>
+        </div>
+      </div>
+      <div id="dash-wash-bars" style="margin-top:10px"></div>
+      <div id="lwash" style="margin-top:2px"></div>
+    </div>
+
+    <!-- Chicago panel -->
+    <div id="dash-panel-chi" style="display:none">
+      <div class="dash-city-stats">
+        <div class="dash-cstat">
+          <div class="dash-cstat-val" id="chi-kv" style="color:var(--az)">$0</div>
+          <div class="dash-cstat-lbl">Ventas</div>
+        </div>
+        <div class="dash-cstat">
+          <div class="dash-cstat-val" id="chi-kg" style="color:var(--r)">$0</div>
+          <div class="dash-cstat-lbl">Gastos</div>
+        </div>
+        <div class="dash-cstat">
+          <div class="dash-cstat-val" id="chi-ku" style="color:var(--v)">$0</div>
+          <div class="dash-cstat-lbl">Utilidad</div>
+        </div>
+      </div>
+      <div id="dash-chi-bars" style="margin-top:10px"></div>
+      <div id="lchi" style="margin-top:2px"></div>
+    </div>
+
+    <!-- Comparativa panel -->
+    <div id="dash-panel-comp" style="display:none">
+      <div id="dash-compare-bars"></div>
+    </div>
+  </div>
+
+  <!-- ⑥ CALENDARIO — compacto al final -->
+  <button onclick="toggleCalendar()" id="cal-toggle-btn"
+    style="width:100%;background:var(--g2);border:1.5px solid var(--g3);border-radius:var(--Rs);padding:11px 16px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:0">
+    <span>🗓️ Calendario de Ventas</span>
+    <span id="cal-toggle-icon" style="font-size:.72rem">▼</span>
   </button>
   <div id="dash-calendar-card" style="display:none">
-    <div class="card">
+    <div class="card" style="border-top-left-radius:0;border-top-right-radius:0;margin-top:0;border-top:none">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <button onclick="calNavMonth(-1)" style="background:var(--g2);border:none;border-radius:8px;padding:6px 14px;font-size:.9rem;cursor:pointer;font-weight:900">◀</button>
         <div id="cal-title" style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--t);letter-spacing:1px"></div>
@@ -398,92 +550,31 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     </div>
   </div>
 
-  <!-- KPIs TOTALES -->
-  <div style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin:4px 0 8px;padding:0 2px">📊 Resumen Total</div>
-  <div class="kgrid">
-    <div class="kcard n" data-i="💰"><div class="ki">💰</div><div class="kv" id="kv">$0</div><div class="kl">Ventas Totales</div></div>
-    <div class="kcard r" data-i="📤"><div class="ki">📤</div><div class="kv" id="kg">$0</div><div class="kl">Gastos Totales</div></div>
-    <div class="kcard a" data-i="👷"><div class="ki">👷</div><div class="kv" id="kn">$0</div><div class="kl">Nómina</div></div>
-    <div class="kcard v" data-i="📈"><div class="ki">📈</div><div class="kv" id="ku">$0</div><div class="kl">Utilidad</div></div>
-  </div>
-
-  <!-- WASHINGTON -->
-  <div id="dash-wash-section">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:12px;height:12px;border-radius:3px;background:var(--n)"></div>
-        <span style="font-size:.82rem;font-weight:900;color:var(--t)">🌲 Washington</span>
-      </div>
-      <div id="wash-total-badge" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--n)">$0</div>
-    </div>
-    <!-- Washington mini stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--n)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--n)" id="wash-kv">$0</div>
-        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">VENTAS</div>
-      </div>
-      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--r)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--r)" id="wash-kg">$0</div>
-        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">GASTOS</div>
-      </div>
-      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--v)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--v)" id="wash-ku">$0</div>
-        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">UTILIDAD</div>
-      </div>
-    </div>
-    <!-- Washington bar chart -->
-    <div class="card" style="padding:12px">
-      <div class="ctit" style="margin-bottom:10px">Ventas por Puesto — Washington</div>
-      <div id="dash-wash-bars"></div>
-    </div>
-    <!-- Washington puesto list -->
-    <div class="card" id="lwash"></div>
-  </div>
-
-  <!-- CHICAGO -->
-  <div id="dash-chi-section">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:12px;height:12px;border-radius:3px;background:var(--az)"></div>
-        <span style="font-size:.82rem;font-weight:900;color:var(--t)">🌆 Chicago</span>
-      </div>
-      <div id="chi-total-badge" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--az)">$0</div>
-    </div>
-    <!-- Chicago mini stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
-      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--az)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--az)" id="chi-kv">$0</div>
-        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">VENTAS</div>
-      </div>
-      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--r)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--r)" id="chi-kg">$0</div>
-        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">GASTOS</div>
-      </div>
-      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--v)">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--v)" id="chi-ku">$0</div>
-        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">UTILIDAD</div>
-      </div>
-    </div>
-    <!-- Chicago bar chart -->
-    <div class="card" style="padding:12px">
-      <div class="ctit" style="margin-bottom:10px">Ventas por Puesto — Chicago</div>
-      <div id="dash-chi-bars"></div>
-    </div>
-    <!-- Chicago puesto list -->
-    <div class="card" id="lchi"></div>
-  </div>
-
-  <!-- GRAFICA COMPARATIVA TOTAL -->
-  <div class="card" id="dash-compare-card" style="margin-top:4px">
-    <div class="ctit">🏆 Comparativa Washington vs Chicago</div>
-    <div id="dash-compare-bars"></div>
-  </div>
-
 </div>
 
 <!-- VENTAS -->
 <div class="view" id="view-ventas">
   <div class="sh" id="vtit">Ventas</div>
+
+  <!-- META DEL PUESTO -->
+  <div id="venta-meta-card">
+    <div class="card" style="border-left:4px solid var(--v);padding:12px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="font-size:.75rem;font-weight:900;color:var(--t2)">🎯 Meta</div>
+          <div id="venta-meta-tipo" style="font-size:.65rem;font-weight:800;color:var(--n);background:var(--ns);padding:2px 7px;border-radius:20px"></div>
+        </div>
+        <div id="venta-meta-nums" style="font-size:.72rem;color:var(--t3);font-weight:700"></div>
+      </div>
+      <div style="height:10px;background:var(--g3);border-radius:5px;overflow:hidden">
+        <div id="venta-meta-fill" style="height:100%;border-radius:5px;width:0%;transition:width .6s ease;background:var(--v)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:5px">
+        <div id="venta-meta-pct" style="font-size:.78rem;font-weight:900;color:var(--v)">—</div>
+        <div id="venta-meta-falta" style="font-size:.72rem;color:var(--t3);font-weight:600"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- DATE PICKER CARD -->
   <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none">
@@ -502,49 +593,25 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
   <div class="card" style="border-left:4px solid var(--am)">
     <div class="ctit">💵 Fondo de Caja (Cambio)</div>
     <p style="font-size:.72rem;color:var(--t3);margin-bottom:12px">Dinero que llevas para dar cambio a los clientes.</p>
-
     <div class="crow">
       <span class="clbl">
         🌅 Fondo inicial
         <span style="font-size:.65rem;color:var(--t3);display:block;font-weight:600">Cuánto llevas al salir</span>
       </span>
-      <input class="cinp" type="number" min="0" id="caja-inicio" oninput="calcCaja()" placeholder="$0.00" style="border-color:var(--am)">
+      <input class="cinp" type="number" min="0" id="caja-inicio" placeholder="$0.00" style="border-color:var(--am)">
     </div>
-
-    <div class="crow">
-      <span class="clbl">
-        🌙 Cierre de caja
-        <span style="font-size:.65rem;color:var(--t3);display:block;font-weight:600">Cuánto regresas al final</span>
-      </span>
-      <input class="cinp" type="number" min="0" id="caja-cierre" oninput="calcCaja()" placeholder="$0.00" style="border-color:var(--v)">
-    </div>
-
     <div class="crow" style="border-bottom:none">
       <span class="clbl">
         📝 Notas
-        <span style="font-size:.65rem;color:var(--t3);display:block;font-weight:600">Ej: faltaron $20 en billetes</span>
+        <span style="font-size:.65rem;color:var(--t3);display:block;font-weight:600">Ej: llevé $200 en billetes de $20</span>
       </span>
       <input type="text" id="caja-notas" placeholder="Opcional..."
         style="width:140px;border:1.5px solid var(--g3);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:600;color:var(--t);background:var(--g2);outline:none"
         onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
     </div>
-
-    <!-- Resultados -->
-    <div id="caja-resultado" style="display:none;margin-top:8px">
-      <div class="ftot" style="background:var(--ams);border-color:var(--am)">
-        <span style="color:#92400E">💵 Fondo inicial</span>
-        <span style="color:#92400E" id="caja-r-inicio">$0</span>
-      </div>
-      <div class="ftot" style="margin-top:4px;background:var(--vs);border-color:var(--v)">
-        <span style="color:var(--v)">🌙 Regresa</span>
-        <span style="color:var(--v)" id="caja-r-cierre">$0</span>
-      </div>
-      <div class="ftot b" style="margin-top:6px" id="caja-r-dif-wrap">
-        <span id="caja-r-dif-lbl">✅ Cuadra exacto</span>
-        <span id="caja-r-dif">$0</span>
-      </div>
-    </div>
   </div>
+  <div class="card">
+    <div class="ctit">💰 Ventas del Día</div>
     <p style="font-size:.72rem;color:var(--t3);margin-bottom:12px" id="ventas-dia-lbl">Registrando para la fecha seleccionada arriba</p>
     <div class="crow"><span class="clbl">💵 Efectivo</span><input class="cinp" type="number" min="0" id="ve-dia-ef" oninput="calcV()" placeholder="$0.00"></div>
     <div class="crow"><span class="clbl">💳 Tarjeta</span><input class="cinp" type="number" min="0" id="ve-dia-tj" oninput="calcV()" placeholder="$0.00"></div>
@@ -571,6 +638,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
         onblur="this.style.borderColor='var(--g3)';this.style.background='var(--g2)'">
     </div>
     <div class="ftot d"><span>Total Gastos</span><span id="gtot">$0</span></div>
+    <button class="boutl" style="width:100%;margin-top:8px;font-size:.8rem" onclick="openM('foto')">📸 Adjuntar foto de comprobante</button>
   </div>
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -654,10 +722,12 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 
 <!-- REPORTES -->
 <div class="view" id="view-reportes">
-  <div class="tabs">
+  <div class="tabs" style="overflow-x:auto;flex-wrap:nowrap">
     <button class="tab active" onclick="setTab('mensual',this)">📅 Mensual</button>
     <button class="tab" onclick="setTab('flujo',this)">💸 Flujo</button>
     <button class="tab" onclick="setTab('gasgen',this)">💰 Gastos</button>
+    <button class="tab" onclick="setTab('nomina-rep',this)">👷 Nómina</button>
+    <button class="tab" onclick="setTab('exportar',this)">📤 Exportar</button>
   </div>
   <div id="tab-mensual">
     <div class="card"><div class="ctit">🌲 Washington</div><div class="rstats"><div class="rstat"><div class="val" id="rwv">$0</div><div class="lbl">Ventas</div></div><div class="rstat"><div class="val" id="rwg">$0</div><div class="lbl">Gastos</div></div><div class="rstat"><div class="val" id="rwu">$0</div><div class="lbl">Utilidad</div></div></div></div>
@@ -703,6 +773,51 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     </div>
     <button class="bsave" onclick="guardarGG()">💾 GUARDAR GASTOS</button>
   </div>
+
+  <!-- NÓMINA POR PERIODO -->
+  <div id="tab-nomina-rep" style="display:none">
+    <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none;padding:14px 16px;margin-bottom:14px">
+      <div style="font-size:.68rem;font-weight:900;color:#a16207;text-transform:uppercase;margin-bottom:8px">📅 Seleccionar Periodo</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="date" id="nom-rep-from" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:white;outline:none;color-scheme:dark">
+        <span style="color:#a16207;align-self:center">→</span>
+        <input type="date" id="nom-rep-to" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:white;outline:none;color-scheme:dark">
+        <button onclick="renderNominaReporte()" style="background:var(--n);border:none;border-radius:8px;padding:7px 14px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer">Ver</button>
+      </div>
+    </div>
+    <div id="nom-rep-content"></div>
+  </div>
+
+  <!-- EXPORTAR -->
+  <div id="tab-exportar" style="display:none">
+    <div class="card">
+      <div class="ctit">📅 Período a exportar</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div>
+          <div style="font-size:.68rem;font-weight:900;color:var(--t3);margin-bottom:4px;text-transform:uppercase">Desde</div>
+          <input type="date" id="exp-from" style="width:100%;border:2px solid var(--g3);border-radius:8px;padding:9px 10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:var(--t);outline:none;background:var(--g2)">
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:900;color:var(--t3);margin-bottom:4px;text-transform:uppercase">Hasta</div>
+          <input type="date" id="exp-to" style="width:100%;border:2px solid var(--g3);border-radius:8px;padding:9px 10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:var(--t);outline:none;background:var(--g2)">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="bedit" style="flex:1;padding:12px;font-size:.85rem;border-radius:var(--Rs)" onclick="exportExcel()">📊 Excel (.xlsx)</button>
+        <button class="bedit" style="flex:1;padding:12px;font-size:.85rem;border-radius:var(--Rs);background:var(--rs);color:var(--r)" onclick="exportPDF()">📄 PDF</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button class="bedit" style="flex:1;padding:12px;font-size:.85rem;border-radius:var(--Rs);background:#dcfce7;color:#16a34a" onclick="exportWhatsApp()">💬 WhatsApp</button>
+        <button class="bedit" style="flex:1;padding:12px;font-size:.85rem;border-radius:var(--Rs);background:var(--azs);color:var(--az)" onclick="exportEmail()">📧 Email</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctit">💾 Backup de Datos</div>
+      <p style="font-size:.78rem;color:var(--t3);margin-bottom:12px">Descarga una copia completa de todos los datos de la app.</p>
+      <button class="bsave" onclick="crearBackup()">💾 CREAR BACKUP AHORA</button>
+      <div id="backup-list" style="margin-top:12px"></div>
+    </div>
+  </div>
 </div>
 
 <!-- CONFIG -->
@@ -712,7 +827,10 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <button class="tab" onclick="setCT('empleados',this)">👷 Empleados</button>
     <button class="tab" onclick="setCT('editar',this)">✏️ Editar</button>
     <button class="tab" onclick="setCT('usuarios',this)">🔐 Usuarios</button>
-    <button class="tab" onclick="setCT('mp',this)">🧅 Precios MP</button>
+    <button class="tab" onclick="setCT('mp',this)">🧅 MP</button>
+    <button class="tab" onclick="setCT('metas',this)">🎯 Metas</button>
+    <button class="tab" onclick="setCT('prov',this)">🏪 Proveed.</button>
+    <button class="tab" onclick="setCT('ajustes',this)">⚙️ Ajustes</button>
     <button class="tab" onclick="setCT('historial',this)">📋 Historial</button>
   </div>
   <div id="cfg-puestos" style="display:none">
@@ -815,6 +933,62 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
       <p>Los precios aquí afectan el cálculo de costos en <strong>todos los puestos</strong>. Solo el admin puede modificarlos.</p>
     </div>
     <div class="card" id="cfg-mp-list"></div>
+  </div>
+
+  <!-- METAS DE VENTA -->
+  <div id="cfg-metas" style="display:none">
+    <div class="sh"><span>🎯 Metas de Venta Semanal</span></div>
+    <div class="infobox"><p>Define cuánto debe vender cada puesto por semana. El dashboard mostrará el % de cumplimiento.</p></div>
+    <div class="card" id="cfg-metas-list"></div>
+    <button class="bsave" onclick="guardarMetas()" style="margin-top:8px">💾 GUARDAR METAS</button>
+  </div>
+
+  <!-- PROVEEDORES -->
+  <div id="cfg-prov" style="display:none">
+    <div class="sh"><span>🏪 Proveedores</span><button class="shbtn" onclick="openM('addProv')">+ Agregar</button></div>
+    <div class="card" id="cfg-prov-list"></div>
+  </div>
+
+  <!-- AJUSTES -->
+  <div id="cfg-ajustes" style="display:none">
+    <!-- Dark Mode -->
+    <div class="card">
+      <div class="ctit">🌙 Apariencia</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
+        <div><div style="font-size:.88rem;font-weight:800">Modo Oscuro</div><div style="font-size:.7rem;color:var(--t3)">Cambia el tema de la app</div></div>
+        <label style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer">
+          <input type="checkbox" id="toggle-dark" onchange="toggleDarkMode()" style="opacity:0;width:0;height:0">
+          <span id="dark-slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--g3);transition:.3s;border-radius:26px"></span>
+          <span id="dark-knob" style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%"></span>
+        </label>
+      </div>
+    </div>
+    <!-- Notificaciones Push -->
+    <div class="card">
+      <div class="ctit">🔔 Notificaciones</div>
+      <p style="font-size:.78rem;color:var(--t3);margin-bottom:12px">Recibe alertas cuando un encargado guarda ventas o hay un puesto sin registrar.</p>
+      <div id="push-status" style="font-size:.8rem;color:var(--t3);margin-bottom:10px">Estado: verificando...</div>
+      <button class="bsave" id="push-btn" onclick="togglePush()">🔔 ACTIVAR NOTIFICACIONES</button>
+    </div>
+    <!-- PIN Rápido -->
+    <div class="card">
+      <div class="ctit">🔢 PIN Rápido</div>
+      <p style="font-size:.78rem;color:var(--t3);margin-bottom:12px">Configura un PIN de 4 dígitos para entrar más rápido.</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="password" id="pin-input" maxlength="4" placeholder="••••"
+          style="width:100px;text-align:center;border:2px solid var(--g3);border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:8px;outline:none;background:var(--g2)">
+        <button class="bsave" onclick="guardarPIN()" style="flex:1;margin:0">💾 GUARDAR PIN</button>
+        <button class="bdang" onclick="borrarPIN()">🗑️</button>
+      </div>
+      <div id="pin-status" style="font-size:.72rem;color:var(--t3);margin-top:8px"></div>
+    </div>
+    <!-- Alertas -->
+    <div class="card">
+      <div class="ctit">⚠️ Alertas de Faltantes</div>
+      <p style="font-size:.78rem;color:var(--t3);margin-bottom:12px">El dashboard mostrará una alerta si un puesto lleva 1 día sin registrar ventas.</p>
+      <div id="alertas-faltantes" style="margin-top:4px"></div>
+      <button class="bsave" onclick="checkFaltantes()" style="margin-top:8px">🔍 REVISAR AHORA</button>
+    </div>
   </div>
 </div>
 
@@ -962,6 +1136,51 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
   </div>
 </div>
 
+<!-- PROVEEDOR MODAL -->
+<div class="moverlay" id="m-addProv">
+  <div class="modal"><div class="mhandle"></div>
+    <div class="mtitle" id="prov-modal-title">🏪 Agregar Proveedor</div>
+    <input type="hidden" id="prov-edit-idx" value="-1">
+    <label class="mlbl">Nombre del Proveedor</label>
+    <input class="minput" id="prov-nombre" placeholder="Ej: Tortillería La Esperanza">
+    <label class="mlbl">📦 Producto que vende</label>
+    <input class="minput" id="prov-producto" placeholder="Ej: Tortillas, Carnes, Sodas">
+    <label class="mlbl">📱 Teléfono / WhatsApp</label>
+    <input class="minput" id="prov-tel" placeholder="Ej: 555-123-4567" type="tel">
+    <label class="mlbl">💰 Precio / Condición</label>
+    <input class="minput" id="prov-precio" placeholder="Ej: $0.025/pza, crédito 7 días">
+    <label class="mlbl">📝 Notas</label>
+    <input class="minput" id="prov-notas" placeholder="Ej: Solo entrega martes y jueves">
+    <div class="macts"><button class="bmcancel" onclick="closeM('addProv')">Cancelar</button><button class="bsave" id="prov-savebtn" onclick="saveProv()">✅ GUARDAR</button></div>
+  </div>
+</div>
+
+<!-- FOTO COMPROBANTE MODAL -->
+<div class="moverlay" id="m-foto">
+  <div class="modal"><div class="mhandle"></div>
+    <div class="mtitle">📸 Foto de Comprobante</div>
+    <p style="font-size:.82rem;color:var(--t3);margin-bottom:14px">Sube una foto del recibo o comprobante del gasto.</p>
+    <div id="foto-preview" style="width:100%;min-height:120px;background:var(--g2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden">
+      <span style="color:var(--t3);font-size:.85rem">Sin foto</span>
+    </div>
+    <input type="file" id="foto-input" accept="image/*" capture="environment" style="display:none" onchange="previewFoto(this)">
+    <button class="boutl" style="width:100%;margin-bottom:8px" onclick="document.getElementById('foto-input').click()">📷 Tomar / Seleccionar Foto</button>
+    <div class="macts"><button class="bmcancel" onclick="closeM('foto')">Cancelar</button><button class="bsave" id="foto-savebtn" onclick="guardarFoto()">💾 GUARDAR</button></div>
+  </div>
+</div>
+
+<!-- PIN LOGIN OVERLAY -->
+<div id="pin-login-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+  <div style="font-size:2rem">🌮</div>
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--n)">La Cuadra Tacos</div>
+  <div id="pin-login-user" style="font-size:.85rem;color:var(--t3);font-weight:700"></div>
+  <div style="display:flex;gap:10px;margin:8px 0" id="pin-dots">
+    <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+  <div id="pin-keypad" style="display:grid;grid-template-columns:repeat(3,64px);gap:10px"></div>
+  <button onclick="pinCancelar()" style="background:none;border:none;color:var(--t3);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:8px">Usar contraseña →</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1032,6 +1251,11 @@ let US=LL('US',[...DU]);
 let MP=LL('MP',[...DMP]); // Materia prima catalog
 let DP=LL('DP',{}),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG=LL('DG',{});
 let HIST=LL('HIST',[]); // Change history log
+let METAS=LL('METAS',{}); // Sales goals per puesto
+let PROV=LL('PROV',[]); // Proveedores
+let BACKUPS=LL('BACKUPS',[]); // Backup log
+let PUSH_SUB=LL('PUSH_SUB',null); // Push subscription
+let DARK_MODE=LL('DARK_MODE',false); // Dark mode
 
 // Current date for ventas/asistencia
 let currentFecha=todayStr();
@@ -1063,7 +1287,7 @@ async function SD(k,v){
 async function syncNow(){
   setST('🔄 Cargando...');setDot('orange');
   showToast('🔄 Cargando datos...');
-  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','US','MP','HIST'];
+  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','US','MP','HIST','METAS','PROV'];
   for(const t of tabs){
     const data=await gsG(t);
     if(data&&data[t]!==undefined){
@@ -1073,6 +1297,7 @@ async function syncNow(){
       if(t==='PC')PC=val;if(t==='EW')EW=val;if(t==='EC')EC=val;
       if(t==='US')US=val;if(t==='MP'){MP=val;renderMPRows();}
       if(t==='HIST')HIST=val;
+      if(t==='METAS')METAS=val;if(t==='PROV')PROV=val;
     }
   }
   buildPSel();renderDash();renderReportes();renderAsist();renderNomina();
@@ -1218,22 +1443,28 @@ function showApp(){
   const fp=document.getElementById('fechaVentas');if(fp) fp.value=currentFecha;
   const fn=document.getElementById('fechaNomina');if(fn){fn.value=currentFechaNomina;updateNomSemanaLabel();}
   loadVF(CP);
+  renderVentaMeta();
+  // Init new features
+  initDarkMode();
+  setTimeout(()=>{checkFaltantes();renderMetasEnDash();},300);
 }
 
 // INIT
 document.addEventListener('DOMContentLoaded',()=>{
+  initDarkMode(); // Apply dark mode immediately before splash fades
   setTimeout(()=>{
     const s=document.getElementById('splash');s.style.opacity='0';
     setTimeout(()=>{
       s.style.display='none';
       const saved=LL('session',null);
       if(saved&&saved.user){
-        // Re-validate saved session against current users (case insensitive)
         const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
         if(valid){
           CU=valid;
-          // If encargado with no puesto, show selector
-          if(CU.rol==='encargado'&&!CU.puesto) showPuestoSelector();
+          // Check PIN login first
+          const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
+          if(checkPINLogin()){return;} // PIN screen handles showApp
+          if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad) showPuestoSelector();
           else showApp();
         } else document.getElementById('loginScreen').classList.add('show');
       } else document.getElementById('loginScreen').classList.add('show');
@@ -1289,6 +1520,7 @@ function setP(p){
   const vt=document.getElementById('vtit');if(vt)vt.textContent=`Ventas — ${p}`;
   const at=document.getElementById('atit');if(at)at.textContent=`Asistencia — ${p}`;
   loadVF(p,currentFecha);renderAsist();
+  renderVentaMeta();
 }
 
 // NAV
@@ -1300,18 +1532,20 @@ function showV(id,btn){
   document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+id)?.classList.add('active');
   if(btn)btn.classList.add('active');
-  // Show puesto selector only on ventas and asistencia
   const psel=document.getElementById('puestoSel');
   if(psel) psel.style.display=VIEWS_WITH_PSEL.includes(id)?'flex':'none';
+  if(id==='ventas') renderVentaMeta();
 }
 function setTab(id,btn){
   document.querySelectorAll('#view-reportes .tabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
-  ['mensual','flujo','gasgen'].forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.style.display=t===id?'block':'none';});
+  ['mensual','flujo','gasgen','nomina-rep','exportar'].forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.style.display=t===id?'block':'none';});
+  if(id==='exportar'){renderBackupList();const t=todayStr();const from=document.getElementById('exp-from');const to=document.getElementById('exp-to');if(from&&!from.value){const d=new Date();d.setDate(1);from.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;}if(to&&!to.value)to.value=t;}
+  if(id==='nomina-rep'){const t=todayStr();const from=document.getElementById('nom-rep-from');const to=document.getElementById('nom-rep-to');if(from&&!from.value){const d=new Date();d.setDate(d.getDate()-30);from.value=d.toISOString().split('T')[0];}if(to&&!to.value)to.value=t;}
 }
 function setCT(id,btn){
   document.querySelectorAll('#view-config .tabs .tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  ['puestos','empleados','editar','usuarios','mp','historial'].forEach(t=>{
+  ['puestos','empleados','editar','usuarios','mp','metas','prov','ajustes','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);
     if(el) el.style.display=t===id?'block':'none';
   });
@@ -1320,12 +1554,15 @@ function setCT(id,btn){
   if(id==='editar') populateEditSel();
   if(id==='usuarios') renderCfgU();
   if(id==='mp') renderCfgMP();
+  if(id==='metas') renderCfgMetas();
+  if(id==='prov') renderCfgProv();
+  if(id==='ajustes'){initPush();initPINStatus();checkFaltantes();}
   if(id==='historial') renderHistorial();
 }
 function setNC(city,btn){NCity=city;document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
 function renderCfg(){
   document.querySelectorAll('#view-config .tabs .tab').forEach((t,i)=>t.classList.toggle('active',i===0));
-  ['puestos','empleados','editar','usuarios','mp','historial'].forEach(t=>{
+  ['puestos','empleados','editar','usuarios','mp','metas','prov','ajustes','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);
     if(el) el.style.display=t==='puestos'?'block':'none';
   });
@@ -1414,6 +1651,7 @@ function loadVF(p,fecha){
   if(status) status.textContent=d.fechaGuardado?`Último guardado: ${d.fechaGuardado} por ${d.guardadoPor||'—'}`:'Sin registro para esta fecha';
   renderMPRows();
   calcV();
+  renderVentaMeta();
 }
 
 function onFechaChange(){
@@ -1487,7 +1725,8 @@ async function guardarVentas(){
   await logChange('Ventas',`${CP} — ${fmtFecha(currentFecha)}`,
     antes?`$${fmt(antes.totalVentas||0)} ventas`:null,
     `$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos${otrosDesc}${cajaLog}${mpResumen?` | MP: ${mpResumen}`:''}`);
-  renderDash();renderReportes();
+  renderDash();renderReportes();renderVentaMeta();
+  sendPushNotif(`✅ ${CP} registró ventas`,`$${fmt(d.totalVentas)} — ${fmtFecha(currentFecha)}`);
   showToast('✅ Guardado — '+CP+' · '+fmtFecha(currentFecha));
 }
 
@@ -1685,7 +1924,7 @@ let calSelectedDate=null;
 
 function setDashPeriod(period,btn){
   dashPeriod=period;
-  document.querySelectorAll('.dash-period-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.dfilter-btn').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   const wrap=document.getElementById('dash-custom-wrap');
   if(wrap) wrap.style.display=period==='custom'?'block':'none';
@@ -1747,12 +1986,24 @@ function getDPuestoFiltered(p,from,to){
 function getDPuesto(p){return getDPuestoFiltered(p,null,null);}
 
 // MAIN DASHBOARD RENDER
+let _activeCityTab = 'wash'; // track active tab
+
+function switchCityTab(tab, btn){
+  _activeCityTab = tab;
+  document.querySelectorAll('.dash-ctab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ['wash','chi','comp'].forEach(t=>{
+    const el=document.getElementById(`dash-panel-${t}`);
+    if(el) el.style.display=t===tab?'block':'none';
+  });
+}
+
 function renderDash(){
   const isA=CU?.rol==='admin';
   const ciudades=getUserCiudades();
   const{from,to}=getDashRange();
 
-  // Update period label
+  // Period label
   const lbl=document.getElementById('dash-period-label');
   if(lbl){
     if(!from&&!to) lbl.textContent='Todos los registros';
@@ -1760,21 +2011,22 @@ function renderDash(){
     else lbl.textContent=`${fmtFecha(from)} → ${fmtFecha(to)}`;
   }
 
-  // Compute Washington stats
   const showWash=isA||ciudades.includes('wash');
   const showChi=isA||ciudades.includes('chi');
   let wV=0,wG=0,cV=0,cG=0;
 
   if(showWash){
-    const washPuestos=isA?PW:getUserPuestos().filter(p=>PW.includes(p));
-    washPuestos.forEach(p=>{const d=getDPuestoFiltered(p,from,to);wV+=d.totalVentas;wG+=d.totalGastos;});
+    (isA?PW:getUserPuestos().filter(p=>PW.includes(p))).forEach(p=>{
+      const d=getDPuestoFiltered(p,from,to);wV+=d.totalVentas;wG+=d.totalGastos;
+    });
   }
   if(showChi){
-    const chiPuestos=isA?PC:getUserPuestos().filter(p=>PC.includes(p));
-    chiPuestos.forEach(p=>{const d=getDPuestoFiltered(p,from,to);cV+=d.totalVentas;cG+=d.totalGastos;});
+    (isA?PC:getUserPuestos().filter(p=>PC.includes(p))).forEach(p=>{
+      const d=getDPuestoFiltered(p,from,to);cV+=d.totalVentas;cG+=d.totalGastos;
+    });
   }
 
-  // Nómina total
+  // Nómina
   let tN=0;
   const nomCities=isA?['wash','chi']:ciudades;
   nomCities.forEach(city=>{
@@ -1784,45 +2036,65 @@ function renderDash(){
     });
   });
 
-  const tV=wV+cV, tG=wG+cG, util=tV-tG;
+  const tV=wV+cV,tG=wG+cG,util=tV-tG;
 
-  // Global KPIs
+  // KPIs
   document.getElementById('kv').textContent='$'+fmt(tV);
   document.getElementById('kg').textContent='$'+fmt(tG);
   document.getElementById('kn').textContent=(isA||ciudades.length>0)?'$'+fmt(tN):'—';
   document.getElementById('ku').textContent='$'+fmt(util);
 
-  // Washington section
-  const washSec=document.getElementById('dash-wash-section');
-  if(washSec) washSec.style.display=showWash?'block':'none';
+  // City card visibility
+  const cityCard=document.getElementById('dash-city-card');
+  if(cityCard) cityCard.style.display=(showWash||showChi)?'block':'none';
+
+  // Show/hide city tabs
+  const tabWash=document.getElementById('dash-ctab-wash');
+  const tabChi=document.getElementById('dash-ctab-chi');
+  const tabComp=document.getElementById('dash-ctab-comp');
+  if(tabWash) tabWash.style.display=showWash?'flex':'none';
+  if(tabChi) tabChi.style.display=showChi?'flex':'none';
+  if(tabComp) tabComp.style.display=(showWash&&showChi)?'flex':'none';
+
+  // If only one city visible, auto-select it; else default to wash
+  if(showWash&&!showChi){
+    switchCityTab('wash',tabWash);
+  } else if(showChi&&!showWash){
+    switchCityTab('chi',tabChi);
+  } else if(showWash&&showChi&&_activeCityTab==='wash'){
+    switchCityTab('wash',tabWash);
+  }
+
+  // Washington data
   if(showWash){
+    const washP=isA?PW:getUserPuestos().filter(p=>PW.includes(p));
     document.getElementById('wash-total-badge').textContent='$'+fmt(wV);
     document.getElementById('wash-kv').textContent='$'+fmt(wV);
     document.getElementById('wash-kg').textContent='$'+fmt(wG);
     document.getElementById('wash-ku').textContent='$'+fmt(wV-wG);
-    renderCityBars('dash-wash-bars', isA?PW:getUserPuestos().filter(p=>PW.includes(p)), 'wash', from, to);
-    renderPL('lwash', isA?PW:getUserPuestos().filter(p=>PW.includes(p)), 'w', from, to);
+    renderCityBars('dash-wash-bars',washP,'wash',from,to);
+    renderPL('lwash',washP,'w',from,to);
   }
 
-  // Chicago section
-  const chiSec=document.getElementById('dash-chi-section');
-  if(chiSec) chiSec.style.display=showChi?'block':'none';
+  // Chicago data
   if(showChi){
+    const chiP=isA?PC:getUserPuestos().filter(p=>PC.includes(p));
     document.getElementById('chi-total-badge').textContent='$'+fmt(cV);
     document.getElementById('chi-kv').textContent='$'+fmt(cV);
     document.getElementById('chi-kg').textContent='$'+fmt(cG);
     document.getElementById('chi-ku').textContent='$'+fmt(cV-cG);
-    renderCityBars('dash-chi-bars', isA?PC:getUserPuestos().filter(p=>PC.includes(p)), 'chi', from, to);
-    renderPL('lchi', isA?PC:getUserPuestos().filter(p=>PC.includes(p)), 'c', from, to);
+    renderCityBars('dash-chi-bars',chiP,'chi',from,to);
+    renderPL('lchi',chiP,'c',from,to);
   }
 
-  // Comparative chart (only if both cities visible)
-  const compareSec=document.getElementById('dash-compare-card');
-  if(compareSec) compareSec.style.display=(showWash&&showChi)?'block':'none';
+  // Comparativa
   if(showWash&&showChi) renderCompareBars(wV,wG,cV,cG);
 
   // Calendar
   renderCalendar();
+
+  // Meta bar + alertas
+  setTimeout(()=>{renderMetasEnDash();checkFaltantes();},100);
 }
 
 // City bar chart
@@ -1849,27 +2121,49 @@ function renderCityBars(containerId, puestos, ciudad, from, to){
 
 // Comparison chart
 function renderCompareBars(wV,wG,cV,cG){
-  const c=document.getElementById('dash-compare-bars');if(!c)return;c.innerHTML='';
+  const c=document.getElementById('dash-compare-bars');if(!c)return;
+  const wU=wV-wG,cU=cV-cG;
   const maxV=Math.max(wV,cV,1);
-  const items=[
-    {lbl:'🌲 Washington Ventas',v:wV,color:'linear-gradient(90deg,var(--n),var(--n2))'},
-    {lbl:'🌆 Chicago Ventas',v:cV,color:'linear-gradient(90deg,var(--az),#1d4ed8)'},
-    {lbl:'🌲 Wash. Utilidad',v:wV-wG,color:'linear-gradient(90deg,var(--v),#15803d)'},
-    {lbl:'🌆 Chi. Utilidad',v:cV-cG,color:'linear-gradient(90deg,#0ea5e9,#0369a1)'},
-  ];
-  items.forEach(item=>{
-    const pct=Math.max(0,Math.round(item.v/maxV*100));
-    const row=document.createElement('div');row.className='city-bar-row';
-    row.innerHTML=`
-      <div class="city-bar-lbl">${item.lbl}</div>
-      <div class="city-bar-track">
-        <div class="city-bar-fill" style="width:${pct}%;background:${item.color}">
-          ${item.v>0?`<span>$${fmt(item.v)}</span>`:''}
+  const wPct=Math.round(wV/maxV*100);
+  const cPct=Math.round(cV/maxV*100);
+  c.innerHTML=`
+    <!-- Head row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 14px 0">
+      <div style="background:var(--ns);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:.65rem;font-weight:900;color:var(--n);text-transform:uppercase;margin-bottom:4px">🌲 Washington</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--n)">$${fmt(wV)}</div>
+        <div style="font-size:.65rem;color:var(--t3);margin-top:2px">Ventas</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--v);margin-top:6px">$${fmt(wU)}</div>
+        <div style="font-size:.62rem;color:var(--t3)">Utilidad</div>
+      </div>
+      <div style="background:var(--azs);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:.65rem;font-weight:900;color:var(--az);text-transform:uppercase;margin-bottom:4px">🌆 Chicago</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--az)">$${fmt(cV)}</div>
+        <div style="font-size:.65rem;color:var(--t3);margin-top:2px">Ventas</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--v);margin-top:6px">$${fmt(cU)}</div>
+        <div style="font-size:.62rem;color:var(--t3)">Utilidad</div>
+      </div>
+    </div>
+    <!-- Bar comparison -->
+    <div style="padding:14px">
+      <div style="font-size:.65rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:8px">Comparativa de Ventas</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="width:70px;font-size:.72rem;font-weight:800;color:var(--n)">🌲 Wash.</div>
+        <div style="flex:1;height:22px;background:var(--g3);border-radius:11px;overflow:hidden">
+          <div style="height:100%;width:${wPct}%;background:linear-gradient(90deg,var(--n),var(--n2));border-radius:11px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;transition:width .6s ease">
+            ${wV>0?`<span style="font-size:.6rem;font-weight:800;color:white">$${fmt(wV)}</span>`:''}
+          </div>
         </div>
       </div>
-      <div class="city-bar-pct">$${fmt(item.v)}</div>`;
-    c.appendChild(row);
-  });
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:70px;font-size:.72rem;font-weight:800;color:var(--az)">🌆 Chi.</div>
+        <div style="flex:1;height:22px;background:var(--g3);border-radius:11px;overflow:hidden">
+          <div style="height:100%;width:${cPct}%;background:linear-gradient(90deg,var(--az),#1d4ed8);border-radius:11px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;transition:width .6s ease">
+            ${cV>0?`<span style="font-size:.6rem;font-weight:800;color:white">$${fmt(cV)}</span>`:''}
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 
 // Updated renderPL to respect date filter
@@ -1979,8 +2273,8 @@ function calSelectDate(dateStr,data){
   if(calSelectedDate){
     // Set custom period to this date
     dashPeriod='custom';
-    document.querySelectorAll('.dash-period-btn').forEach(b=>b.classList.remove('active'));
-    const customBtn=document.querySelector('.dash-period-btn:last-child');
+    document.querySelectorAll('.dfilter-btn').forEach(b=>b.classList.remove('active'));
+    const customBtn=document.querySelector('.dfilter-btn:last-child');
     if(customBtn) customBtn.classList.add('active');
     const from=document.getElementById('dash-date-from');
     const to=document.getElementById('dash-date-to');
@@ -1989,7 +2283,7 @@ function calSelectDate(dateStr,data){
     if(wrap) wrap.style.display='block';
   } else {
     dashPeriod='all';
-    document.querySelectorAll('.dash-period-btn').forEach((b,i)=>{b.classList.toggle('active',i===0);});
+    document.querySelectorAll('.dfilter-btn').forEach((b,i)=>{b.classList.toggle('active',i===0);});
     const wrap=document.getElementById('dash-custom-wrap');
     if(wrap) wrap.style.display='none';
   }
@@ -2126,7 +2420,7 @@ function renderCfgMP(){
         </div>
       </div>
       <div class="ebtns">
-        <button class="bedit" onclick="editMP(${i});openM('addMP')" style="white-space:nowrap">✏️ Editar</button>
+        <button class="bedit" onclick="editMP(${i})" style="white-space:nowrap">✏️ Editar</button>
         <button class="bdang" onclick="delMP(${i})">🗑️</button>
       </div>`;
     c.appendChild(row);
@@ -2178,7 +2472,21 @@ function renderCfgU(){
 
 // MODALS
 function openM(id,data){
-  if(id==='addMP'){openM_addMP_reset();}
+  if(id==='addMP'){openM_addMP_reset();} // reset for new product only — editMP bypasses this
+  if(id==='addProv'){
+    document.getElementById('prov-modal-title').textContent='🏪 Agregar Proveedor';
+    document.getElementById('prov-edit-idx').value='-1';
+    ['prov-nombre','prov-producto','prov-tel','prov-precio','prov-notas'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+    document.getElementById('prov-savebtn').innerHTML='✅ GUARDAR';
+  }
+  if(id==='foto'){
+    fotoBase64=null;
+    const prev=document.getElementById('foto-preview');
+    if(prev){
+      const key=dpKey(CP,currentFecha);const d=DP[key]||{};
+      prev.innerHTML=d.foto?`<img src="${d.foto}" style="width:100%;border-radius:10px;object-fit:cover;max-height:200px">`:`<span style="color:var(--t3);font-size:.85rem">Sin foto</span>`;
+    }
+  }
   if(id==='addP'&&data)document.getElementById('np-ciu').value=data;
   if(id==='addE')document.getElementById('ne-ciu').value=CECity;
   if(id==='addU'){
@@ -2619,12 +2927,628 @@ async function delMP(idx){
   showToast(`🗑️ "${nom}" eliminado`);
 }
 
+// ═══════════════════════════════════════════
+// 🔔 NOTIFICACIONES PUSH
+// ═══════════════════════════════════════════
+async function initPush(){
+  const btn=document.getElementById('push-btn');
+  const status=document.getElementById('push-status');
+  if(!('Notification' in window)){
+    if(status) status.textContent='Estado: No soportado en este navegador';
+    if(btn) btn.disabled=true;return;
+  }
+  const perm=Notification.permission;
+  if(status) status.textContent=perm==='granted'?'Estado: ✅ Activadas':perm==='denied'?'Estado: ❌ Bloqueadas por el navegador':'Estado: ⏳ Sin configurar';
+  if(btn) btn.textContent=perm==='granted'?'🔕 DESACTIVAR NOTIFICACIONES':'🔔 ACTIVAR NOTIFICACIONES';
+}
+
+async function togglePush(){
+  if(Notification.permission==='granted'){
+    SL('PUSH_SUB',null);PUSH_SUB=null;
+    showToast('🔕 Notificaciones desactivadas');initPush();return;
+  }
+  const p=await Notification.requestPermission();
+  if(p==='granted'){
+    SL('PUSH_SUB',{active:true,user:CU?.user,date:new Date().toISOString()});
+    PUSH_SUB={active:true};
+    showToast('🔔 Notificaciones activadas');
+    new Notification('🌮 La Cuadra Tacos',{body:'¡Notificaciones activadas correctamente!',icon:'https://img.icons8.com/emoji/48/taco.png'});
+  } else {
+    showToast('⚠️ Permiso denegado — revisa configuración del navegador');
+  }
+  initPush();
+}
+
+function sendPushNotif(title,body){
+  if(Notification.permission==='granted'){
+    try{new Notification(title,{body,icon:'https://img.icons8.com/emoji/48/taco.png'});}catch(e){}
+  }
+}
+
+// ═══════════════════════════════════════════
+// 🌙 MODO OSCURO
+// ═══════════════════════════════════════════
+function initDarkMode(){
+  const isDark=LL('DARK_MODE',false);
+  if(isDark){document.body.classList.add('dark');}
+  const chk=document.getElementById('toggle-dark');
+  if(chk) chk.checked=isDark;
+  updateDarkSlider(isDark);
+}
+
+function toggleDarkMode(){
+  const isDark=document.body.classList.toggle('dark');
+  SL('DARK_MODE',isDark);
+  updateDarkSlider(isDark);
+  showToast(isDark?'🌙 Modo oscuro activado':'☀️ Modo claro activado');
+}
+
+function updateDarkSlider(isDark){
+  const slider=document.getElementById('dark-slider');
+  const knob=document.getElementById('dark-knob');
+  if(slider) slider.style.background=isDark?'var(--n)':'var(--g3)';
+  if(knob) knob.style.transform=isDark?'translateX(22px)':'translateX(0)';
+}
+
+// ═══════════════════════════════════════════
+// 🔢 PIN RÁPIDO
+// ═══════════════════════════════════════════
+let pinBuffer='';
+let pinTargetUser=null;
+
+function initPINStatus(){
+  const status=document.getElementById('pin-status');
+  const stored=LL('PIN_DATA',null);
+  if(status) status.textContent=stored?`✅ PIN configurado para: ${stored.user}`:'Sin PIN configurado';
+}
+
+function guardarPIN(){
+  const pin=document.getElementById('pin-input').value;
+  if(!pin||pin.length!==4||isNaN(pin)){showToast('⚠️ El PIN debe ser exactamente 4 números');return;}
+  SL('PIN_DATA',{user:CU?.user,pin,fecha:new Date().toISOString()});
+  document.getElementById('pin-input').value='';
+  initPINStatus();
+  showToast('✅ PIN guardado — úsalo la próxima vez que abras la app');
+}
+
+function borrarPIN(){
+  if(!confirm('¿Eliminar el PIN?'))return;
+  SL('PIN_DATA',null);initPINStatus();showToast('🗑️ PIN eliminado');
+}
+
+function checkPINLogin(){
+  const pinData=LL('PIN_DATA',null);
+  if(!pinData) return false;
+  const user=US.find(u=>u.user===pinData.user);
+  if(!user) return false;
+  pinTargetUser=user;
+  const screen=document.getElementById('pin-login-screen');
+  const lbl=document.getElementById('pin-login-user');
+  const keypad=document.getElementById('pin-keypad');
+  // Build keypad in JS to avoid template literal in HTML
+  if(keypad&&!keypad.children.length){
+    [1,2,3,4,5,6,7,8,9,'',0,'⌫'].forEach(n=>{
+      const btn=document.createElement('button');
+      btn.className='pin-key';
+      btn.textContent=n;
+      if(n==='') btn.style.visibility='hidden';
+      btn.onclick=()=>pinKey(String(n));
+      keypad.appendChild(btn);
+    });
+  }
+  if(screen) screen.style.display='flex';
+  if(lbl) lbl.textContent=`Hola, ${user.user} 👋`;
+  pinBuffer='';updatePinDots();
+  return true;
+}
+
+function pinKey(k){
+  if(k==='⌫'){pinBuffer=pinBuffer.slice(0,-1);}
+  else if(k===''||isNaN(k))return;
+  else if(pinBuffer.length<4){pinBuffer+=k;}
+  updatePinDots();
+  if(pinBuffer.length===4) setTimeout(validarPIN,150);
+}
+
+function updatePinDots(){
+  document.querySelectorAll('.pin-dot').forEach((d,i)=>{
+    d.classList.toggle('filled',i<pinBuffer.length);
+  });
+}
+
+function validarPIN(){
+  const pinData=LL('PIN_DATA',null);
+  if(pinBuffer===pinData?.pin){
+    document.getElementById('pin-login-screen').style.display='none';
+    CU=pinTargetUser;SL('session',CU);
+    showApp();
+  } else {
+    pinBuffer='';updatePinDots();
+    showToast('❌ PIN incorrecto');
+    document.querySelectorAll('.pin-dot').forEach(d=>{d.style.background='var(--r)';setTimeout(()=>d.style.background='',500);});
+  }
+}
+
+function pinCancelar(){
+  document.getElementById('pin-login-screen').style.display='none';
+}
+
+// ═══════════════════════════════════════════
+// 🎯 METAS DE VENTA
+// ═══════════════════════════════════════════
+function renderCfgMetas(){
+  const c=document.getElementById('cfg-metas-list');if(!c)return;c.innerHTML='';
+  const puestos=getUserPuestos();
+  if(!puestos.length){c.innerHTML='<p style="color:var(--t3);padding:16px;text-align:center">Sin puestos disponibles</p>';return;}
+  puestos.forEach(p=>{
+    const m=METAS[p]||{monto:0,tipo:'dia'};
+    const monto=parseFloat(m.monto||m||0); // backwards compat with old number format
+    const tipo=m.tipo||'dia';
+    const actual=getMetaActual(p,tipo);
+    const pct=monto>0?Math.min(100,Math.round(actual/monto*100)):0;
+    const color=pct>=100?'var(--v)':pct>=70?'var(--am)':'var(--r)';
+    const row=document.createElement('div');row.className='meta-row';
+    row.style.cssText='flex-direction:column;align-items:stretch;gap:8px;padding:12px 0';
+    row.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:.85rem;font-weight:900;color:var(--t)">${p}</div>
+        <span style="font-size:.65rem;font-weight:900;color:${color}">${monto>0?pct+'%':'Sin meta'}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <!-- Tipo toggle -->
+        <div style="display:flex;border:1.5px solid var(--g3);border-radius:8px;overflow:hidden;flex-shrink:0">
+          <button data-p="${p}" data-tipo="dia"
+            class="meta-tipo-btn ${tipo==='dia'?'active':''}"
+            onclick="setMetaTipo('${p}','dia',this)"
+            style="padding:6px 10px;border:none;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;background:${tipo==='dia'?'var(--n)':'white'};color:${tipo==='dia'?'white':'var(--t3)'}">
+            📅 Día
+          </button>
+          <button data-p="${p}" data-tipo="semana"
+            class="meta-tipo-btn ${tipo==='semana'?'active':''}"
+            onclick="setMetaTipo('${p}','semana',this)"
+            style="padding:6px 10px;border:none;border-left:1.5px solid var(--g3);font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;background:${tipo==='semana'?'var(--n)':'white'};color:${tipo==='semana'?'white':'var(--t3)'}">
+            📆 Semana
+          </button>
+        </div>
+        <input type="number" min="0" data-p="${p}"
+          value="${monto||''}" placeholder="$0 meta"
+          style="flex:1;text-align:right;border:1.5px solid var(--g3);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;background:var(--g2);outline:none;color:var(--t)"
+          class="meta-inp">
+      </div>
+      ${monto>0?`
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:.65rem;color:var(--t3)">Vendido: $${fmt(actual)} ${tipo==='dia'?'hoy':'esta semana'}</span>
+          <span style="font-size:.65rem;font-weight:900;color:${color}">${pct}%</span>
+        </div>
+        <div class="meta-bar"><div class="meta-fill" style="width:${pct}%;background:${color}"></div></div>
+      </div>`:''}`;
+    c.appendChild(row);
+  });
+}
+
+function getMetaActual(p, tipo){
+  if(tipo==='dia'){
+    // Today only
+    const key=dpKey(p,todayStr());
+    return parseFloat(DP[key]?.totalVentas||0);
+  } else {
+    // This week: Mon–Sun
+    const d=new Date();const day=d.getDay();
+    const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    const from=mon.toISOString().split('T')[0];
+    const to=sun.toISOString().split('T')[0];
+    return getDPuestoFiltered(p,from,to).totalVentas;
+  }
+}
+
+function setMetaTipo(p, tipo, btn){
+  // Update button styles
+  const parent=btn.closest('.meta-row');
+  parent.querySelectorAll('.meta-tipo-btn').forEach(b=>{
+    const isThis=b.dataset.tipo===tipo;
+    b.style.background=isThis?'var(--n)':'white';
+    b.style.color=isThis?'white':'var(--t3)';
+  });
+  // Store tipo in dataset for guardarMetas
+  btn.closest('.meta-row').dataset.tipo=tipo;
+  btn.closest('.meta-row').dataset.p=p;
+}
+
+async function guardarMetas(){
+  document.querySelectorAll('.meta-inp').forEach(el=>{
+    const p=el.dataset.p;
+    const row=el.closest('.meta-row');
+    // Get tipo from active button
+    const activeBtn=row?.querySelector('.meta-tipo-btn[style*="var(--n)"]');
+    const tipo=activeBtn?.dataset.tipo||row?.dataset.tipo||'dia';
+    METAS[p]={monto:parseFloat(el.value||0),tipo};
+  });
+  await SD('METAS',METAS);
+  showToast('✅ Metas guardadas');renderCfgMetas();renderDash();
+}
+
+function renderVentaMeta(){
+  const card=document.getElementById('venta-meta-card');
+  if(!card||!CP) return;
+
+  const raw=METAS[CP];
+  const monto=raw?parseFloat(raw.monto||raw||0):0;
+  const tipo=raw?.tipo||'dia';
+  const actual=getMetaActual(CP,tipo);
+  const pct=monto>0?Math.min(100,Math.round(actual/monto*100)):0;
+  const falta=monto>0?Math.max(0,monto-actual):0;
+  const color=pct>=100?'var(--v)':pct>=70?'var(--am)':'var(--n)';
+  const periodoLbl=tipo==='dia'?'hoy':'esta semana';
+
+  card.style.display='block';
+
+  const fill=document.getElementById('venta-meta-fill');
+  const pctEl=document.getElementById('venta-meta-pct');
+  const nums=document.getElementById('venta-meta-nums');
+  const faltaEl=document.getElementById('venta-meta-falta');
+  const tipoLbl=document.getElementById('venta-meta-tipo');
+
+  if(monto>0){
+    if(fill){fill.style.width=pct+'%';fill.style.background=color;}
+    if(pctEl){pctEl.textContent=pct+'%';pctEl.style.color=color;}
+    if(nums) nums.textContent=`$${fmt(actual)} vendido ${periodoLbl} / meta $${fmt(monto)}`;
+    if(faltaEl){faltaEl.textContent=pct>=100?'✅ ¡Meta cumplida! 🎉':`Faltan $${fmt(falta)}`;faltaEl.style.color=pct>=100?'var(--v)':'var(--t3)';}
+    if(tipoLbl) tipoLbl.textContent=tipo==='dia'?'📅 Diaria':'📆 Semanal';
+  } else {
+    if(fill) fill.style.width='0%';
+    if(pctEl){pctEl.textContent='—';pctEl.style.color='var(--t3)';}
+    if(nums) nums.textContent=`$${fmt(actual)} vendido ${periodoLbl}`;
+    if(faltaEl){faltaEl.textContent='Sin meta asignada';faltaEl.style.color='var(--t3)';}
+    if(tipoLbl) tipoLbl.textContent='';
+  }
+}
+
+function renderVentaMetaHoy(){
+  renderVentaMeta();
+}
+
+function renderMetasEnDash(){
+  const puestos=getUserPuestos();
+  const hasMetas=puestos.some(p=>{ const m=METAS[p]; return m&&(parseFloat(m.monto||m||0)>0); });
+  if(!hasMetas) return;
+  const totalMeta=puestos.reduce((a,p)=>{const m=METAS[p];return a+parseFloat(m?.monto||m||0);},0);
+  const totalActual=puestos.reduce((a,p)=>{const m=METAS[p];const tipo=m?.tipo||'dia';return a+getMetaActual(p,tipo);},0);
+  const pct=totalMeta>0?Math.min(100,Math.round(totalActual/totalMeta*100)):0;
+  const existing=document.getElementById('dash-meta-bar');
+  const container=document.querySelector('.kgrid');
+  if(!container) return;
+  if(!existing){
+    const div=document.createElement('div');div.id='dash-meta-bar';
+    div.style.cssText='background:white;border-radius:var(--Rs);padding:12px 14px;box-shadow:var(--sh);margin-bottom:14px;grid-column:span 2';
+    div.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:.75rem;font-weight:800;color:var(--t2)">🎯 Meta Semanal</span><span style="font-size:.75rem;font-weight:900;color:${pct>=100?'var(--v)':pct>=70?'var(--am)':'var(--r)'}">${pct}% — $${fmt(totalActual)} / $${fmt(totalMeta)}</span></div><div style="height:10px;background:var(--g3);border-radius:5px;overflow:hidden"><div style="height:100%;background:${pct>=100?'var(--v)':pct>=70?'var(--am)':'var(--r)'};border-radius:5px;width:${pct}%;transition:width .6s"></div></div>`;
+    container.parentNode.insertBefore(div,container);
+  }
+}
+
+// ═══════════════════════════════════════════
+// ⚠️ ALERTAS DE FALTANTES
+// ═══════════════════════════════════════════
+function checkFaltantes(){
+  const today=todayStr();
+  const ayer=new Date();ayer.setDate(ayer.getDate()-1);
+  const ayerStr=ayer.toISOString().split('T')[0];
+  const puestos=CU?.rol==='admin'?allP():getUserPuestos();
+  const faltantes=[];
+  puestos.forEach(p=>{
+    const keyHoy=dpKey(p,today);
+    const keyAyer=dpKey(p,ayerStr);
+    const tieneHoy=DP[keyHoy]?.fechaGuardado;
+    const tieneAyer=DP[keyAyer]?.fechaGuardado;
+    if(!tieneHoy&&!tieneAyer) faltantes.push({p,dias:2});
+    else if(!tieneHoy) faltantes.push({p,dias:1});
+  });
+  const c=document.getElementById('alertas-faltantes');
+  if(c){
+    c.innerHTML='';
+    if(!faltantes.length){
+      c.innerHTML='<div style="color:var(--v);font-size:.85rem;font-weight:800;padding:8px">✅ Todos los puestos al día</div>';
+    } else {
+      faltantes.forEach(({p,dias})=>{
+        const div=document.createElement('div');div.className='alerta-item';
+        div.innerHTML=`<span style="font-size:1.1rem">⚠️</span><div><div style="font-size:.85rem;font-weight:800;color:var(--r)">${p}</div><div style="font-size:.7rem;color:var(--r)">${dias===1?'No registró hoy':'Sin registro hoy ni ayer'}</div></div>`;
+        c.appendChild(div);
+      });
+    }
+  }
+  // Also show in dashboard
+  renderAlertasBanner(faltantes);
+  if(faltantes.length&&Notification.permission==='granted'){
+    sendPushNotif('⚠️ Puestos sin registro',`${faltantes.length} puesto(s) sin ventas: ${faltantes.map(f=>f.p).join(', ')}`);
+  }
+  return faltantes;
+}
+
+function renderAlertasBanner(faltantes){
+  const existing=document.getElementById('dash-alertas-banner');
+  if(existing) existing.remove();
+  if(!faltantes||!faltantes.length) return;
+  const tip=document.querySelector('.tip');
+  if(!tip) return;
+  const div=document.createElement('div');div.id='dash-alertas-banner';
+  div.style.cssText='background:var(--rs);border:1.5px solid #fca5a5;border-radius:var(--Rs);padding:12px 14px;margin-bottom:12px';
+  div.innerHTML=`<div style="font-size:.82rem;font-weight:900;color:var(--r);margin-bottom:4px">⚠️ ${faltantes.length} puesto(s) sin registrar hoy</div><div style="font-size:.72rem;color:var(--r)">${faltantes.map(f=>f.p).join(' · ')}</div>`;
+  tip.after(div);
+}
+
+// ═══════════════════════════════════════════
+// 🏪 PROVEEDORES
+// ═══════════════════════════════════════════
+function renderCfgProv(){
+  const c=document.getElementById('cfg-prov-list');if(!c)return;c.innerHTML='';
+  if(!PROV.length){c.innerHTML='<p style="color:var(--t3);padding:16px;text-align:center">Sin proveedores. Toca + Agregar</p>';return;}
+  PROV.forEach((p,i)=>{
+    const div=document.createElement('div');div.className='prov-card';
+    div.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1">
+          <div style="font-size:.9rem;font-weight:900;color:var(--t)">${p.nombre}</div>
+          <div style="font-size:.75rem;color:var(--v);font-weight:700;margin-top:2px">📦 ${p.producto}</div>
+          ${p.tel?`<div style="font-size:.75rem;color:var(--t3);margin-top:2px">📱 <a href="https://wa.me/${p.tel.replace(/\D/g,'')}" style="color:var(--az)">${p.tel}</a></div>`:''}
+          ${p.precio?`<div style="font-size:.75rem;color:var(--t2);margin-top:2px">💰 ${p.precio}</div>`:''}
+          ${p.notas?`<div style="font-size:.72rem;color:var(--t3);margin-top:4px;font-style:italic">${p.notas}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <button class="bedit" style="padding:4px 8px" onclick="editProv(${i})">✏️</button>
+          <button class="bdang" style="padding:4px 8px" onclick="delProv(${i})">🗑️</button>
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function editProv(idx){
+  const p=PROV[idx];if(!p)return;
+  document.getElementById('prov-modal-title').textContent='✏️ Editar Proveedor';
+  document.getElementById('prov-edit-idx').value=idx;
+  document.getElementById('prov-nombre').value=p.nombre;
+  document.getElementById('prov-producto').value=p.producto;
+  document.getElementById('prov-tel').value=p.tel||'';
+  document.getElementById('prov-precio').value=p.precio||'';
+  document.getElementById('prov-notas').value=p.notas||'';
+  document.getElementById('prov-savebtn').innerHTML='💾 GUARDAR CAMBIOS';
+  document.getElementById('m-addProv').classList.add('open');
+}
+
+async function saveProv(){
+  const idx=parseInt(document.getElementById('prov-edit-idx').value);
+  const nombre=document.getElementById('prov-nombre').value.trim();
+  if(!nombre){showToast('⚠️ Escribe el nombre del proveedor');return;}
+  const obj={nombre,producto:document.getElementById('prov-producto').value.trim(),
+    tel:document.getElementById('prov-tel').value.trim(),
+    precio:document.getElementById('prov-precio').value.trim(),
+    notas:document.getElementById('prov-notas').value.trim()};
+  if(idx===-1) PROV.push(obj); else PROV[idx]=obj;
+  await SD('PROV',PROV);
+  await logChange('Proveedores',idx===-1?`Nuevo: ${nombre}`:`Editado: ${nombre}`,null,`Producto: ${obj.producto}`);
+  renderCfgProv();closeM('addProv');
+  showToast(idx===-1?`✅ "${nombre}" agregado`:`✅ "${nombre}" actualizado`);
+}
+
+async function delProv(idx){
+  const nom=PROV[idx]?.nombre;
+  if(!confirm(`¿Eliminar "${nom}"?`))return;
+  PROV.splice(idx,1);await SD('PROV',PROV);renderCfgProv();showToast(`🗑️ "${nom}" eliminado`);
+}
+
+// ═══════════════════════════════════════════
+// 📸 FOTO COMPROBANTE
+// ═══════════════════════════════════════════
+let fotoBase64=null;
+
+function previewFoto(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    fotoBase64=e.target.result;
+    const prev=document.getElementById('foto-preview');
+    if(prev) prev.innerHTML=`<img src="${fotoBase64}" style="width:100%;border-radius:10px;object-fit:cover;max-height:200px">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function guardarFoto(){
+  if(!fotoBase64){showToast('⚠️ Selecciona una foto primero');return;}
+  const key=dpKey(CP,currentFecha);
+  const d=DP[key]||{};
+  d.foto=fotoBase64;d.fotoFecha=new Date().toLocaleString('es');
+  DP[key]=d;await SD('DP',DP);
+  fotoBase64=null;closeM('foto');
+  showToast('📸 Foto guardada en el registro');
+}
+
+// ═══════════════════════════════════════════
+// 📋 REPORTE NÓMINA POR PERIODO
+// ═══════════════════════════════════════════
+function renderNominaReporte(){
+  const from=document.getElementById('nom-rep-from')?.value;
+  const to=document.getElementById('nom-rep-to')?.value;
+  const c=document.getElementById('nom-rep-content');if(!c)return;c.innerHTML='';
+  const keys=Object.keys(DN).filter(k=>{
+    const parts=k.split('__');if(parts.length<2)return false;
+    const fecha=parts[1];
+    return(!from||fecha>=from)&&(!to||fecha<=to);
+  });
+  if(!keys.length){c.innerHTML='<div class="card" style="text-align:center;color:var(--t3);padding:24px">Sin registros en este periodo</div>';return;}
+  // Group by city
+  const weeks={};
+  keys.forEach(k=>{
+    const[city,fecha]=k.split('__');
+    if(!weeks[fecha]) weeks[fecha]={};
+    weeks[fecha][city]=DN[k];
+  });
+  let grandTotal=0;
+  Object.keys(weeks).sort((a,b)=>b.localeCompare(a)).forEach(fecha=>{
+    const card=document.createElement('div');card.className='card';
+    let weekTotal=0;
+    let html=`<div class="ctit">📅 Semana: ${fmtFecha(fecha)}</div>`;
+    ['wash','chi'].forEach(city=>{
+      const data=weeks[fecha][city];if(!data)return;
+      const emps=city==='wash'?EW:EC;
+      const cityTotal=emps.reduce((a,_,i)=>a+(data[i]?.pago||0),0);
+      weekTotal+=cityTotal;
+      html+=`<div style="font-size:.75rem;font-weight:900;color:${city==='wash'?'var(--n)':'var(--az)'};margin:8px 0 4px">${city==='wash'?'🌲 Washington':'🌆 Chicago'} — $${fmt(cityTotal)}</div>`;
+      emps.forEach((emp,i)=>{
+        const pago=data[i]?.pago||0;
+        const dias=data[i]?.diasTrab||0;
+        if(pago>0) html+=`<div style="display:flex;justify-content:space-between;font-size:.78rem;padding:3px 0;border-bottom:1px solid var(--g2)"><span>${emp.n}</span><span style="font-weight:800;color:var(--n)">$${fmt(pago)} <span style="color:var(--t3);font-weight:600">(${dias}d)</span></span></div>`;
+      });
+    });
+    html+=`<div class="ftot b" style="margin-top:10px"><span>Total semana</span><span>$${fmt(weekTotal)}</span></div>`;
+    grandTotal+=weekTotal;
+    card.innerHTML=html;c.appendChild(card);
+  });
+  const tot=document.createElement('div');tot.className='card';
+  tot.style.cssText='background:var(--n);border:none';
+  tot.innerHTML=`<div class="ftot b" style="color:white"><span>💰 TOTAL DEL PERIODO</span><span>$${fmt(grandTotal)}</span></div>`;
+  c.appendChild(tot);
+}
+
+// ═══════════════════════════════════════════
+// 📊 EXPORTAR
+// ═══════════════════════════════════════════
+function getExportData(){
+  const from=document.getElementById('exp-from')?.value||null;
+  const to=document.getElementById('exp-to')?.value||null;
+  const puestos=CU?.rol==='admin'?allP():getUserPuestos();
+  const rows=[];
+  puestos.forEach(p=>{
+    let keys=Object.keys(DP).filter(k=>k.startsWith(p+'__'));
+    if(from||to) keys=keys.filter(k=>{const f=k.split('__')[1];return(!from||f>=from)&&(!to||f<=to);});
+    keys.sort().forEach(k=>{
+      const d=DP[k]||{};const fecha=k.split('__')[1];
+      rows.push({Puesto:p,Fecha:fecha,Efectivo:d['ve-ef']||0,Tarjeta:(d['ve-tj']||0)+(d['ve-ot']||0),
+        TotalVentas:d.totalVentas||0,TotalGastos:d.totalGastos||0,Utilidad:(d.totalVentas||0)-(d.totalGastos||0),
+        Gasolina:d['g-gas']||0,Hielo:d['g-hie']||0,Reparacion:d['g-rep']||0,Casetas:d['g-cas']||0,
+        Otros:d['g-otr']||0,OtrosDesc:d['g-otr-desc']||'',Guardado:d.fechaGuardado||'',Por:d.guardadoPor||''});
+    });
+  });
+  return rows;
+}
+
+function exportExcel(){
+  const rows=getExportData();
+  if(!rows.length){showToast('⚠️ Sin datos en el periodo seleccionado');return;}
+  const headers=Object.keys(rows[0]);
+  let csv=headers.join(',')+'\n';
+  rows.forEach(r=>csv+=headers.map(h=>JSON.stringify(r[h]||'')).join(',')+'\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`CuadraTacos_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();URL.revokeObjectURL(url);
+  showToast('📊 Descargando Excel (CSV)...');
+}
+
+function exportPDF(){
+  const rows=getExportData();
+  if(!rows.length){showToast('⚠️ Sin datos en el periodo seleccionado');return;}
+  const from=document.getElementById('exp-from')?.value||'Inicio';
+  const to=document.getElementById('exp-to')?.value||'Hoy';
+  const resumen={};
+  rows.forEach(r=>{
+    if(!resumen[r.Puesto]) resumen[r.Puesto]={v:0,g:0,u:0};
+    resumen[r.Puesto].v+=r.TotalVentas;resumen[r.Puesto].g+=r.TotalGastos;resumen[r.Puesto].u+=r.Utilidad;
+  });
+  const grandV=rows.reduce((a,r)=>a+r.TotalVentas,0);
+  const grandG=rows.reduce((a,r)=>a+r.TotalGastos,0);
+  let html=`<html><head><meta charset="utf-8"><title>La Cuadra Tacos</title>
+  <style>body{font-family:Arial,sans-serif;padding:20px;color:#111}h1{color:#ea580c}table{width:100%;border-collapse:collapse;margin:14px 0}th{background:#ea580c;color:white;padding:8px;font-size:12px}td{padding:6px 8px;border-bottom:1px solid #eee;font-size:12px}.tot{font-weight:bold;background:#fff7ed}.city{background:#f0fdf4;font-weight:bold}</style>
+  </head><body>
+  <h1>🌮 La Cuadra Tacos</h1>
+  <p>Reporte: <strong>${from}</strong> → <strong>${to}</strong> — Generado: ${new Date().toLocaleString('es')}</p>
+  <table><tr><th>Puesto</th><th>Ventas</th><th>Gastos</th><th>Utilidad</th></tr>
+  ${Object.entries(resumen).map(([p,d])=>`<tr class="${PW.includes(p)?'city':''}"><td>${p}</td><td>$${fmt(d.v)}</td><td>$${fmt(d.g)}</td><td>$${fmt(d.u)}</td></tr>`).join('')}
+  <tr class="tot"><td><strong>TOTAL</strong></td><td><strong>$${fmt(grandV)}</strong></td><td><strong>$${fmt(grandG)}</strong></td><td><strong>$${fmt(grandV-grandG)}</strong></td></tr>
+  </table>
+  <table><tr><th>Puesto</th><th>Fecha</th><th>Ventas</th><th>Gastos</th><th>Utilidad</th><th>Guardado por</th></tr>
+  ${rows.map(r=>`<tr><td>${r.Puesto}</td><td>${r.Fecha}</td><td>$${fmt(r.TotalVentas)}</td><td>$${fmt(r.TotalGastos)}</td><td>$${fmt(r.Utilidad)}</td><td>${r.Por}</td></tr>`).join('')}
+  </table></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();
+  setTimeout(()=>w.print(),400);
+  showToast('📄 Abriendo PDF para imprimir...');
+}
+
+function exportWhatsApp(){
+  const rows=getExportData();
+  if(!rows.length){showToast('⚠️ Sin datos en el periodo seleccionado');return;}
+  const from=document.getElementById('exp-from')?.value||'';
+  const to=document.getElementById('exp-to')?.value||'';
+  const grandV=rows.reduce((a,r)=>a+r.TotalVentas,0);
+  const grandG=rows.reduce((a,r)=>a+r.TotalGastos,0);
+  const resumen={};
+  rows.forEach(r=>{if(!resumen[r.Puesto])resumen[r.Puesto]=0;resumen[r.Puesto]+=r.TotalVentas;});
+  let msg=`🌮 *La Cuadra Tacos*\n`;
+  if(from||to) msg+=`📅 ${from||'Inicio'} → ${to||'Hoy'}\n`;
+  msg+=`\n💰 *Ventas: $${fmt(grandV)}*\n📤 Gastos: $${fmt(grandG)}\n📈 Utilidad: $${fmt(grandV-grandG)}\n\n📍 Por puesto:\n`;
+  Object.entries(resumen).sort((a,b)=>b[1]-a[1]).forEach(([p,v])=>{msg+=`• ${p}: $${fmt(v)}\n`;});
+  msg+=`\n_Enviado desde La Cuadra Tacos App_`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function exportEmail(){
+  const rows=getExportData();
+  if(!rows.length){showToast('⚠️ Sin datos en el periodo seleccionado');return;}
+  const from=document.getElementById('exp-from')?.value||'';
+  const to=document.getElementById('exp-to')?.value||'';
+  const grandV=rows.reduce((a,r)=>a+r.TotalVentas,0);
+  const grandG=rows.reduce((a,r)=>a+r.TotalGastos,0);
+  const subject=`Reporte La Cuadra Tacos — ${from} a ${to}`;
+  const resumen=Object.entries(rows.reduce((a,r)=>{if(!a[r.Puesto])a[r.Puesto]=0;a[r.Puesto]+=r.TotalVentas;return a;},{})).sort((a,b)=>b[1]-a[1]).map(([p,v])=>`${p}: $${fmt(v)}`).join('\n');
+  const body=`Reporte La Cuadra Tacos\n${from} → ${to}\n\nVentas totales: $${fmt(grandV)}\nGastos: $${fmt(grandG)}\nUtilidad: $${fmt(grandV-grandG)}\n\nPor puesto:\n${resumen}\n\nGenerado: ${new Date().toLocaleString('es')}`;
+  window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+// ═══════════════════════════════════════════
+// 💾 BACKUP
+// ═══════════════════════════════════════════
+function crearBackup(){
+  const data={fecha:new Date().toISOString(),version:'1.0',DP,DN,DA,DF,DG,US,MP,METAS,PROV,HIST};
+  const json=JSON.stringify(data,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`CuadraTacos_backup_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();URL.revokeObjectURL(url);
+  // Log backup
+  const log={fecha:new Date().toLocaleString('es'),user:CU?.user||'admin'};
+  BACKUPS.unshift(log);if(BACKUPS.length>10)BACKUPS.pop();
+  SL('BACKUPS',BACKUPS);
+  renderBackupList();
+  showToast('💾 Backup descargado correctamente');
+}
+
+function renderBackupList(){
+  const c=document.getElementById('backup-list');if(!c)return;
+  if(!BACKUPS.length){c.innerHTML='<p style="font-size:.78rem;color:var(--t3)">Sin backups recientes</p>';return;}
+  c.innerHTML='<div style="font-size:.72rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Backups recientes</div>'+
+    BACKUPS.map(b=>`<div style="font-size:.78rem;color:var(--t2);padding:4px 0;border-bottom:1px solid var(--g2)">✅ ${b.fecha} — ${b.user}</div>`).join('');
+}
+
+// ═══════════════════════════════════════════
 // UTILS
 function fmt(n){return(parseFloat(n)||0).toLocaleString('es-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2800);}
 function showNotif(msg){const n=document.getElementById('notif');n.textContent=msg;n.style.display='block';setTimeout(()=>n.style.display='none',4000);}
 
 document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
+
+// ── SERVICE WORKER REGISTRATION ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      console.log('✅ SW registered');
+    }).catch(err=>{
+      console.log('SW registration failed (normal if not on server):', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
