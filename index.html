@@ -150,13 +150,23 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .ach{font-size:.6rem;text-align:center;font-weight:900;color:var(--t3);text-transform:uppercase}
 
 /* NOMINA */
-.nrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g2)}
+.nrow{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--g2)}
 .nrow:last-child{border-bottom:none}
-.nav2{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--n),var(--n2));color:white;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;flex-shrink:0}
+.nav2{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--n),var(--n2));color:white;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;flex-shrink:0;margin-top:2px}
 .ninfo{flex:1;min-width:0}
 .nname{font-size:.85rem;font-weight:800}.npos{font-size:.68rem;color:var(--t3);font-weight:600}
+.ndays{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.nday{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.nday-lbl{font-size:.58rem;font-weight:900;color:var(--t3);text-transform:uppercase}
+.nday-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--g3);background:var(--g2);font-size:.65rem;font-weight:900;cursor:pointer;transition:all .15s;color:var(--t3);display:flex;align-items:center;justify-content:center}
+.nday-btn.on{background:var(--vs);border-color:var(--v);color:var(--v)}
+.nday-btn.off{background:var(--rs);border-color:#fca5a5;color:var(--r)}
+.nday-btn.des{background:var(--g3);border-color:var(--g3);color:var(--t3)}
 .nsuel{width:85px;text-align:right;border:1.5px solid var(--g3);border-radius:8px;padding:8px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;background:var(--g2);outline:none;color:var(--t)}
 .nsuel:focus{border-color:var(--n);background:white}
+.nright{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.npago{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--n);letter-spacing:.5px}
+.npago-lbl{font-size:.6rem;color:var(--t3);font-weight:700}
 
 /* PUESTO ROWS */
 .prow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--g2);cursor:pointer;transition:all .15s}
@@ -321,6 +331,20 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 <!-- VENTAS -->
 <div class="view" id="view-ventas">
   <div class="sh" id="vtit">Ventas</div>
+
+  <!-- DATE PICKER CARD -->
+  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:.68rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:4px">📅 Fecha del Registro</div>
+        <input type="date" id="fechaVentas" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:10px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:white;outline:none;color-scheme:dark" onchange="onFechaChange()">
+      </div>
+      <div style="text-align:right">
+        <div id="fechaVentasLabel" style="font-size:.75rem;color:#fed7aa;font-weight:700"></div>
+        <div id="fechaVentasStatus" style="font-size:.65rem;color:#a16207;margin-top:2px"></div>
+      </div>
+    </div>
+  </div>
   <div class="card">
     <div class="ctit">💰 Efectivo por Día</div>
     <div class="dgrid">
@@ -403,6 +427,19 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 
 <!-- NOMINA -->
 <div class="view" id="view-nomina">
+  <!-- Semana selector -->
+  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:.68rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:4px">📅 Semana de Pago</div>
+        <input type="date" id="fechaNomina" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:10px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:white;outline:none;color-scheme:dark" onchange="onFechaNominaChange()">
+      </div>
+      <div style="text-align:right">
+        <div id="nomSemanaLabel" style="font-size:.75rem;color:#fed7aa;font-weight:700"></div>
+        <div id="nomSemanaStatus" style="font-size:.65rem;color:#a16207;margin-top:2px"></div>
+      </div>
+    </div>
+  </div>
   <div class="cchips">
     <button class="cchip w active" onclick="setNC('wash',this)">🌲 Washington</button>
     <button class="cchip c" onclick="setNC('chi',this)">🌆 Chicago</button>
@@ -471,6 +508,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <button class="tab" onclick="setCT('empleados',this)">👷 Empleados</button>
     <button class="tab" onclick="setCT('editar',this)">✏️ Editar</button>
     <button class="tab" onclick="setCT('usuarios',this)">🔐 Usuarios</button>
+    <button class="tab" onclick="setCT('historial',this)">📋 Historial</button>
   </div>
   <div id="cfg-puestos" style="display:none">
     <div class="sh"><span>🌲 Washington</span><button class="shbtn" onclick="openM('addP','wash')">+ Agregar</button></div>
@@ -488,12 +526,16 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
   </div>
   <div id="cfg-editar" style="display:none">
     <div class="card">
-      <div class="ctit">✏️ Puesto a Editar</div>
+      <div class="ctit">✏️ Seleccionar Registro a Editar</div>
       <div class="crow"><span class="clbl">📍 Puesto</span>
         <select class="msel" id="editPsel" onchange="loadEditForm()" style="width:auto;flex:1;margin:0;padding:8px 10px"></select>
       </div>
+      <div class="crow"><span class="clbl">📅 Fecha</span>
+        <input type="date" id="editFechaSel" onchange="loadEditForm()" style="flex:1;border:2px solid var(--g3);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;color:var(--t);outline:none;background:var(--g2)">
+      </div>
     </div>
     <div id="editForm" style="display:none">
+      <div id="editFormInfo" style="font-size:.72rem;color:var(--t3);padding:0 2px 12px;font-weight:700"></div>
       <div class="card">
         <div class="ctit">💰 Editar Totales</div>
         <div class="crow"><span class="clbl">💵 Efectivo Total</span><input class="cinp" type="number" id="ed-ef"></div>
@@ -517,6 +559,44 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <div class="card" id="cfg-ul"></div>
     <div class="infobox" style="margin-top:8px">
       <p>👑 <strong>Admin</strong> — Acceso total a toda la app<br><br>👷 <strong>Encargado</strong> — Solo ve y registra su puesto asignado</p>
+    </div>
+  </div>
+
+  <div id="cfg-historial" style="display:none">
+    <div class="sh">
+      <span>📋 Historial de Cambios</span>
+      <button class="bdang" style="font-size:.7rem;padding:4px 10px" onclick="limpiarHistorial()">🗑️ Limpiar</button>
+    </div>
+    <!-- Filters -->
+    <div class="card" style="padding:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div>
+          <div style="font-size:.68rem;font-weight:900;color:var(--t3);margin-bottom:4px;text-transform:uppercase">Filtrar por usuario</div>
+          <select class="msel" id="hist-filter-user" onchange="renderHistorial()" style="margin:0;padding:8px 10px;font-size:.82rem"></select>
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:900;color:var(--t3);margin-bottom:4px;text-transform:uppercase">Filtrar por sección</div>
+          <select class="msel" id="hist-filter-sec" onchange="renderHistorial()" style="margin:0;padding:8px 10px;font-size:.82rem">
+            <option value="">Todas</option>
+            <option value="Ventas">💰 Ventas</option>
+            <option value="Asistencia">✅ Asistencia</option>
+            <option value="Nómina">👷 Nómina</option>
+            <option value="Reportes">📊 Reportes</option>
+            <option value="Usuarios">🔐 Usuarios</option>
+            <option value="Puestos">📍 Puestos</option>
+            <option value="Empleados">👷 Empleados</option>
+            <option value="Materia Prima">🧅 Materia Prima</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:.68rem;font-weight:900;color:var(--t3);margin-bottom:4px;text-transform:uppercase">Filtrar por fecha</div>
+        <input type="date" id="hist-filter-date" onchange="renderHistorial()" style="width:100%;border:2px solid var(--g3);border-radius:var(--Rs);padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:var(--t);outline:none;background:var(--g2)">
+      </div>
+    </div>
+    <div id="hist-list"></div>
+    <div id="hist-empty" style="text-align:center;padding:32px;color:var(--t3);font-size:.9rem;display:none">
+      📋 No hay registros aún.<br>Cada vez que guardes algo aparecerá aquí.
     </div>
   </div>
 </div>
@@ -713,6 +793,11 @@ let EW=LL('EW',[...DEW]),EC=LL('EC',[...DEC]);
 let US=LL('US',[...DU]);
 let MP=LL('MP',[...DMP]); // Materia prima catalog
 let DP=LL('DP',{}),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG=LL('DG',{});
+let HIST=LL('HIST',[]); // Change history log
+
+// Current date for ventas/asistencia
+let currentFecha=todayStr();
+let currentFechaNomina=todayStr(); // for nomina date tracking
 
 const allP=()=>[...PW,...PC];
 
@@ -740,7 +825,7 @@ async function SD(k,v){
 async function syncNow(){
   setST('🔄 Cargando...');setDot('orange');
   showToast('🔄 Cargando datos...');
-  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','US','MP'];
+  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','US','MP','HIST'];
   for(const t of tabs){
     const data=await gsG(t);
     if(data&&data[t]!==undefined){
@@ -749,6 +834,7 @@ async function syncNow(){
       if(t==='DF')DF=val;if(t==='DG')DG=val;if(t==='PW')PW=val;
       if(t==='PC')PC=val;if(t==='EW')EW=val;if(t==='EC')EC=val;
       if(t==='US')US=val;if(t==='MP'){MP=val;renderMPRows();}
+      if(t==='HIST')HIST=val;
     }
   }
   buildPSel();renderDash();renderReportes();renderAsist();renderNomina();
@@ -758,6 +844,29 @@ async function syncNow(){
 
 function setST(t){const el=document.getElementById('stxt');if(el)el.textContent=t;}
 function setDot(s){const d=document.getElementById('sdot');if(!d)return;d.className='sdot '+s;}
+
+// DATE HELPERS
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function fmtFecha(str){if(!str)return '';const d=new Date(str+'T12:00:00');return d.toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
+function dpKey(puesto,fecha){return `${puesto}__${fecha||currentFecha}`;}
+
+// HISTORIAL — log every change
+async function logChange(seccion,detalle,valorAntes,valorDespues){
+  const entry={
+    id:Date.now(),
+    fecha:new Date().toLocaleString('es'),
+    fechaISO:new Date().toISOString(),
+    usuario:CU?.user||'—',
+    seccion,
+    detalle,
+    antes:valorAntes||'—',
+    despues:valorDespues||'—'
+  };
+  HIST.unshift(entry);
+  if(HIST.length>500) HIST=HIST.slice(0,500); // keep last 500 entries
+  SL('HIST',HIST);
+  await gsS('HIST','HIST',JSON.stringify(HIST));
+}
 
 // AUTH
 function doLogin(){
@@ -846,6 +955,13 @@ function showApp(){
   populateEditSel();updateTip();
   renderMPRows();
   document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'});
+  // Initialize date picker with today
+  currentFecha=todayStr();
+  currentFechaNomina=todayStr();
+  const fp=document.getElementById('fechaVentas');
+  if(fp) fp.value=currentFecha;
+  const fn=document.getElementById('fechaNomina');
+  if(fn){ fn.value=currentFechaNomina; updateNomSemanaLabel(); }
   loadVF(CP);
 }
 
@@ -896,7 +1012,7 @@ function setP(p){
   CP=p;
   const vt=document.getElementById('vtit');if(vt)vt.textContent=`Ventas — ${p}`;
   const at=document.getElementById('atit');if(at)at.textContent=`Asistencia — ${p}`;
-  loadVF(p);renderAsist();
+  loadVF(p,currentFecha);renderAsist();
 }
 
 // NAV
@@ -919,7 +1035,7 @@ function setTab(id,btn){
 function setCT(id,btn){
   document.querySelectorAll('#view-config .tabs .tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  ['puestos','empleados','editar','usuarios'].forEach(t=>{
+  ['puestos','empleados','editar','usuarios','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);
     if(el) el.style.display=t===id?'block':'none';
   });
@@ -927,19 +1043,16 @@ function setCT(id,btn){
   if(id==='empleados') renderCfgE();
   if(id==='editar') populateEditSel();
   if(id==='usuarios') renderCfgU();
+  if(id==='historial') renderHistorial();
 }
 function setNC(city,btn){NCity=city;document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
 function renderCfg(){
-  // Always start on puestos tab
-  document.querySelectorAll('#view-config .tabs .tab').forEach((t,i)=>{
-    t.classList.toggle('active', i===0);
-  });
-  ['puestos','empleados','editar','usuarios'].forEach(t=>{
+  document.querySelectorAll('#view-config .tabs .tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  ['puestos','empleados','editar','usuarios','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);
     if(el) el.style.display=t==='puestos'?'block':'none';
   });
-  renderCfgP();
-  populateEditSel();
+  renderCfgP();populateEditSel();
 }
 
 function setCEC(city,btn){
@@ -960,15 +1073,31 @@ function calcV(){
   const g=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+parseFloat(document.getElementById(`g-${k}`)?.value||0),0);
   document.getElementById('gtot').textContent='$'+fmt(g);
 }
-function loadVF(p){
-  const d=DP[p]||{};
+function loadVF(p,fecha){
+  const key=dpKey(p,fecha||currentFecha);
+  const d=DP[key]||{};
   ['mar','mie','jue','vie','sab','dom'].forEach(dia=>{
     const ef=document.getElementById(`ve-${dia}-ef`);const tj=document.getElementById(`ve-${dia}-tj`);
     if(ef)ef.value=d[`ve-${dia}-ef`]||'';if(tj)tj.value=d[`ve-${dia}-tj`]||'';
   });
   ['gas','hie','rep','cas','otr'].forEach(k=>{const el=document.getElementById(`g-${k}`);if(el)el.value=d[`g-${k}`]||'';});
-  renderMPRows(); // render dynamic MP with saved values
+  // Update date status label
+  const lbl=document.getElementById('fechaVentasLabel');
+  const status=document.getElementById('fechaVentasStatus');
+  if(lbl) lbl.textContent=fmtFecha(fecha||currentFecha);
+  if(status) status.textContent=d.fechaGuardado?`Último guardado: ${d.fechaGuardado} por ${d.guardadoPor||'—'}`:'Sin registro para esta fecha';
+  renderMPRows();
   calcV();
+}
+
+function onFechaChange(){
+  const fecha=document.getElementById('fechaVentas').value;
+  if(!fecha)return;
+  currentFecha=fecha;
+  loadVF(CP,fecha);
+  // Also update asistencia date
+  const aKey=`${CP}__${fecha}`;
+  if(DA[aKey]) renderAsist();
 }
 function limpiarV(){
   ['mar','mie','jue','vie','sab','dom'].forEach(d=>{['ef','tj'].forEach(t=>{const el=document.getElementById(`ve-${d}-${t}`);if(el)el.value='';});});
@@ -985,13 +1114,23 @@ async function guardarVentas(){
   const ds=['mar','mie','jue','vie','sab','dom'];
   d.totalVentas=ds.reduce((a,dia)=>a+d[`ve-${dia}-ef`]+d[`ve-${dia}-tj`],0);
   d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
-  d.fechaGuardado=new Date().toLocaleString('es');d.guardadoPor=CU?.user||'—';
-  DP[CP]=d;await SD('DP',DP);renderDash();renderReportes();showToast('✅ Guardado — '+CP);
+  d.fechaGuardado=new Date().toLocaleString('es');
+  d.fechaRegistro=currentFecha;
+  d.guardadoPor=CU?.user||'—';
+  const key=dpKey(CP,currentFecha);
+  const antes=DP[key];
+  DP[key]=d;
+  await SD('DP',DP);
+  await logChange('Ventas',`${CP} — ${fmtFecha(currentFecha)}`,
+    antes?`$${fmt(antes.totalVentas||0)} ventas`:null,
+    `$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos`);
+  renderDash();renderReportes();showToast('✅ Guardado — '+CP+' · '+fmtFecha(currentFecha));
 }
 
 // ASISTENCIA
 function renderAsist(){
-  const saved=DA[CP]||{};AS=JSON.parse(JSON.stringify(saved));
+  const key=`${CP}__${currentFecha}`;
+  const saved=DA[key]||{};AS=JSON.parse(JSON.stringify(saved));
   const emps=PW.includes(CP)?EW:EC;
   const dks=['mar','mie','jue','vie','sab','dom'];
   const c=document.getElementById('arows');if(!c)return;c.innerHTML='';
@@ -1009,28 +1148,145 @@ function renderAsist(){
   updAR(emps.length);
 }
 function updAR(total){let p=0,a=0;Object.values(AS).forEach(v=>{if(v==='P')p++;else if(v==='A')a++;});const pct=total>0?Math.round(p/(total*6)*100):100;const el=document.getElementById('ares');if(el)el.textContent=`✅ ${p} presencias  ❌ ${a} ausencias  📊 ${pct}%`;}
-async function guardarAsist(){DA[CP]=JSON.parse(JSON.stringify(AS));await SD('DA',DA);showToast('✅ Asistencia guardada — '+CP);}
+async function guardarAsist(){
+  const key=`${CP}__${currentFecha}`;
+  const antes=DA[key];
+  DA[key]=JSON.parse(JSON.stringify(AS));
+  await SD('DA',DA);
+  await logChange('Asistencia',`${CP} — ${fmtFecha(currentFecha)}`,
+    antes?JSON.stringify(antes):null,
+    `${Object.values(AS).filter(v=>v==='P').length} presentes`);
+  showToast('✅ Asistencia guardada — '+CP);
+}
 
 // NOMINA
+function nomKey(city,fecha){return `${city}__${fecha||currentFechaNomina}`;}
+
+function updateNomSemanaLabel(){
+  const lbl=document.getElementById('nomSemanaLabel');
+  const status=document.getElementById('nomSemanaStatus');
+  if(lbl) lbl.textContent=`Semana del ${fmtFecha(currentFechaNomina)}`;
+  const saved=DN[nomKey(NCity,currentFechaNomina)];
+  if(status) status.textContent=saved?.fechaGuardado?`Guardado: ${saved.fechaGuardado} por ${saved.guardadoPor||'—'}`:'Sin registro para esta semana';
+}
+
+function onFechaNominaChange(){
+  const fecha=document.getElementById('fechaNomina').value;
+  if(!fecha) return;
+  currentFechaNomina=fecha;
+  updateNomSemanaLabel();
+  renderNomina();
+}
+
+const DIAS_NOM=['Mar','Mié','Jue','Vie','Sáb','Dom'];
+
 function renderNomina(){
-  const emps=NCity==='wash'?EW:EC;const saved=DN[NCity]||{};
+  const emps=NCity==='wash'?EW:EC;
+  const key=nomKey(NCity,currentFechaNomina);
+  const saved=DN[key]||{};
   const c=document.getElementById('nomcontent');if(!c)return;c.innerHTML='';
   const card=document.createElement('div');card.className='card';
   card.innerHTML=`<div class="ctit">👷 ${NCity==='wash'?'Washington':'Chicago'} — ${emps.length} empleados</div>`;
   let total=0;
   emps.forEach((emp,i)=>{
-    const s=saved[i]?.sueldo||0;total+=parseFloat(s);
-    const row=document.createElement('div');row.className='nrow';
+    const empData=saved[i]||{};
+    const sueldo=empData.sueldo||0;
+    const dias=empData.dias||{};
+    const diasTrab=Object.values(dias).filter(v=>v==='P').length||6;
+    const pago=sueldo>0?Math.round((sueldo/6)*diasTrab):0;
+    total+=pago;
     const ini=emp.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    row.innerHTML=`<div class="nav2">${ini}</div><div class="ninfo"><div class="nname">${emp.n}</div><div class="npos">${emp.p}</div></div><input class="nsuel" type="number" min="0" value="${s||''}" placeholder="$0" oninput="updNT()">`;
+    const row=document.createElement('div');row.className='nrow';
+    const daysHTML=DIAS_NOM.map((d,di)=>{
+      const k=`d${di}`;const st=dias[k]||'P';
+      const cls=st==='P'?'on':st==='D'?'des':'off';
+      const icon=st==='P'?'✓':st==='D'?'D':'✗';
+      return `<div class="nday"><div class="nday-lbl">${d}</div><button class="nday-btn ${cls}" data-emp="${i}" data-day="${k}" onclick="toggleNDay(this)">${icon}</button></div>`;
+    }).join('');
+    row.innerHTML=`
+      <div class="nav2">${ini}</div>
+      <div class="ninfo">
+        <div class="nname">${emp.n}</div>
+        <div class="npos">${emp.p}</div>
+        <div class="ndays">${daysHTML}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <span style="font-size:.7rem;color:var(--t3);font-weight:700">Sueldo base/sem:</span>
+          <input class="nsuel" type="number" min="0" value="${sueldo||''}" placeholder="$0" data-emp="${i}" oninput="updNT()">
+        </div>
+      </div>
+      <div class="nright">
+        <div class="npago-lbl">${diasTrab} días</div>
+        <div class="npago" id="npago-${i}">$${fmt(pago)}</div>
+      </div>`;
     card.appendChild(row);
   });
   const tr=document.createElement('div');tr.className='ftot b';tr.style.marginTop='12px';
-  tr.innerHTML=`<span>💰 Total Nómina Semanal</span><span id="ntotal">$${fmt(total)}</span>`;
+  tr.innerHTML=`<span>💰 Total a Pagar esta Semana</span><span id="ntotal">$${fmt(total)}</span>`;
   card.appendChild(tr);c.appendChild(card);
+  updateNomSemanaLabel();
 }
-function updNT(){let t=0;document.querySelectorAll('.nsuel').forEach(i=>t+=parseFloat(i.value||0));const el=document.getElementById('ntotal');if(el)el.textContent='$'+fmt(t);}
-async function guardarNomina(){const s={};document.querySelectorAll('.nsuel').forEach((i,idx)=>s[idx]={sueldo:parseFloat(i.value||0)});DN[NCity]=s;await SD('DN',DN);showToast('✅ Nómina guardada');}
+
+function toggleNDay(btn){
+  const cycle={P:'A',A:'D',D:'P'};
+  const icons={P:'✓',A:'✗',D:'D'};
+  const clsMap={P:'on',A:'off',D:'des'};
+  const empIdx=parseInt(btn.dataset.emp);
+  const cur=btn.classList.contains('on')?'P':btn.classList.contains('off')?'A':'D';
+  const next=cycle[cur]||'P';
+  btn.className=`nday-btn ${clsMap[next]}`;
+  btn.textContent=icons[next];
+  const sueldo=parseFloat(document.querySelector(`.nsuel[data-emp="${empIdx}"]`)?.value||0);
+  const allDays=document.querySelectorAll(`.nday-btn[data-emp="${empIdx}"]`);
+  const diasTrab=[...allDays].filter(b=>b.classList.contains('on')).length;
+  const pago=sueldo>0?Math.round((sueldo/6)*diasTrab):0;
+  const pagoEl=document.getElementById(`npago-${empIdx}`);
+  if(pagoEl) pagoEl.textContent='$'+fmt(pago);
+  updNT();
+}
+
+function updNT(){
+  let t=0;
+  const emps=NCity==='wash'?EW:EC;
+  emps.forEach((_,i)=>{
+    const sueldo=parseFloat(document.querySelector(`.nsuel[data-emp="${i}"]`)?.value||0);
+    const allDays=document.querySelectorAll(`.nday-btn[data-emp="${i}"]`);
+    const diasTrab=[...allDays].filter(b=>b.classList.contains('on')).length||6;
+    const pago=sueldo>0?Math.round((sueldo/6)*diasTrab):0;
+    const pagoEl=document.getElementById(`npago-${i}`);
+    if(pagoEl) pagoEl.textContent='$'+fmt(pago);
+    t+=pago;
+  });
+  const el=document.getElementById('ntotal');if(el)el.textContent='$'+fmt(t);
+}
+
+async function guardarNomina(){
+  const emps=NCity==='wash'?EW:EC;
+  const key=nomKey(NCity,currentFechaNomina);
+  const s={};
+  emps.forEach((_,i)=>{
+    const sueldo=parseFloat(document.querySelector(`.nsuel[data-emp="${i}"]`)?.value||0);
+    const dias={};
+    document.querySelectorAll(`.nday-btn[data-emp="${i}"]`).forEach(btn=>{
+      const st=btn.classList.contains('on')?'P':btn.classList.contains('off')?'A':'D';
+      dias[btn.dataset.day]=st;
+    });
+    const diasTrab=Object.values(dias).filter(v=>v==='P').length;
+    const pago=sueldo>0?Math.round((sueldo/6)*diasTrab):0;
+    s[i]={sueldo,dias,diasTrab,pago};
+  });
+  const totalNuevo=Object.values(s).reduce((a,v)=>a+(v.pago||0),0);
+  const keyAntes=DN[key];
+  const totalAntes=keyAntes?Object.values(keyAntes).filter(v=>typeof v==='object'&&v.pago).reduce((a,v)=>a+(v.pago||0),0):0;
+  s.fechaGuardado=new Date().toLocaleString('es');
+  s.guardadoPor=CU?.user||'—';
+  s.fechaRegistro=currentFechaNomina;
+  DN[key]=s;
+  await SD('DN',DN);
+  await logChange('Nómina',`${NCity==='wash'?'Washington':'Chicago'} — ${fmtFecha(currentFechaNomina)}`,
+    `$${fmt(totalAntes)} total`,`$${fmt(totalNuevo)} total a pagar`);
+  updateNomSemanaLabel();
+  showToast('✅ Nómina guardada — '+fmtFecha(currentFechaNomina));
+}
 
 // FLUJO
 function calcFlujo(){
@@ -1041,8 +1297,33 @@ function calcFlujo(){
   const neto=e-s;const el=document.getElementById('flneto');
   if(el){el.textContent='$'+fmt(neto);el.style.color=neto>=0?'var(--v)':'var(--r)';}
 }
-async function guardarFlujo(){const d={};['ef','tj','pre','ing','gas','ren','nom','tra'].forEach(k=>d[k]=parseFloat(document.getElementById(`fl-${k}`)?.value||0));DF=d;await SD('DF',DF);showToast('✅ Flujo guardado');}
-async function guardarGG(){const d={};['cpa','per','leg','tel','ban','veh','equ','fle','pub','otr'].forEach(k=>d[k]=parseFloat(document.getElementById(`gg-${k}`)?.value||0));DG=d;await SD('DG',DG);showToast('✅ Gastos guardados');}
+async function guardarFlujo(){
+  const d={};['ef','tj','pre','ing','gas','ren','nom','tra'].forEach(k=>d[k]=parseFloat(document.getElementById(`fl-${k}`)?.value||0));
+  const neto=(['ef','tj','pre'].reduce((a,k)=>a+(d[k]||0),0))-(['ing','gas','ren','nom','tra'].reduce((a,k)=>a+(d[k]||0),0));
+  DF=d;await SD('DF',DF);
+  await logChange('Reportes','Flujo de Efectivo',null,`Saldo neto: $${fmt(neto)}`);
+  showToast('✅ Flujo guardado');
+}
+async function guardarGG(){
+  const d={};['cpa','per','leg','tel','ban','veh','equ','fle','pub','otr'].forEach(k=>d[k]=parseFloat(document.getElementById(`gg-${k}`)?.value||0));
+  const total=Object.values(d).reduce((a,v)=>a+v,0);
+  DG=d;await SD('DG',DG);
+  await logChange('Reportes','Gastos Generales',null,`Total: $${fmt(total)}`);
+  showToast('✅ Gastos guardados');
+}
+
+// Get aggregated data for a puesto (sum all dates)
+function getDPuesto(p){
+  const keys=Object.keys(DP).filter(k=>k.startsWith(p+'__')||k===p);
+  let totalVentas=0,totalGastos=0,lastFecha='',lastGuardado='',lastUser='';
+  keys.forEach(k=>{
+    const d=DP[k]||{};
+    totalVentas+=parseFloat(d.totalVentas||0);
+    totalGastos+=parseFloat(d.totalGastos||0);
+    if(d.fechaRegistro&&d.fechaRegistro>lastFecha){lastFecha=d.fechaRegistro;lastGuardado=d.fechaGuardado||'';lastUser=d.guardadoPor||'';}
+  });
+  return{totalVentas,totalGastos,fechaGuardado:lastGuardado?`${fmtFecha(lastFecha)} · ${lastUser}`:'Sin registro'};
+}
 
 // DASHBOARD
 function renderDash(){
@@ -1050,7 +1331,7 @@ function renderDash(){
   let tV=0,tG=0,tN=0;
   ['wash','chi'].forEach(city=>{const emps=city==='wash'?EW:EC;const s=DN[city]||{};emps.forEach((_,i)=>tN+=parseFloat(s[i]?.sueldo||0));});
   const lista=isA?allP():[CU?.puesto].filter(Boolean);
-  lista.forEach(p=>{const d=DP[p]||{};tV+=parseFloat(d.totalVentas||0);tG+=parseFloat(d.totalGastos||0);});
+  lista.forEach(p=>{const d=getDPuesto(p);tV+=d.totalVentas;tG+=d.totalGastos;});
   const util=tV-tG-(isA?tN:0);
   document.getElementById('kv').textContent='$'+fmt(tV);
   document.getElementById('kg').textContent='$'+fmt(tG);
@@ -1064,18 +1345,18 @@ function renderPL(cid,puestos,ciudad){
   const c=document.getElementById(cid);if(!c)return;c.innerHTML='';
   if(!puestos||!puestos.length){c.innerHTML='<p style="color:var(--t3);font-size:.85rem;padding:8px 0;text-align:center">Sin puestos</p>';return;}
   puestos.forEach(p=>{
-    const d=DP[p]||{};const v=parseFloat(d.totalVentas||0);
+    const d=getDPuesto(p);const v=d.totalVentas;
     const row=document.createElement('div');row.className='prow';
-    row.innerHTML=`<div class="pdot ${ciudad}"></div><div style="flex:1"><div class="pname">${p}</div><div class="psub">${d.fechaGuardado||'Sin registro'}</div></div><div class="pven">$${fmt(v)}</div><span style="color:var(--t3);font-size:18px;margin-left:4px">›</span>`;
+    row.innerHTML=`<div class="pdot ${ciudad}"></div><div style="flex:1"><div class="pname">${p}</div><div class="psub">${d.fechaGuardado}</div></div><div class="pven">$${fmt(v)}</div><span style="color:var(--t3);font-size:18px;margin-left:4px">›</span>`;
     row.onclick=()=>{setP(p);document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('active',b.textContent===p));showV('ventas',document.querySelectorAll('.nbtn')[1]);};
     c.appendChild(row);
   });
 }
 function renderMB(){
   const c=document.getElementById('minibars');if(!c)return;c.innerHTML='';
-  const todos=allP();const maxV=Math.max(...todos.map(p=>parseFloat(DP[p]?.totalVentas||0)),1);
+  const todos=allP();const maxV=Math.max(...todos.map(p=>getDPuesto(p).totalVentas),1);
   todos.forEach(p=>{
-    const v=parseFloat(DP[p]?.totalVentas||0);const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
+    const v=getDPuesto(p).totalVentas;const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
     const col=document.createElement('div');col.className='mdia';
     col.innerHTML=`<div class="mdbar"><div class="mdfil" style="height:${pct}%;background:${isW?'var(--n)':'var(--az)'}"></div></div><div class="mdlbl">${p.replace('Chi-','').substring(0,4)}</div>`;
     c.appendChild(col);
@@ -1085,19 +1366,87 @@ function renderMB(){
 // REPORTES
 function renderReportes(){
   let wV=0,wG=0,cV=0,cG=0;
-  PW.forEach(p=>{const d=DP[p]||{};wV+=parseFloat(d.totalVentas||0);wG+=parseFloat(d.totalGastos||0);});
-  PC.forEach(p=>{const d=DP[p]||{};cV+=parseFloat(d.totalVentas||0);cG+=parseFloat(d.totalGastos||0);});
+  PW.forEach(p=>{const d=getDPuesto(p);wV+=d.totalVentas;wG+=d.totalGastos;});
+  PC.forEach(p=>{const d=getDPuesto(p);cV+=d.totalVentas;cG+=d.totalGastos;});
   const map={'rwv':wV,'rwg':wG,'rwu':wV-wG,'rcv':cV,'rcg':cG,'rcu':cV-cG};
   Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent='$'+fmt(v);});
   const c=document.getElementById('rpuestos');if(!c)return;c.innerHTML='';
-  const maxV=Math.max(...allP().map(p=>parseFloat(DP[p]?.totalVentas||0)),1);
-  [...allP()].sort((a,b)=>parseFloat(DP[b]?.totalVentas||0)-parseFloat(DP[a]?.totalVentas||0)).forEach((p,i)=>{
-    const v=parseFloat(DP[p]?.totalVentas||0);const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
+  const maxV=Math.max(...allP().map(p=>getDPuesto(p).totalVentas),1);
+  [...allP()].sort((a,b)=>getDPuesto(b).totalVentas-getDPuesto(a).totalVentas).forEach((p,i)=>{
+    const v=getDPuesto(p).totalVentas;const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
     const m=['🥇 ','🥈 ','🥉 '][i]||'';
     const row=document.createElement('div');row.className='brow';
     row.innerHTML=`<div class="blbl">${m}${p}</div><div class="btrk"><div class="bfil" style="width:${pct}%;background:${isW?'linear-gradient(90deg,var(--n),var(--n2))':'linear-gradient(90deg,var(--az),#1d4ed8)'}"> ${v>0?`<span>$${fmt(v)}</span>`:''}</div></div>`;
     c.appendChild(row);
   });
+}
+
+// ── HISTORIAL ──
+function renderHistorial(){
+  // Populate user filter
+  const uSel=document.getElementById('hist-filter-user');
+  if(uSel){
+    const curVal=uSel.value;
+    uSel.innerHTML='<option value="">Todos</option>';
+    [...new Set(HIST.map(h=>h.usuario))].forEach(u=>{const o=document.createElement('option');o.value=u;o.textContent=u;uSel.appendChild(o);});
+    uSel.value=curVal;
+  }
+  const filterUser=document.getElementById('hist-filter-user')?.value||'';
+  const filterSec=document.getElementById('hist-filter-sec')?.value||'';
+  const filterDate=document.getElementById('hist-filter-date')?.value||'';
+  let filtered=HIST.filter(h=>{
+    if(filterUser&&h.usuario!==filterUser)return false;
+    if(filterSec&&h.seccion!==filterSec)return false;
+    if(filterDate&&!h.fechaISO?.startsWith(filterDate))return false;
+    return true;
+  });
+  const c=document.getElementById('hist-list');
+  const empty=document.getElementById('hist-empty');
+  if(!c)return;
+  c.innerHTML='';
+  if(!filtered.length){if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  const secColors={
+    'Ventas':'var(--n)','Asistencia':'var(--v)','Nómina':'var(--am)',
+    'Reportes':'var(--az)','Usuarios':'#7C3AED','Puestos':'var(--n2)',
+    'Empleados':'var(--am)','Materia Prima':'var(--v)'
+  };
+  filtered.forEach(h=>{
+    const color=secColors[h.seccion]||'var(--t3)';
+    const card=document.createElement('div');
+    card.className='card';card.style.marginBottom='10px';card.style.padding='14px';
+    card.innerHTML=`
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="background:${color};color:white;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:900">${h.seccion}</div>
+          <div style="font-size:.78rem;font-weight:800;color:var(--t)">${h.detalle}</div>
+        </div>
+        <div style="font-size:.65rem;color:var(--t3);text-align:right;flex-shrink:0">${h.fecha}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <div style="font-size:.72rem;font-weight:900;color:var(--t3)">👤 ${h.usuario}</div>
+      </div>
+      ${h.antes&&h.antes!=='—'?`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+        <div style="background:var(--rs);border-radius:8px;padding:8px;font-size:.72rem">
+          <div style="font-weight:900;color:var(--r);margin-bottom:2px">Antes</div>
+          <div style="color:var(--t2)">${h.antes}</div>
+        </div>
+        <div style="background:var(--vs);border-radius:8px;padding:8px;font-size:.72rem">
+          <div style="font-weight:900;color:var(--v);margin-bottom:2px">Después</div>
+          <div style="color:var(--t2)">${h.despues}</div>
+        </div>
+      </div>`:''}
+    `;
+    c.appendChild(card);
+  });
+}
+
+async function limpiarHistorial(){
+  if(!confirm('¿Borrar todo el historial de cambios?'))return;
+  HIST=[];SL('HIST',HIST);
+  await gsS('HIST','HIST',JSON.stringify(HIST));
+  renderHistorial();showToast('🗑️ Historial limpiado');
 }
 
 // CONFIG
@@ -1262,6 +1611,9 @@ async function saveUsuario(){
   }
 
   await SD('US',US);
+  await logChange('Usuarios',isNew?`Nuevo usuario: ${user}`:`Editado: ${user}`,
+    isNew?null:`rol: ${US[idx]?.rol||''}, puesto: ${US[idx]?.puesto||''}`,
+    `rol: ${rol}, puesto: ${puesto||'sin asignar'}`);
   renderCfgU();closeM('addU');
   showToast(isNew?`✅ Usuario "${user}" creado`:`✅ Usuario "${user}" actualizado`);
 }
@@ -1271,6 +1623,7 @@ async function addPuesto(){
   if(!nom){showToast('⚠️ Escribe el nombre');return;}
   if(ciu==='wash')PW.push(nom);else PC.push(nom);
   await SD('PW',PW);await SD('PC',PC);
+  await logChange('Puestos',`Nuevo puesto: ${nom}`,null,`Ciudad: ${ciu==='wash'?'Washington':'Chicago'}`);
   buildPSel();renderDash();renderCfg();populateEditSel();
   document.getElementById('np-nom').value='';closeM('addP');showToast(`✅ "${nom}" agregado`);
 }
@@ -1280,6 +1633,7 @@ async function addEmpleado(){
   if(!nom){showToast('⚠️ Escribe el nombre');return;}
   if(ciu==='wash')EW.push({n:nom,p:pos});else EC.push({n:nom,p:pos});
   await SD('EW',EW);await SD('EC',EC);
+  await logChange('Empleados',`Nuevo empleado: ${nom}`,null,`Posición: ${pos}, Ciudad: ${ciu==='wash'?'Washington':'Chicago'}`);
   renderNomina();renderAsist();renderCfg();
   document.getElementById('ne-nom').value='';closeM('addE');showToast(`✅ ${nom} agregado`);
 }
@@ -1306,32 +1660,30 @@ function confirmDel(type,sub,idx){
     action=async()=>{
       if(sub==='w')PW.splice(idx,1);else PC.splice(idx,1);
       delete DP[nom];await SD('PW',PW);await SD('PC',PC);await SD('DP',DP);
+      await logChange('Puestos',`Puesto eliminado: ${nom}`,`Ciudad: ${sub==='w'?'Washington':'Chicago'}`,null);
       if(CP===nom)CP=allP()[0]||'';
       buildPSel();renderDash();renderCfg();populateEditSel();
       closeM('confirm');showToast(`🗑️ "${nom}" eliminado`);
     };
   } else if(type==='emp'){
-    const emps=CECity==='wash'?EW:EC;const nom=emps[idx]?.n;
+    const emps=CECity==='wash'?EW:EC;const nom=emps[idx]?.n;const pos=emps[idx]?.p;
     title='⚠️ Eliminar Empleado';msg=`¿Eliminar a "${nom}" del equipo?`;
     action=async()=>{
       if(CECity==='wash')EW.splice(idx,1);else EC.splice(idx,1);
       await SD('EW',EW);await SD('EC',EC);
+      await logChange('Empleados',`Empleado eliminado: ${nom}`,`${pos} — ${CECity==='wash'?'Washington':'Chicago'}`,null);
       renderNomina();renderAsist();renderCfg();closeM('confirm');showToast(`🗑️ ${nom} eliminado`);
     };
   } else if(type==='usuario'){
-    const nom=US[idx]?.user;
+    const nom=US[idx]?.user;const rolU=US[idx]?.rol;
     title='⚠️ Eliminar Usuario';msg=`¿Eliminar a "${nom}"? Ya no podrá entrar a la app.`;
     action=async()=>{
       closeM('confirm');
-      // Immediately remove from local + UI
-      US.splice(idx,1);
-      SL('US',US);
-      renderCfgU();
+      US.splice(idx,1);SL('US',US);renderCfgU();
       showToast(`🗑️ "${nom}" eliminado`);
-      // Then save to cloud
       const ok=await gsS('US','US',JSON.stringify(US));
-      setST(ok?'✅ Guardado':'⚠️ Local');
-      isSaving=false;
+      await logChange('Usuarios',`Usuario eliminado: ${nom}`,`rol: ${rolU}`,null);
+      setST(ok?'✅ Guardado':'⚠️ Local');isSaving=false;
     };
   }
   document.getElementById('cf-title').textContent=title;
@@ -1345,27 +1697,41 @@ function populateEditSel(){
   const sel=document.getElementById('editPsel');if(!sel)return;
   sel.innerHTML='<option value="">— Selecciona —</option>';
   allP().forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+  // Init date to today
+  const fd=document.getElementById('editFechaSel');
+  if(fd&&!fd.value) fd.value=todayStr();
 }
 function loadEditForm(){
   const p=document.getElementById('editPsel').value;
   const c=document.getElementById('editForm');if(!p){c.style.display='none';return;}
-  c.style.display='block';const d=DP[p]||{};
+  const fecha=document.getElementById('editFechaSel')?.value||todayStr();
+  const key=dpKey(p,fecha);
+  c.style.display='block';
+  const d=DP[key]||{};
   const ds=['mar','mie','jue','vie','sab','dom'];
   const ef=ds.reduce((a,dia)=>a+parseFloat(d[`ve-${dia}-ef`]||0),0);
   const tj=ds.reduce((a,dia)=>a+parseFloat(d[`ve-${dia}-tj`]||0),0);
   document.getElementById('ed-ef').value=ef||'';document.getElementById('ed-tj').value=tj||'';
   ['gas','hie','rep','cas','otr'].forEach(k=>{const el=document.getElementById(`ed-${k}`);if(el)el.value=d[`g-${k}`]||'';});
+  // Show existing record info
+  const info=document.getElementById('editFormInfo');
+  if(info) info.textContent=d.fechaGuardado?`Último guardado: ${d.fechaGuardado} por ${d.editadoPor||d.guardadoPor||'—'}`:'Sin registro para esta fecha';
 }
 async function guardarEdicion(){
   const p=document.getElementById('editPsel').value;if(!p)return;
-  const d=DP[p]||{};
+  const fecha=document.getElementById('editFechaSel')?.value||currentFecha;
+  const key=dpKey(p,fecha);
+  const d=DP[key]||{};
   const ef=parseFloat(document.getElementById('ed-ef').value||0);
   const tj=parseFloat(document.getElementById('ed-tj').value||0);
   ['mar','mie','jue','vie','sab','dom'].forEach(dia=>{d[`ve-${dia}-ef`]=ef/6;d[`ve-${dia}-tj`]=tj/6;});
   ['gas','hie','rep','cas','otr'].forEach(k=>{d[`g-${k}`]=parseFloat(document.getElementById(`ed-${k}`).value||0);});
+  const antes=DP[key]?`$${fmt(DP[key].totalVentas||0)} ventas`:null;
   d.totalVentas=ef+tj;d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
-  d.fechaGuardado=new Date().toLocaleString('es');d.editadoPor=CU?.user||'admin';
-  DP[p]=d;await SD('DP',DP);renderDash();renderReportes();showToast(`✅ "${p}" actualizado`);
+  d.fechaGuardado=new Date().toLocaleString('es');d.fechaRegistro=fecha;d.editadoPor=CU?.user||'admin';
+  DP[key]=d;await SD('DP',DP);
+  await logChange('Ventas',`Edición: ${p} — ${fmtFecha(fecha)}`,antes,`$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos`);
+  renderDash();renderReportes();showToast(`✅ "${p}" actualizado`);
 }
 
 // ── MATERIA PRIMA ──
