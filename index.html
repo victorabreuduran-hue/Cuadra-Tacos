@@ -2091,22 +2091,7 @@ function sincronizarAsistencia(silencioso=false){
   if(!silencioso) showToast(syncCount>0?'✅ Sincronizado desde: '+fmtFecha(asistFecha):'⚠️ No se pudieron actualizar los botones');
 }
 
-function debugAsistencia(){
-  const keys=Object.keys(DA).filter(k=>k.includes('asist-city'));
-  if(!keys.length){alert('DA no tiene registros de asistencia.\n\nKeys en DA:\n'+Object.keys(DA).slice(0,10).join('\n'));return;}
-  let msg='Registros de asistencia encontrados:\n\n';
-  keys.forEach(k=>{
-    const rec=DA[k];
-    const empKeys=Object.keys(rec).filter(x=>x.match(/^\d+-/));
-    msg+=`📌 ${k}\n`;
-    msg+=`   Keys empleados: ${empKeys.slice(0,6).join(', ')||'NINGUNA'}\n`;
-    if(empKeys.length){
-      empKeys.slice(0,4).forEach(ek=>{msg+=`   ${ek} = ${rec[ek]}\n`;});
-    }
-    msg+='\n';
-  });
-  alert(msg);
-}
+
 
 function getAsistDias(city, empIdx){
   const dayMap=['mar','mie','jue','vie','sab','dom'];
@@ -2143,15 +2128,7 @@ function renderNomina(){
 
   const c=document.getElementById('nomcontent');if(!c)return;c.innerHTML='';
 
-  // DEBUG — cuadro azul visible
-  const dbg=document.createElement('div');
-  dbg.style.cssText='background:#1e3a5f;color:white;padding:10px;border-radius:8px;font-size:.72rem;font-weight:700;margin-bottom:8px;word-break:break-all;white-space:pre-wrap';
-  const daAsistKeys=Object.keys(DA).filter(k=>k.includes('asist'));
-  dbg.textContent='DA en memoria: '+Object.keys(DA).length+' keys'
-    +'\nKeys asist: ['+(daAsistKeys.join(', ')||'NINGUNA')+']'
-    +'\nasistRec: '+(asistRec?'SI - '+Object.keys(asistRec).filter(k=>k.match(/^\d+-/)).slice(0,4).join(','):'NO')
-    +'\nhasNominaSaved: '+hasNominaSaved;
-  c.appendChild(dbg);
+
 
   const card=document.createElement('div');card.className='card';
   const headerDiv=document.createElement('div');
