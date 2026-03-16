@@ -151,7 +151,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .agrid{display:grid;grid-template-columns:1fr repeat(6,34px);gap:4px;align-items:center;margin-bottom:6px}
 .aname{font-size:.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .abtn{width:34px;height:34px;border-radius:8px;border:none;font-size:.7rem;font-weight:900;cursor:pointer;transition:all .15s;background:var(--g2);color:var(--t2)}
-.abtn.P{background:var(--vs);color:var(--v)}.abtn.A{background:var(--rs);color:var(--r)}.abtn.JV{background:var(--azs);color:var(--az)}.abtn.D{background:var(--g3);color:var(--t3)}
+.abtn.P{background:var(--vs);color:var(--v)}.abtn.MD{background:var(--ams);color:#92400E}.abtn.A{background:var(--rs);color:var(--r)}
 .ach{font-size:.6rem;text-align:center;font-weight:900;color:var(--t3);text-transform:uppercase}
 
 /* NOMINA */
@@ -165,6 +165,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .nday-lbl{font-size:.58rem;font-weight:900;color:var(--t3);text-transform:uppercase}
 .nday-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid var(--g3);background:var(--g2);font-size:.65rem;font-weight:900;cursor:pointer;transition:all .15s;color:var(--t3);display:flex;align-items:center;justify-content:center}
 .nday-btn.on{background:var(--vs);border-color:var(--v);color:var(--v)}
+.nday-btn.half{background:var(--ams);border-color:var(--am);color:#92400E}
 .nday-btn.off{background:var(--rs);border-color:#fca5a5;color:var(--r)}
 .nday-btn.des{background:var(--g3);border-color:var(--g3);color:var(--t3)}
 .nsuel{width:85px;text-align:right;border:1.5px solid var(--g3);border-radius:8px;padding:8px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;background:var(--g2);outline:none;color:var(--t)}
@@ -678,10 +679,24 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
       <div class="ftot b" style="margin-top:6px"><span>💸 Costo total MP</span><span id="mp-total-val">$0</span></div>
     </div>
   </div>
+  <!-- Firma del encargado -->
+  <div class="card" style="border-left:4px solid var(--az)">
+    <div style="font-size:.75rem;font-weight:900;color:var(--t2);margin-bottom:8px">✍️ Firma del Encargado</div>
+    <div class="crow" style="border-bottom:none">
+      <span class="clbl">
+        Nombre
+        <span style="font-size:.65rem;color:var(--t3);display:block;font-weight:600">Quien registra este reporte</span>
+      </span>
+      <input type="text" id="ve-encargado" placeholder="Tu nombre..."
+        style="width:140px;border:1.5px solid var(--g3);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;color:var(--t);background:var(--g2);outline:none"
+        onfocus="this.style.borderColor='var(--az)'" onblur="this.style.borderColor='var(--g3)'">
+    </div>
+  </div>
   <button class="bsave" onclick="guardarVentas()">💾 GUARDAR REGISTRO</button>
   <button class="boutl" style="width:100%;margin-top:8px" onclick="limpiarV()">🗑️ Limpiar formulario</button>
 </div>
 
+<!-- ASISTENCIA -->
 <!-- ASISTENCIA -->
 <div class="view" id="view-asist">
   <div class="sh" id="atit">Asistencia</div>
@@ -692,24 +707,31 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <button class="cchip c" id="asist-btn-chi" onclick="setAsistCity('chi',this)">🌆 Chicago</button>
   </div>
 
+  <!-- Fecha -->
+  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:.68rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:4px">📅 Fecha del Registro</div>
+        <input type="date" id="fechaAsist" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:10px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:white;outline:none;color-scheme:dark" onchange="onAsistFechaChange()">
+      </div>
+      <div id="asistFechaStatus" style="font-size:.65rem;color:#a16207;font-weight:700;text-align:right"></div>
+    </div>
+  </div>
+
   <div class="card">
     <!-- Leyenda -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:8px;background:var(--vs);padding:8px 10px;border-radius:10px">
         <span style="font-size:16px">✅</span>
-        <div><div style="font-size:.78rem;font-weight:900;color:var(--v)">P — Presente</div><div style="font-size:.62rem;color:var(--v);opacity:.8">Trabajó ese día</div></div>
+        <div><div style="font-size:.78rem;font-weight:900;color:var(--v)">P — Presente</div><div style="font-size:.62rem;color:var(--v);opacity:.8">Día completo</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--ams);padding:8px 10px;border-radius:10px">
+        <span style="font-size:16px">🌗</span>
+        <div><div style="font-size:.78rem;font-weight:900;color:#92400E">MD — Medio Día</div><div style="font-size:.62rem;color:#92400E;opacity:.8">Pago 50%</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;background:var(--rs);padding:8px 10px;border-radius:10px">
         <span style="font-size:16px">❌</span>
         <div><div style="font-size:.78rem;font-weight:900;color:var(--r)">A — Ausente</div><div style="font-size:.62rem;color:var(--r);opacity:.8">No se presentó</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;background:var(--azs);padding:8px 10px;border-radius:10px">
-        <span style="font-size:16px">🔵</span>
-        <div><div style="font-size:.78rem;font-weight:900;color:var(--az)">JV — Justificado</div><div style="font-size:.62rem;color:var(--az);opacity:.8">Permiso / Vacaciones</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;background:var(--g3);padding:8px 10px;border-radius:10px">
-        <span style="font-size:16px">⚫</span>
-        <div><div style="font-size:.78rem;font-weight:900;color:var(--t2)">D — Descanso</div><div style="font-size:.62rem;color:var(--t2);opacity:.8">Día libre (Lunes)</div></div>
       </div>
     </div>
     <div class="agrid" style="margin-bottom:8px">
@@ -844,6 +866,15 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   </div>
 </div>
 
+<!-- PROVEEDORES VIEW -->
+<div class="view" id="view-prov">
+  <div class="sh">
+    <span>🏪 Proveedores</span>
+    <button class="shbtn" onclick="openM('addProv')">+ Agregar</button>
+  </div>
+  <div class="card" id="prov-view-list"></div>
+</div>
+
 <!-- CONFIG -->
 <div class="view" id="view-config">
   <div class="tabs" style="overflow-x:auto;flex-wrap:nowrap">
@@ -853,7 +884,7 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <button class="tab" onclick="setCT('usuarios',this)">🔐 Usuarios</button>
     <button class="tab" onclick="setCT('mp',this)">🧅 MP</button>
     <button class="tab" onclick="setCT('metas',this)">🎯 Metas</button>
-    <button class="tab" onclick="setCT('prov',this)">🏪 Proveed.</button>
+    <button class="tab" onclick="setCT('reportes',this)">📊 Reportes</button>
     <button class="tab" onclick="setCT('ajustes',this)">⚙️ Ajustes</button>
     <button class="tab" onclick="setCT('historial',this)">📋 Historial</button>
   </div>
@@ -968,9 +999,16 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   </div>
 
   <!-- PROVEEDORES -->
-  <div id="cfg-prov" style="display:none">
-    <div class="sh"><span>🏪 Proveedores</span><button class="shbtn" onclick="openM('addProv')">+ Agregar</button></div>
-    <div class="card" id="cfg-prov-list"></div>
+  <!-- REPORTES dentro de Config -->
+  <div id="cfg-reportes" style="display:none">
+    <div class="tabs" style="margin-bottom:0" id="cfg-rep-tabs">
+      <button class="tab active" onclick="setRepTab('mensual',this)">📅 Mensual</button>
+      <button class="tab" onclick="setRepTab('flujo',this)">💸 Flujo</button>
+      <button class="tab" onclick="setRepTab('gasgen',this)">💰 Gastos</button>
+      <button class="tab" onclick="setRepTab('nomina-rep',this)">👷 Nómina</button>
+      <button class="tab" onclick="setRepTab('exportar',this)">📤 Exportar</button>
+    </div>
+    <div id="cfg-rep-content"></div>
   </div>
 
   <!-- AJUSTES -->
@@ -1032,9 +1070,10 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
 <div class="bnav" id="mainNav" style="display:none">
   <button class="nbtn active" onclick="showV('dashboard',this)"><span class="ni">🏠</span><span class="nl">Inicio</span></button>
   <button class="nbtn" onclick="showV('ventas',this)"><span class="ni">💰</span><span class="nl">Ventas</span></button>
+  
   <button class="nbtn" onclick="showV('asist',this)"><span class="ni">✅</span><span class="nl">Asist.</span></button>
   <button class="nbtn ao" onclick="showV('nomina',this)"><span class="ni">👷</span><span class="nl">Nómina</span></button>
-  <button class="nbtn ao" onclick="showV('reportes',this)"><span class="ni">📊</span><span class="nl">Reportes</span></button>
+  <button class="nbtn ao" onclick="showV('prov',this);renderProvView()"><span class="ni">🏪</span><span class="nl">Proveed.</span></button>
   <button class="nbtn ao" onclick="showV('config',this);renderCfg()"><span class="ni">⚙️</span><span class="nl">Config</span></button>
 </div>
 
@@ -1139,6 +1178,7 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
           <input type="checkbox" id="perm-asist" style="width:17px;height:17px;accent-color:var(--n)">
           <span style="font-size:.82rem;font-weight:800">✅ Asistencia</span>
         </label>
+
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
           <input type="checkbox" id="perm-nomina" style="width:17px;height:17px;accent-color:var(--n)">
           <span style="font-size:.82rem;font-weight:800">👷 Nómina</span>
@@ -1273,7 +1313,8 @@ const DMP=[
 ];
 
 let CU=null,CP='',NCity='wash',CECity='wash',AS={};
-let asistCity='wash'; // ciudad activa en asistencia
+let asistCity='wash';
+let currentAsistFecha=todayStr();
 let isSaving=false;
 
 // STORAGE
@@ -1441,7 +1482,8 @@ function showApp(){
     if(lbl==='Ventas')   btn.style.display=can('ventas')?'':'none';
     if(lbl==='Asist.')   btn.style.display=can('asist')?'':'none';
     if(lbl==='Nómina')   btn.style.display=isA||can('nomina')?'':'none';
-    if(lbl==='Reportes') btn.style.display=isA||can('reportes')?'':'none';
+    if(lbl==='Reportes') btn.style.display='none'; // now inside Config
+    if(lbl==='Proveed.') btn.style.display=isA||can('reportes')?'':'none';
     if(lbl==='Config')   btn.style.display=isA||can('config')?'':'none';
   });
 
@@ -1467,7 +1509,8 @@ function showApp(){
   const psel=document.getElementById('puestoSel');
   if(psel) psel.style.display='none';
   renderDash();
-  if(can('asist'))renderAsist();
+  
+  if(can('asist')){currentAsistFecha=todayStr();const fa=document.getElementById('fechaAsist');if(fa)fa.value=currentAsistFecha;renderAsist();}
   if(isA||can('nomina'))renderNomina();
   if(isA||can('reportes'))renderReportes();
   populateEditSel();updateTip();
@@ -1481,18 +1524,6 @@ function showApp(){
   renderVentaMeta();
   // Init asist city buttons based on user permissions
   const ciudadesUser=getUserCiudades();
-  const btnWash=document.getElementById('asist-btn-wash');
-  const btnChi=document.getElementById('asist-btn-chi');
-  if(!isA&&ciudadesUser.length===1){
-    asistCity=ciudadesUser[0];
-    if(btnWash) btnWash.classList.toggle('active',asistCity==='wash');
-    if(btnChi) btnChi.classList.toggle('active',asistCity==='chi');
-  }
-  if(btnWash) btnWash.style.display=(!isA&&ciudadesUser.length>0&&!ciudadesUser.includes('wash'))?'none':'';
-  if(btnChi) btnChi.style.display=(!isA&&ciudadesUser.length>0&&!ciudadesUser.includes('chi'))?'none':'';
-  // Init new features
-  initDarkMode();
-  setTimeout(()=>{checkFaltantes();renderMetasEnDash();},300);
 }
 
 // INIT
@@ -1566,7 +1597,7 @@ function setP(p){
   CP=p;
   const vt=document.getElementById('vtit');if(vt)vt.textContent=`Ventas — ${p}`;
   const at=document.getElementById('atit');if(at)at.textContent=`Asistencia — ${p}`;
-  loadVF(p,currentFecha);renderAsist();
+  loadVF(p,currentFecha);
   renderVentaMeta();
 }
 
@@ -1590,9 +1621,9 @@ function setTab(id,btn){
   if(id==='nomina-rep'){const t=todayStr();const from=document.getElementById('nom-rep-from');const to=document.getElementById('nom-rep-to');if(from&&!from.value){const d=new Date();d.setDate(d.getDate()-30);from.value=d.toISOString().split('T')[0];}if(to&&!to.value)to.value=t;}
 }
 function setCT(id,btn){
-  document.querySelectorAll('#view-config .tabs .tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#view-config .tabs:first-child .tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  ['puestos','empleados','editar','usuarios','mp','metas','prov','ajustes','historial'].forEach(t=>{
+  ['puestos','empleados','editar','usuarios','mp','metas','reportes','ajustes','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);
     if(el) el.style.display=t===id?'block':'none';
   });
@@ -1602,14 +1633,14 @@ function setCT(id,btn){
   if(id==='usuarios') renderCfgU();
   if(id==='mp') renderCfgMP();
   if(id==='metas') renderCfgMetas();
-  if(id==='prov') renderCfgProv();
+  if(id==='reportes'){renderReportes();mountReportesInConfig();}
   if(id==='ajustes'){initPush();initPINStatus();checkFaltantes();initFaceIDStatus();}
   if(id==='historial') renderHistorial();
 }
 function setNC(city,btn){NCity=city;document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
 function renderCfg(){
-  document.querySelectorAll('#view-config .tabs .tab').forEach((t,i)=>t.classList.toggle('active',i===0));
-  ['puestos','empleados','editar','usuarios','mp','metas','prov','ajustes','historial'].forEach(t=>{
+  document.querySelectorAll('#view-config .tabs:first-child .tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  ['puestos','empleados','editar','usuarios','mp','metas','reportes','ajustes','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);
     if(el) el.style.display=t==='puestos'?'block':'none';
   });
@@ -1682,6 +1713,9 @@ function loadVF(p,fecha){
   const tj=document.getElementById('ve-dia-tj');if(tj)tj.value=d['ve-tj']||'';
   const ot=document.getElementById('ve-dia-ot');if(ot)ot.value=d['ve-ot']||'';
   ['gas','hie','rep','cas','otr'].forEach(k=>{const el=document.getElementById(`g-${k}`);if(el)el.value=d[`g-${k}`]||'';});
+  // Load encargado name — pre-fill with saved or current user
+  const enc=document.getElementById('ve-encargado');
+  if(enc) enc.value=d['encargado']||CU?.user||'';
   // Load caja chica
   const ci=document.getElementById('caja-inicio');if(ci)ci.value=d['caja-inicio']||'';
   const cc=document.getElementById('caja-cierre');if(cc)cc.value=d['caja-cierre']||'';
@@ -1706,7 +1740,6 @@ function onFechaChange(){
   if(!fecha)return;
   currentFecha=fecha;
   loadVF(CP,fecha);
-  renderAsist();
 }
 
 function limpiarV(){
@@ -1716,6 +1749,8 @@ function limpiarV(){
   // Clear caja
   ['caja-inicio','caja-cierre'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const cn=document.getElementById('caja-notas');if(cn)cn.value='';
+  const encEl=document.getElementById('ve-encargado');
+  if(encEl) encEl.value=CU?.user||'';
   const res=document.getElementById('caja-resultado');if(res)res.style.display='none';
   MP.forEach((_,i)=>{
     const sal=document.getElementById(`mp-sal-${i}`);if(sal)sal.value='';
@@ -1735,6 +1770,14 @@ async function guardarVentas(){
   d['ve-ot']=parseFloat(document.getElementById('ve-dia-ot')?.value||0);
   ['gas','hie','rep','cas','otr'].forEach(k=>{d[`g-${k}`]=parseFloat(document.getElementById(`g-${k}`)?.value||0);});
   d['g-otr-desc']=document.getElementById('g-otr-desc')?.value?.trim()||'';
+  // Firma del encargado — obligatorio
+  const encargadoNombre=document.getElementById('ve-encargado')?.value?.trim()||'';
+  if(!encargadoNombre){
+    showToast('⚠️ Escribe tu nombre antes de guardar');
+    document.getElementById('ve-encargado')?.focus();
+    return;
+  }
+  d['encargado']=encargadoNombre;
   // Caja chica
   d['caja-inicio']=parseFloat(document.getElementById('caja-inicio')?.value||0)||'';
   d['caja-cierre']=parseFloat(document.getElementById('caja-cierre')?.value||0)||'';
@@ -1753,7 +1796,7 @@ async function guardarVentas(){
   d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
   d.fechaGuardado=new Date().toLocaleString('es');
   d.fechaRegistro=currentFecha;
-  d.guardadoPor=CU?.user||'—';
+  d.guardadoPor=encargadoNombre; // nombre del encargado que registra
   const key=dpKey(CP,currentFecha);
   const antes=DP[key];
   DP[key]=d;
@@ -1777,23 +1820,37 @@ async function guardarVentas(){
 }
 
 // ASISTENCIA
+
+
+
+
+
+
+
+
+// ── ASISTENCIA ──
 function setAsistCity(city, btn){
   asistCity=city;
   document.querySelectorAll('#view-asist .cchip').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  // Show/hide city buttons based on user permissions
-  const isA=CU?.rol==='admin';
-  const ciudades=getUserCiudades();
   const atit=document.getElementById('atit');
   if(atit) atit.textContent=`Asistencia — ${city==='wash'?'🌲 Washington':'🌆 Chicago'}`;
   renderAsist();
 }
 
+function onAsistFechaChange(){
+  const fecha=document.getElementById('fechaAsist').value;
+  if(!fecha) return;
+  currentAsistFecha=fecha;
+  const key=`asist-city__${asistCity}__${fecha}`;
+  const status=document.getElementById('asistFechaStatus');
+  if(status) status.textContent=DA[key]?.fechaGuardado?`Guardado: ${DA[key].fechaGuardado}`:'Sin registro para esta fecha';
+  renderAsist();
+}
+
 function renderAsist(){
-  // Use asistCity to determine which employees to show
   const emps=asistCity==='wash'?EW:EC;
-  // Key based on city + date (not puesto)
-  const key=`asist-city__${asistCity}__${currentFecha}`;
+  const key=`asist-city__${asistCity}__${currentAsistFecha}`;
   const saved=DA[key]||{};AS=JSON.parse(JSON.stringify(saved));
   const dks=['mar','mie','jue','vie','sab','dom'];
   const c=document.getElementById('arows');if(!c)return;c.innerHTML='';
@@ -1805,35 +1862,46 @@ function renderAsist(){
     dks.forEach(dk=>{
       const k=`${i}-${dk}`;const state=AS[k]||'P';
       const btn=document.createElement('button');btn.className=`abtn ${state}`;btn.textContent=state;
-      btn.onclick=()=>{const cy={P:'A',A:'JV',JV:'D',D:'P'};const nx=cy[btn.textContent]||'P';btn.textContent=nx;btn.className=`abtn ${nx}`;AS[k]=nx;updAR(emps.length);};
+      btn.onclick=()=>{const cy={P:'MD',MD:'A',A:'P'};const nx=cy[btn.textContent]||'P';btn.textContent=nx;btn.className=`abtn ${nx}`;AS[k]=nx;updAR(emps.length)};
       row.appendChild(btn);
     });
     c.appendChild(row);
   });
   updAR(emps.length);
+  // Update fecha input and status
+  const fi=document.getElementById('fechaAsist');if(fi&&!fi.value)fi.value=currentAsistFecha;
+  const status=document.getElementById('asistFechaStatus');
+  const key2=`asist-city__${asistCity}__${currentAsistFecha}`;
+  if(status) status.textContent=DA[key2]?.fechaGuardado?`Guardado: ${DA[key2].fechaGuardado}`:'Sin registro para esta fecha';
 }
 
 function updAR(total){
-  let p=0,a=0;
-  Object.values(AS).forEach(v=>{if(v==='P')p++;else if(v==='A')a++;});
-  const pct=total>0?Math.round(p/(total*6)*100):100;
+  let p=0,md=0,a=0;
+  Object.values(AS).forEach(v=>{if(v==='P')p++;else if(v==='MD')md++;else if(v==='A')a++;});
+  const diasEfectivos=p+md*0.5;
+  const pct=total>0?Math.round(diasEfectivos/(total*6)*100):100;
   const el=document.getElementById('ares');
-  if(el) el.textContent=`✅ ${p} presencias  ❌ ${a} ausencias  📊 ${pct}%`;
+  if(el) el.textContent=`✅ ${p} presentes  🌗 ${md} medio día  ❌ ${a} ausentes  📊 ${pct}%`;
 }
 
 async function guardarAsist(){
-  const key=`asist-city__${asistCity}__${currentFecha}`;
+  const key=`asist-city__${asistCity}__${currentAsistFecha}`;
   const antes=DA[key];
-  DA[key]=JSON.parse(JSON.stringify(AS));
+  const data=JSON.parse(JSON.stringify(AS));
+  data.fechaGuardado=new Date().toLocaleString('es');
+  data.guardadoPor=CU?.user||'—';
+  DA[key]=data;
   await SD('DA',DA);
   const ciudad=asistCity==='wash'?'Washington':'Chicago';
-  await logChange('Asistencia',`${ciudad} — ${fmtFecha(currentFecha)}`,
+  await logChange('Asistencia',`${ciudad} — ${fmtFecha(currentAsistFecha)}`,
     antes?`${Object.values(antes).filter(v=>v==='P').length} presentes`:null,
     `${Object.values(AS).filter(v=>v==='P').length} presentes`);
-  showToast(`✅ Asistencia guardada — ${ciudad}`);
+  const status=document.getElementById('asistFechaStatus');
+  if(status) status.textContent=`Guardado: ${new Date().toLocaleString('es')}`;
+  showToast(`✅ Asistencia guardada — ${ciudad} · ${fmtFecha(currentAsistFecha)}`);
 }
 
-// NOMINA
+// ── NOMINA ──
 function nomKey(city,fecha){return `${city}__${fecha||currentFechaNomina}`;}
 
 function updateNomSemanaLabel(){
@@ -1855,37 +1923,94 @@ function onFechaNominaChange(){
 const DIAS_NOM=['Mar','Mié','Jue','Vie','Sáb','Dom'];
 
 function calcPago(sueldo, tipo, diasTrab){
-  // tipo: 'dia' = sueldo × días trabajados
-  //       'semana' = sueldo ÷ 6 × días trabajados
+  // diasTrab can be fractional (e.g. 4.5 if one medio día)
   if(!sueldo) return 0;
   if(tipo==='dia') return Math.round(sueldo * diasTrab);
   return Math.round((sueldo/6) * diasTrab);
+}
+
+function diasTrabFromButtons(empIdx){
+  // Count P=1, MD=0.5, A/D=0
+  let dias=0;
+  document.querySelectorAll(`.nday-btn[data-emp="${empIdx}"]`).forEach(btn=>{
+    if(btn.classList.contains('on')) dias+=1;
+    else if(btn.classList.contains('half')) dias+=0.5;
+  });
+  return dias;
+}
+
+// Get dias trabajados from asistencia records for a given week
+function getDiasDeAsistencia(city, empIdx, fechaSemana){
+  // fechaSemana = the date stored in nomina (any date, we find Mon-Sun of that week)
+  const d=new Date(fechaSemana+'T12:00:00');
+  const day=d.getDay(); // 0=Sun
+  const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7)); // Monday
+  
+  // DIAS_NOM = Mar,Mié,Jue,Vie,Sáb,Dom → offsets 1-6 from Monday
+  const offsets=[1,2,3,4,5,6];
+  const dias={};
+  offsets.forEach((offset,di)=>{
+    const fecha=new Date(mon);fecha.setDate(mon.getDate()+offset);
+    const fechaStr=fecha.toISOString().split('T')[0];
+    const key=`asist-city__${city}__${fechaStr}`;
+    const record=DA[key];
+    if(record){
+      // Find this employee's state for any day in that record
+      const empStates=Object.keys(record)
+        .filter(k=>k.startsWith(`${empIdx}-`))
+        .map(k=>record[k]);
+      // If any day has P → present, if all A → absent, etc.
+      // Actually each asist record is per-date, so check all days in that record
+      const dayKeys=['mar','mie','jue','vie','sab','dom'];
+      const dayState=record[`${empIdx}-${dayKeys[di]}`]||record[`${empIdx}-d${di}`];
+      if(dayState) dias[`d${di}`]=dayState==='JV'?'A':dayState; // JV counts as A in nómina
+      else if(empStates.length>0) dias[`d${di}`]='P'; // has record = present
+      else dias[`d${di}`]='P'; // default
+    } else {
+      dias[`d${di}`]='P'; // no asist record = default present
+    }
+  });
+  return dias;
 }
 
 function renderNomina(){
   const emps=NCity==='wash'?EW:EC;
   const key=nomKey(NCity,currentFechaNomina);
   const saved=DN[key]||{};
+  const hasAsistData=checkHasAsistForWeek(NCity,currentFechaNomina);
   const c=document.getElementById('nomcontent');if(!c)return;c.innerHTML='';
   const card=document.createElement('div');card.className='card';
-  card.innerHTML=`<div class="ctit">👷 ${NCity==='wash'?'Washington':'Chicago'} — ${emps.length} empleados</div>`;
+
+  // Header with sync button
+  const headerDiv=document.createElement('div');
+  headerDiv.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
+  headerDiv.innerHTML=`
+    <div class="ctit" style="margin-bottom:0">👷 ${NCity==='wash'?'Washington':'Chicago'} — ${emps.length} empleados</div>
+    <button onclick="sincronizarAsistencia()" 
+      style="background:${hasAsistData?'var(--vs)':'var(--g2)'};color:${hasAsistData?'var(--v)':'var(--t3)'};border:1.5px solid ${hasAsistData?'var(--v)':'var(--g3)'};border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer"
+      title="Cargar días desde Asistencia">
+      ${hasAsistData?'✅ Sincronizar Asistencia':'📋 Sin asistencia registrada'}
+    </button>`;
+  card.appendChild(headerDiv);
+
   let total=0;
   emps.forEach((emp,i)=>{
     const empData=saved[i]||{};
     const sueldoBase=emp.s||0;
-    const tipoBase=emp.t||'dia'; // tipo guardado en el empleado
+    const tipoBase=emp.t||'dia';
     const sueldo=empData.sueldo!==undefined?empData.sueldo:sueldoBase;
     const tipo=empData.tipo||tipoBase;
-    const dias=empData.dias||{};
-    const diasTrab=Object.values(dias).filter(v=>v==='P').length||(tipo==='semana'?6:0);
+    // Use saved dias, or load from asistencia if available and not yet saved
+    let dias=empData.dias||{};
+    const diasTrab=Object.values(dias).reduce((a,v)=>a+(v==='P'?1:v==='MD'?0.5:0),0)||(tipo==='semana'?6:0);
     const pago=calcPago(sueldo,tipo,diasTrab);
     total+=pago;
     const ini=emp.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const row=document.createElement('div');row.className='nrow';
     const daysHTML=DIAS_NOM.map((d,di)=>{
       const k=`d${di}`;const st=dias[k]||'P';
-      const cls=st==='P'?'on':st==='D'?'des':'off';
-      const icon=st==='P'?'✓':st==='D'?'D':'✗';
+      const cls=st==='P'?'on':st==='MD'?'half':st==='D'?'des':'off';
+      const icon=st==='P'?'✓':st==='MD'?'½':'✗';
       return `<div class="nday"><div class="nday-lbl">${d}</div><button class="nday-btn ${cls}" data-emp="${i}" data-day="${k}" onclick="toggleNDay(this)">${icon}</button></div>`;
     }).join('');
     const lblTipo=tipo==='dia'?'$/día':'$/semana';
@@ -1897,7 +2022,6 @@ function renderNomina(){
         <div class="nname">${emp.n}</div>
         <div class="npos">${emp.p}</div>
         <div class="ndays">${daysHTML}</div>
-        <!-- Sueldo solo lectura — se edita en Config → Empleados -->
         <div style="display:flex;align-items:center;gap:6px;margin-top:8px;background:var(--g2);border-radius:8px;padding:6px 10px">
           <span style="font-size:.65rem;color:var(--t3)">💰 Sueldo:</span>
           <span style="font-size:.82rem;font-weight:900;color:${sueldoColor}">${sueldoLabel}</span>
@@ -1916,12 +2040,71 @@ function renderNomina(){
   updateNomSemanaLabel();
 }
 
+// Check if asistencia records exist for the week
+function checkHasAsistForWeek(city, fechaSemana){
+  const d=new Date(fechaSemana+'T12:00:00');
+  const day=d.getDay();
+  const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
+  for(let offset=1;offset<=6;offset++){
+    const fecha=new Date(mon);fecha.setDate(mon.getDate()+offset);
+    const fechaStr=fecha.toISOString().split('T')[0];
+    const key=`asist-city__${city}__${fechaStr}`;
+    if(DA[key]) return true;
+  }
+  return false;
+}
+
+// Sync asistencia → nómina for current week
+function sincronizarAsistencia(){
+  const emps=NCity==='wash'?EW:EC;
+  const d=new Date(currentFechaNomina+'T12:00:00');
+  const day=d.getDay();
+  const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
+  const dayKeys=['mar','mie','jue','vie','sab','dom'];
+  let syncCount=0;
+
+  emps.forEach((emp,i)=>{
+    const empDias={};
+    // For each day Mar-Dom (offsets 1-6 from Monday)
+    dayKeys.forEach((dk,di)=>{
+      const fecha=new Date(mon);fecha.setDate(mon.getDate()+di+1);
+      const fechaStr=fecha.toISOString().split('T')[0];
+      const key=`asist-city__${NCity}__${fechaStr}`;
+      const record=DA[key];
+      if(record){
+        const state=record[`${i}-${dk}`];
+        if(state==='P') empDias[`d${di}`]='P';
+        else if(state==='A') empDias[`d${di}`]='A';
+        else if(state==='MD') empDias[`d${di}`]='MD';
+        
+        else empDias[`d${di}`]='P';
+        syncCount++;
+      } else {
+        empDias[`d${di}`]='P'; // sin registro = presente por defecto
+      }
+    });
+
+    // Update the day buttons in the UI
+    Object.entries(empDias).forEach(([k,st])=>{
+      const btn=document.querySelector(`.nday-btn[data-emp="${i}"][data-day="${k}"]`);
+      if(btn){
+        const cls=st==='P'?'on':st==='MD'?'half':'off';
+        const icon=st==='P'?'✓':st==='MD'?'½':'✗';
+        btn.className=`nday-btn ${cls}`;btn.textContent=icon;
+      }
+    });
+  });
+
+  updNT();
+  showToast(syncCount>0?`✅ Asistencia cargada en nómina`:`⚠️ Sin registros de asistencia para esta semana`);
+}
+
 function toggleNDay(btn){
-  const cycle={P:'A',A:'D',D:'P'};
-  const icons={P:'✓',A:'✗',D:'D'};
-  const clsMap={P:'on',A:'off',D:'des'};
+  const cycle={P:'MD',MD:'A',A:'P'};
+  const icons={P:'✓',MD:'½',A:'✗'};
+  const clsMap={P:'on',MD:'half',A:'off'};
   const empIdx=parseInt(btn.dataset.emp);
-  const cur=btn.classList.contains('on')?'P':btn.classList.contains('off')?'A':'D';
+  const cur=btn.classList.contains('on')?'P':btn.classList.contains('half')?'MD':'A';
   const next=cycle[cur]||'P';
   btn.className=`nday-btn ${clsMap[next]}`;
   btn.textContent=icons[next];
@@ -1934,12 +2117,13 @@ function recalcEmp(empIdx){
   const sueldo=parseFloat(inp?.value||0);
   const tipo=inp?.dataset.tipo||'dia';
   const allDays=document.querySelectorAll(`.nday-btn[data-emp="${empIdx}"]`);
-  const diasTrab=[...allDays].filter(b=>b.classList.contains('on')).length;
+  // Count P=1, MD=0.5, rest=0
+  const diasTrab=[...allDays].reduce((a,b)=>a+(b.classList.contains('on')?1:b.classList.contains('half')?0.5:0),0);
   const pago=calcPago(sueldo,tipo,diasTrab);
   const pagoEl=document.getElementById(`npago-${empIdx}`);
   const diasEl=document.getElementById(`ndias-${empIdx}`);
   if(pagoEl) pagoEl.textContent='$'+fmt(pago);
-  if(diasEl) diasEl.textContent=diasTrab+' días';
+  if(diasEl) diasEl.textContent=diasTrab%1===0?diasTrab+' días':diasTrab+' días (½)';
   return pago;
 }
 
@@ -1960,10 +2144,10 @@ async function guardarNomina(){
     const tipo=inp?.dataset.tipo||'dia';
     const dias={};
     document.querySelectorAll(`.nday-btn[data-emp="${i}"]`).forEach(btn=>{
-      const st=btn.classList.contains('on')?'P':btn.classList.contains('off')?'A':'D';
+      const st=btn.classList.contains('on')?'P':btn.classList.contains('half')?'MD':'A';
       dias[btn.dataset.day]=st;
     });
-    const diasTrab=Object.values(dias).filter(v=>v==='P').length;
+    const diasTrab=Object.values(dias).reduce((a,v)=>a+(v==='P'?1:v==='MD'?0.5:0),0);
     const pago=calcPago(sueldo,tipo,diasTrab);
     s[i]={sueldo,tipo,dias,diasTrab,pago};
   });
@@ -2527,28 +2711,42 @@ function renderCfgE(){
   emps.forEach((emp,i)=>{
     const ini=emp.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const sueldo=emp.s||0;
-    const row=document.createElement('div');row.className='eitem';row.style.cssText='align-items:center;cursor:pointer';
+    // Check if this employee has a user account
+    const userExists=US.find(u=>u.user.toLowerCase()===emp.n.toLowerCase());
+    const tieneAcceso=userExists&&userExists.rol!=='admin';
+    const row=document.createElement('div');row.className='eitem';row.style.cssText='align-items:center;cursor:pointer;flex-wrap:wrap;gap:8px';
     row.dataset.idx=i;
     row.innerHTML=`
       <div class="emp-check" data-idx="${i}"
         style="width:22px;height:22px;border-radius:6px;border:2px solid var(--g3);background:white;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:.8rem"></div>
       <div class="eav" style="margin-left:4px">${ini}</div>
-      <div class="einfo" style="flex:1">
+      <div class="einfo" style="flex:1;min-width:100px">
         <div class="ename">${emp.n}</div>
         <div class="epos">${emp.p||'—'}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      <!-- Acceso toggle -->
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0" onclick="event.stopPropagation()">
+        <div style="text-align:center">
+          <div style="font-size:.58rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Acceso portal</div>
+          <button onclick="toggleAccesoEmpleado(${i},'${CECity}')"
+            style="padding:6px 12px;border-radius:20px;border:none;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;background:${tieneAcceso?'var(--vs)':'var(--g2)'};color:${tieneAcceso?'var(--v)':'var(--t3)'}">
+            ${tieneAcceso?'🔓 Activo':'🔒 Inactivo'}
+          </button>
+        </div>
+      </div>
+      <!-- Sueldo -->
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0" onclick="event.stopPropagation()">
         <div style="text-align:right">
           <div style="font-size:.6rem;font-weight:800;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Tipo / Monto</div>
           <div style="display:flex;align-items:center;gap:4px">
             <div style="display:flex;border:1.5px solid var(--g3);border-radius:6px;overflow:hidden">
               <button data-emp="${i}" data-city="${CECity}" data-tipo="dia"
                 class="cfg-tipo-btn"
-                onclick="event.stopPropagation();setCfgTipo(${i},'dia',this)"
+                onclick="setCfgTipo(${i},'dia',this)"
                 style="padding:4px 7px;border:none;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;cursor:pointer;background:${(emp.t||'dia')==='dia'?'var(--n)':'white'};color:${(emp.t||'dia')==='dia'?'white':'var(--t3)'}">Día</button>
               <button data-emp="${i}" data-city="${CECity}" data-tipo="semana"
                 class="cfg-tipo-btn"
-                onclick="event.stopPropagation();setCfgTipo(${i},'semana',this)"
+                onclick="setCfgTipo(${i},'semana',this)"
                 style="padding:4px 7px;border:none;border-left:1.5px solid var(--g3);font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;cursor:pointer;background:${emp.t==='semana'?'var(--n)':'white'};color:${emp.t==='semana'?'white':'var(--t3)'}">Sem.</button>
             </div>
             <input type="number" min="0" data-city="${CECity}" data-idx="${i}" data-tipo="${emp.t||'dia'}"
@@ -2556,12 +2754,11 @@ function renderCfgE(){
               onclick="event.stopPropagation()"
               style="width:70px;text-align:right;border:1.5px solid var(--g3);border-radius:8px;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;background:var(--g2);outline:none;color:var(--t)"
               class="emp-sueldo-inp"
-              onfocus="this.style.borderColor='var(--n)';event.stopPropagation()" onblur="this.style.borderColor='var(--g3)'">
+              onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
           </div>
         </div>
         <button class="bdang" onclick="event.stopPropagation();confirmDel('emp',null,${i})">🗑️</button>
       </div>`;
-    // Toggle selection on row click
     row.onclick=()=>toggleEmpSel(i, row);
     c.appendChild(row);
   });
@@ -2662,6 +2859,50 @@ function setCfgTipo(empIdx, tipo, btn){
   });
   const inp=row.querySelector(`.emp-sueldo-inp[data-idx="${empIdx}"]`);
   if(inp) inp.dataset.tipo=tipo;
+}
+
+async function toggleAccesoEmpleado(empIdx, city){
+  const emps=city==='wash'?EW:EC;
+  const emp=emps[empIdx];if(!emp)return;
+  const userExists=US.find(u=>u.user.toLowerCase()===emp.n.toLowerCase());
+
+  if(userExists){
+    // Desactivar — confirmar y eliminar usuario
+    if(!confirm(`¿Desactivar acceso al portal para ${emp.n}?\nEl empleado no podrá iniciar sesión.`))return;
+    const idx=US.indexOf(userExists);
+    US.splice(idx,1);
+    await SD('US',US);
+    renderCfgE();renderCfgU();
+    showToast(`🔒 Acceso desactivado para ${emp.n}`);
+  } else {
+    // Activar — pedir contraseña
+    const pass=prompt(`Crear acceso para ${emp.n}\n\nEscribe una contraseña (mínimo 4 caracteres):`);
+    if(pass===null) return; // cancelado
+    if(!pass||pass.length<4){showToast('⚠️ La contraseña debe tener al menos 4 caracteres');return;}
+
+    // Determinar puesto por defecto según ciudad
+    const ciudadPerm=city==='wash'?{'ciudad-wash':true,'ciudad-chi':false}:{'ciudad-wash':false,'ciudad-chi':true};
+
+    const nuevoUser={
+      user:emp.n,
+      pass,
+      rol:'encargado',
+      puesto:emp.p||'',
+      perms:{
+        ventas:true,
+        asist:true,
+        nomina:false,
+        reportes:false,
+        config:false,
+        dashboard:true,
+        ...ciudadPerm
+      }
+    };
+    US.push(nuevoUser);
+    await SD('US',US);
+    renderCfgE();renderCfgU();
+    showToast(`🔓 Acceso activado para ${emp.n} — contraseña guardada`);
+  }
 }
 
 async function guardarSueldos(){
@@ -2936,7 +3177,7 @@ async function addEmpleado(){
   if(ciu==='wash')EW.push({n:nom,p:pos,s:0});else EC.push({n:nom,p:pos,s:0});
   await SD('EW',EW);await SD('EC',EC);
   await logChange('Empleados',`Nuevo empleado: ${nom}`,null,`Posición: ${pos}, Ciudad: ${ciu==='wash'?'Washington':'Chicago'}`);
-  renderNomina();renderAsist();renderCfg();
+  renderNomina();renderCfg();
   document.getElementById('ne-nom').value='';closeM('addE');showToast(`✅ ${nom} agregado`);
 }
 
@@ -2974,7 +3215,7 @@ function confirmDel(type,sub,idx){
       if(CECity==='wash')EW.splice(idx,1);else EC.splice(idx,1);
       await SD('EW',EW);await SD('EC',EC);
       await logChange('Empleados',`Empleado eliminado: ${nom}`,`${pos} — ${CECity==='wash'?'Washington':'Chicago'}`,null);
-      renderNomina();renderAsist();renderCfg();closeM('confirm');showToast(`🗑️ ${nom} eliminado`);
+      renderNomina();renderCfg();closeM('confirm');showToast(`🗑️ ${nom} eliminado`);
     };
   } else if(type==='usuario'){
     const nom=US[idx]?.user;const rolU=US[idx]?.rol;
@@ -3707,6 +3948,54 @@ function renderAlertasBanner(faltantes){
 // ═══════════════════════════════════════════
 // 🏪 PROVEEDORES
 // ═══════════════════════════════════════════
+// Render proveedores in standalone view
+function renderProvView(){
+  const c=document.getElementById('prov-view-list');if(!c)return;
+  renderCfgProv(); // reuse existing function for cfg-prov-list
+  // Copy content to prov-view-list
+  const src=document.getElementById('cfg-prov-list');
+  if(src) c.innerHTML=src.innerHTML;
+  // Re-bind buttons since innerHTML copy loses event listeners
+  c.querySelectorAll('[onclick]').forEach(el=>{
+    // buttons already have onclick as strings, they work fine
+  });
+  if(!c.innerHTML.trim()) c.innerHTML='<p style="color:var(--t3);padding:16px;text-align:center">Sin proveedores. Agrega uno desde ⚙️ Config → Ajustes.</p>';
+}
+
+// Mount reportes tabs content inside cfg-reportes
+function mountReportesInConfig(){
+  const container=document.getElementById('cfg-rep-content');
+  if(!container) return;
+  // Move reportes tab divs content into cfg-rep-content
+  const tabs=['mensual','flujo','gasgen','nomina-rep','exportar'];
+  container.innerHTML='';
+  tabs.forEach((t,idx)=>{
+    const orig=document.getElementById('tab-'+t);
+    if(!orig) return;
+    const clone=orig.cloneNode(true);
+    clone.id='cfg-tab-'+t;
+    clone.style.display=idx===0?'block':'none';
+    container.appendChild(clone);
+  });
+  renderReportes();
+}
+
+function setRepTab(id,btn){
+  document.querySelectorAll('#cfg-rep-tabs .tab').forEach(t=>t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ['mensual','flujo','gasgen','nomina-rep','exportar'].forEach(t=>{
+    const el=document.getElementById('cfg-tab-'+t);
+    if(el) el.style.display=t===id?'block':'none';
+  });
+  if(id==='exportar'){
+    renderBackupList();
+    const today=todayStr();
+    const from=document.getElementById('exp-from');const to=document.getElementById('exp-to');
+    if(from&&!from.value){const d=new Date();d.setDate(1);from.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;}
+    if(to&&!to.value) to.value=today;
+  }
+}
+
 function renderCfgProv(){
   const c=document.getElementById('cfg-prov-list');if(!c)return;c.innerHTML='';
   if(!PROV.length){c.innerHTML='<p style="color:var(--t3);padding:16px;text-align:center">Sin proveedores. Toca + Agregar</p>';return;}
