@@ -2057,8 +2057,41 @@ function getDiasDeAsistencia(city, empIdx, fechaSemana){
   return dias;
 }
 
+function sincronizarAsistencia(silencioso=false){
+  const emps=NCity==='wash'?EW:EC;
+  const dayKeys=['mar','mie','jue','vie','sab','dom'];
+  const cityRecords=Object.keys(DA)
+    .filter(k=>k.startsWith('asist-city__'+NCity+'__'))
+    .sort((a,b)=>b.localeCompare(a));
+  if(!cityRecords.length){
+    if(!silencioso) showToast('⚠️ Sin registros de asistencia. Guarda primero en ✅ Asist.');
+    return;
+  }
+  const asistKey=cityRecords[0];
+  const rec=DA[asistKey];
+  const asistFecha=asistKey.split('__')[2];
+  const allBtns=document.querySelectorAll('.nday-btn');
+  if(!allBtns.length) return;
+  let syncCount=0;
+  emps.forEach((emp,i)=>{
+    dayKeys.forEach((dk,di)=>{
+      const state=rec[i+'-'+dk];
+      const finalState=(state&&['P','MD','A'].includes(state))?state:'P';
+      const btn=document.querySelector('.nday-btn[data-emp="'+i+'"][data-day="d'+di+'"]');
+      if(btn){
+        const cls=finalState==='P'?'on':finalState==='MD'?'half':'off';
+        const icon=finalState==='P'?'✓':finalState==='MD'?'½':'✗';
+        btn.className='nday-btn '+cls;
+        btn.textContent=icon;
+        syncCount++;
+      }
+    });
+  });
+  updNT();
+  if(!silencioso) showToast(syncCount>0?'✅ Sincronizado desde: '+fmtFecha(asistFecha):'⚠️ No se pudieron actualizar los botones');
+}
+
 function debugAsistencia(){
-  DA=LL('DA',DA);
   const keys=Object.keys(DA).filter(k=>k.includes('asist-city'));
   if(!keys.length){alert('DA no tiene registros de asistencia.\n\nKeys en DA:\n'+Object.keys(DA).slice(0,10).join('\n'));return;}
   let msg='Registros de asistencia encontrados:\n\n';
@@ -2076,43 +2109,61 @@ function debugAsistencia(){
 }
 
 function getAsistDias(city, empIdx){
-  DA=LL('DA',DA);
   const dayMap=['mar','mie','jue','vie','sab','dom'];
   const records=Object.keys(DA)
     .filter(k=>k.startsWith('asist-city__'+city+'__'))
     .sort((a,b)=>b.localeCompare(a));
-  if(!records.length) return null;
+  if(!records.length) return null; // no hay ningun registro de asistencia
   const rec=DA[records[0]];
-  const dias={};let hasData=false;
+  // Check if this record has ANY employee data at all
+  const hasAnyEmpData=Object.keys(rec).some(k=>k.match(/^\d+-/));
+  if(!hasAnyEmpData) return null; // registro vacío
+  // Build dias — if employee has no keys, default to P
+  const dias={};
   dayMap.forEach((dk,di)=>{
     const v=rec[empIdx+'-'+dk];
-    if(v&&typeof v==='string'&&['P','MD','A'].includes(v)){
-      dias['d'+di]=v;hasData=true;
-    }
+    dias['d'+di]=(v&&['P','MD','A'].includes(v))?v:'P';
   });
-  return hasData?dias:null;
+  return dias;
 }
 
 function renderNomina(){
   const emps=NCity==='wash'?EW:EC;
   const key=nomKey(NCity,currentFechaNomina);
   const saved=DN[key]||{};
-  DA=LL('DA',DA);
-  const hasAsistData=Object.keys(DA).some(k=>k.startsWith('asist-city__'+NCity+'__'));
+  const hasNominaSaved=Object.keys(saved).some(k=>!isNaN(parseInt(k)));
+
+  // Leer asistencia del localStorage
+  const asistRecords=Object.keys(DA)
+    .filter(k=>k.startsWith('asist-city__'+NCity+'__'))
+    .sort((a,b)=>b.localeCompare(a));
+  const asistRec=asistRecords.length?DA[asistRecords[0]]:null;
+  const dayMapKeys=['mar','mie','jue','vie','sab','dom'];
+  const hasAsistData=asistRec!==null;
+
   const c=document.getElementById('nomcontent');if(!c)return;c.innerHTML='';
+
+  // DEBUG — cuadro azul visible
+  const dbg=document.createElement('div');
+  dbg.style.cssText='background:#1e3a5f;color:white;padding:10px;border-radius:8px;font-size:.72rem;font-weight:700;margin-bottom:8px;word-break:break-all;white-space:pre-wrap';
+  const daAsistKeys=Object.keys(DA).filter(k=>k.includes('asist'));
+  dbg.textContent='DA en memoria: '+Object.keys(DA).length+' keys'
+    +'\nKeys asist: ['+(daAsistKeys.join(', ')||'NINGUNA')+']'
+    +'\nasistRec: '+(asistRec?'SI - '+Object.keys(asistRec).filter(k=>k.match(/^\d+-/)).slice(0,4).join(','):'NO')
+    +'\nhasNominaSaved: '+hasNominaSaved;
+  c.appendChild(dbg);
+
   const card=document.createElement('div');card.className='card';
   const headerDiv=document.createElement('div');
   headerDiv.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
   headerDiv.innerHTML=`
     <div class="ctit" style="margin-bottom:0">👷 ${NCity==='wash'?'Washington':'Chicago'} — ${emps.length} empleados</div>
-    <div style="display:flex;gap:6px">
-      <button onclick="debugAsistencia()" style="background:var(--g2);color:var(--t3);border:1.5px solid var(--g3);border-radius:8px;padding:5px 8px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;cursor:pointer">🔍 Debug</button>
-      <button onclick="sincronizarAsistencia()"
-        style="background:${hasAsistData?'var(--vs)':'var(--g2)'};color:${hasAsistData?'var(--v)':'var(--t3)'};border:1.5px solid ${hasAsistData?'var(--v)':'var(--g3)'};border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer">
-        ${hasAsistData?'✅ Sincronizar Asistencia':'📋 Sin asistencia registrada'}
-      </button>
-    </div>`;
+    <button onclick="sincronizarAsistencia()"
+      style="background:${hasAsistData?'var(--vs)':'var(--g2)'};color:${hasAsistData?'var(--v)':'var(--t3)'};border:1.5px solid ${hasAsistData?'var(--v)':'var(--g3)'};border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer">
+      ${hasAsistData?'✅ Sincronizar Asistencia':'📋 Sin asistencia registrada'}
+    </button>`;
   card.appendChild(headerDiv);
+
   let total=0;
   emps.forEach((emp,i)=>{
     const empData=saved[i]||{};
@@ -2120,14 +2171,17 @@ function renderNomina(){
     const tipoBase=emp.t||'dia';
     const sueldo=empData.sueldo!==undefined?empData.sueldo:sueldoBase;
     const tipo=empData.tipo||tipoBase;
-    // Priority: 1) nomina guardada  2) asistencia  3) default P
+
     let dias={};
-    if(empData.dias&&Object.keys(empData.dias).length){
+    if(hasNominaSaved&&empData.dias&&Object.keys(empData.dias).length){
       dias=empData.dias;
-    } else {
-      const ad=getAsistDias(NCity,i);
-      if(ad) dias=ad;
+    } else if(asistRec){
+      dayMapKeys.forEach((dk,di)=>{
+        const v=asistRec[i+'-'+dk];
+        dias['d'+di]=(v&&['P','MD','A'].includes(v))?v:'P';
+      });
     }
+
     const diasTrab=Object.values(dias).reduce((a,v)=>a+(v==='P'?1:v==='MD'?0.5:0),0)||(tipo==='semana'?6:0);
     const pago=calcPago(sueldo,tipo,diasTrab);
     total+=pago;
@@ -2155,14 +2209,15 @@ function renderNomina(){
         </div>
       </div>
       <div class="nright">
-        <div class="npago-lbl" id="ndias-${i}">${diasTrab%1===0?diasTrab:diasTrab} días</div>
+        <div class="npago-lbl" id="ndias-${i}">${diasTrab} días</div>
         <div class="npago" id="npago-${i}">$${fmt(pago)}</div>
       </div>`;
     card.appendChild(row);
   });
   const tr=document.createElement('div');tr.className='ftot b';tr.style.marginTop='12px';
   tr.innerHTML='<span>💰 Total a Pagar esta Semana</span><span id="ntotal">$'+fmt(total)+'</span>';
-  card.appendChild(tr);c.appendChild(card);
+  card.appendChild(tr);
+  c.appendChild(card);
   updateNomSemanaLabel();
 }
 
