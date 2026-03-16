@@ -223,6 +223,37 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .ename{font-size:.85rem;font-weight:800}.epos{font-size:.68rem;color:var(--t3);font-weight:600}
 .ebtns{display:flex;gap:4px}
 
+/* DASHBOARD PERIOD BUTTONS */
+.dash-period-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.3);color:#d97706;padding:6px 12px;border-radius:20px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap}
+.dash-period-btn.active{background:var(--n);color:white;border-color:var(--n)}
+/* CALENDAR */
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:.7rem;font-weight:800;position:relative}
+.cal-day.empty{background:transparent;cursor:default;pointer-events:none}
+.cal-day.no-data{background:var(--g2);color:var(--t3)}
+.cal-day.has-data{background:var(--n);color:white}
+.cal-day.has-data:hover{background:var(--n2);transform:scale(1.05)}
+.cal-day.today{box-shadow:0 0 0 2px var(--am)}
+.cal-day.selected{outline:2px solid var(--n);outline-offset:2px}
+.cal-day .cal-num{font-size:.75rem;font-weight:900;line-height:1}
+.cal-day .cal-amt{font-size:.5rem;font-weight:700;opacity:.9;margin-top:1px}
+/* CITY BARS */
+.city-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.city-bar-lbl{font-size:.72rem;font-weight:700;color:var(--t2);width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.city-bar-track{flex:1;height:24px;background:var(--g2);border-radius:12px;overflow:hidden}
+.city-bar-fill{height:100%;border-radius:12px;transition:width .6s ease;display:flex;align-items:center;padding:0 8px;min-width:4px}
+.city-bar-fill span{font-size:.62rem;font-weight:800;color:white;white-space:nowrap}
+.city-bar-pct{font-size:.65rem;font-weight:800;color:var(--t3);width:34px;text-align:right;flex-shrink:0}
+/* MP INVENTORY ROW */
+.mp-row{display:grid;grid-template-columns:1fr 70px 70px 70px;gap:4px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--g2)}
+.mp-row:last-child{border-bottom:none}
+.mp-inp-sal{text-align:center;border:1.5px solid var(--azs);border-radius:8px;padding:7px 4px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#eff6ff;outline:none;color:var(--az);width:100%;transition:all .15s}
+.mp-inp-sal:focus{border-color:var(--az);background:white}
+.mp-inp-reg{text-align:center;border:1.5px solid var(--vs);border-radius:8px;padding:7px 4px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#f0fdf4;outline:none;color:var(--v);width:100%;transition:all .15s}
+.mp-inp-reg:focus{border-color:var(--v);background:white}
+.mp-consumido{text-align:center;border-radius:8px;padding:7px 4px;font-size:.82rem;font-weight:900;background:var(--ns);color:var(--n);width:100%}
+.mp-consumido.zero{background:var(--g2);color:var(--t3)}
+.mp-consumido.negative{background:var(--rs);color:var(--r)}
+
 /* TOAST */
 .toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:var(--cb);color:white;padding:12px 20px;border-radius:30px;font-size:.85rem;font-weight:700;z-index:9998;display:none;box-shadow:var(--sh2);white-space:nowrap;border:1px solid rgba(234,88,12,.3)}
 
@@ -315,17 +346,138 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 
 <!-- DASHBOARD -->
 <div class="view active" id="view-dashboard">
+
+  <!-- Greeting -->
   <div class="tip"><h3 id="tipG">¡Bienvenido! 🔥</h3><p id="tipT">—</p></div>
-  <div class="live-badge"><span class="live-dot" style="animation:none;background:var(--v)"></span>Datos locales — presiona 🔄 para actualizar desde la nube</div>
+
+  <!-- Date filter -->
+  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none;padding:14px 16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:.65rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:6px">📅 Filtrar por Fecha</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="dash-period-btn active" onclick="setDashPeriod('all',this)">Todo</button>
+          <button class="dash-period-btn" onclick="setDashPeriod('today',this)">Hoy</button>
+          <button class="dash-period-btn" onclick="setDashPeriod('week',this)">Esta semana</button>
+          <button class="dash-period-btn" onclick="setDashPeriod('month',this)">Este mes</button>
+          <button class="dash-period-btn" onclick="setDashPeriod('custom',this)">📅 Fecha</button>
+        </div>
+      </div>
+      <div id="dash-custom-wrap" style="display:none">
+        <div style="font-size:.65rem;color:#a16207;font-weight:800;margin-bottom:4px">Rango personalizado</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="date" id="dash-date-from" style="background:rgba(255,255,255,.12);border:1.5px solid rgba(234,88,12,.4);border-radius:8px;padding:6px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:white;outline:none;color-scheme:dark" onchange="renderDash()">
+          <span style="color:#a16207;font-size:.8rem">→</span>
+          <input type="date" id="dash-date-to" style="background:rgba(255,255,255,.12);border:1.5px solid rgba(234,88,12,.4);border-radius:8px;padding:6px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:white;outline:none;color-scheme:dark" onchange="renderDash()">
+        </div>
+      </div>
+      <div id="dash-period-label" style="font-size:.7rem;color:#fed7aa;font-weight:700;text-align:right"></div>
+    </div>
+  </div>
+
+  <!-- CALENDARIO — toggle -->
+  <button onclick="toggleCalendar()" id="cal-toggle-btn" style="width:100%;background:white;border:1.5px solid var(--g3);border-radius:var(--R);padding:12px 16px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh);margin-bottom:14px">
+    <span>🗓️ Ver Calendario de Ventas</span>
+    <span id="cal-toggle-icon" style="font-size:.75rem;color:var(--t3)">▼ Abrir</span>
+  </button>
+  <div id="dash-calendar-card" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <button onclick="calNavMonth(-1)" style="background:var(--g2);border:none;border-radius:8px;padding:6px 14px;font-size:.9rem;cursor:pointer;font-weight:900">◀</button>
+        <div id="cal-title" style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--t);letter-spacing:1px"></div>
+        <button onclick="calNavMonth(1)" style="background:var(--g2);border:none;border-radius:8px;padding:6px 14px;font-size:.9rem;cursor:pointer;font-weight:900">▶</button>
+      </div>
+      <div id="cal-headers" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px"></div>
+      <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px"></div>
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:3px;background:var(--n)"></div><span style="font-size:.65rem;color:var(--t3)">Con ventas</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:3px;background:var(--g3)"></div><span style="font-size:.65rem;color:var(--t3)">Sin registro</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:3px;background:transparent;border:2px solid var(--am)"></div><span style="font-size:.65rem;color:var(--t3)">Hoy</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs TOTALES -->
+  <div style="font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin:4px 0 8px;padding:0 2px">📊 Resumen Total</div>
   <div class="kgrid">
-    <div class="kcard n" data-i="💰"><div class="ki">💰</div><div class="kv" id="kv">$0</div><div class="kl">Ventas</div></div>
-    <div class="kcard r" data-i="📤"><div class="ki">📤</div><div class="kv" id="kg">$0</div><div class="kl">Gastos</div></div>
+    <div class="kcard n" data-i="💰"><div class="ki">💰</div><div class="kv" id="kv">$0</div><div class="kl">Ventas Totales</div></div>
+    <div class="kcard r" data-i="📤"><div class="ki">📤</div><div class="kv" id="kg">$0</div><div class="kl">Gastos Totales</div></div>
     <div class="kcard a" data-i="👷"><div class="ki">👷</div><div class="kv" id="kn">$0</div><div class="kl">Nómina</div></div>
     <div class="kcard v" data-i="📈"><div class="ki">📈</div><div class="kv" id="ku">$0</div><div class="kl">Utilidad</div></div>
   </div>
-  <div class="card"><div class="ctit">📊 Ventas por Puesto</div><div class="mbar" id="minibars"></div></div>
-  <div class="sh"><span>📍 Washington</span></div><div class="card" id="lwash"></div>
-  <div class="sh"><span>📍 Chicago</span></div><div class="card" id="lchi"></div>
+
+  <!-- WASHINGTON -->
+  <div id="dash-wash-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:12px;height:12px;border-radius:3px;background:var(--n)"></div>
+        <span style="font-size:.82rem;font-weight:900;color:var(--t)">🌲 Washington</span>
+      </div>
+      <div id="wash-total-badge" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--n)">$0</div>
+    </div>
+    <!-- Washington mini stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--n)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--n)" id="wash-kv">$0</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">VENTAS</div>
+      </div>
+      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--r)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--r)" id="wash-kg">$0</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">GASTOS</div>
+      </div>
+      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--v)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--v)" id="wash-ku">$0</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">UTILIDAD</div>
+      </div>
+    </div>
+    <!-- Washington bar chart -->
+    <div class="card" style="padding:12px">
+      <div class="ctit" style="margin-bottom:10px">Ventas por Puesto — Washington</div>
+      <div id="dash-wash-bars"></div>
+    </div>
+    <!-- Washington puesto list -->
+    <div class="card" id="lwash"></div>
+  </div>
+
+  <!-- CHICAGO -->
+  <div id="dash-chi-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:12px;height:12px;border-radius:3px;background:var(--az)"></div>
+        <span style="font-size:.82rem;font-weight:900;color:var(--t)">🌆 Chicago</span>
+      </div>
+      <div id="chi-total-badge" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--az)">$0</div>
+    </div>
+    <!-- Chicago mini stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--az)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--az)" id="chi-kv">$0</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">VENTAS</div>
+      </div>
+      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--r)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--r)" id="chi-kg">$0</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">GASTOS</div>
+      </div>
+      <div style="background:white;border-radius:var(--Rs);padding:10px;box-shadow:var(--sh);text-align:center;border-top:3px solid var(--v)">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--v)" id="chi-ku">$0</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:800;margin-top:2px">UTILIDAD</div>
+      </div>
+    </div>
+    <!-- Chicago bar chart -->
+    <div class="card" style="padding:12px">
+      <div class="ctit" style="margin-bottom:10px">Ventas por Puesto — Chicago</div>
+      <div id="dash-chi-bars"></div>
+    </div>
+    <!-- Chicago puesto list -->
+    <div class="card" id="lchi"></div>
+  </div>
+
+  <!-- GRAFICA COMPARATIVA TOTAL -->
+  <div class="card" id="dash-compare-card" style="margin-top:4px">
+    <div class="ctit">🏆 Comparativa Washington vs Chicago</div>
+    <div id="dash-compare-bars"></div>
+  </div>
+
 </div>
 
 <!-- VENTAS -->
@@ -384,11 +536,23 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <div class="ftot d"><span>Total Gastos</span><span id="gtot">$0</span></div>
   </div>
   <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div class="ctit" style="margin-bottom:0">🧅 Materia Prima</div>
-      <button class="shbtn" onclick="openM('addMP')">+ Agregar</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="ctit" style="margin-bottom:0">🧅 Control de Materia Prima</div>
+      <button class="shbtn" onclick="openM('addMP')">+ Producto</button>
+    </div>
+    <p style="font-size:.72rem;color:var(--t3);margin-bottom:12px">Registra cuánto llevas y cuánto regresas — el sistema calcula lo consumido.</p>
+    <!-- Column headers -->
+    <div style="display:grid;grid-template-columns:1fr 70px 70px 70px;gap:4px;align-items:center;margin-bottom:6px;padding:0 2px">
+      <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase">Producto</div>
+      <div style="font-size:.6rem;font-weight:900;color:var(--az);text-align:center;text-transform:uppercase">📦 Sale</div>
+      <div style="font-size:.6rem;font-weight:900;color:var(--v);text-align:center;text-transform:uppercase">📥 Regresa</div>
+      <div style="font-size:.6rem;font-weight:900;color:var(--n);text-align:center;text-transform:uppercase">🔥 Usó</div>
     </div>
     <div id="mp-rows"></div>
+    <!-- Resumen costo -->
+    <div id="mp-costo-total" style="display:none;margin-top:10px">
+      <div class="ftot d" style="margin-top:0"><span>💸 Costo total consumido</span><span id="mp-costo-val">$0</span></div>
+    </div>
   </div>
   <button class="bsave" onclick="guardarVentas()">💾 GUARDAR REGISTRO</button>
   <button class="boutl" style="width:100%;margin-top:8px" onclick="limpiarV()">🗑️ Limpiar formulario</button>
@@ -997,6 +1161,7 @@ function showApp(){
   renderMPRows();
   document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'});
   currentFecha=todayStr();currentFechaNomina=todayStr();
+  calYear=new Date().getFullYear();calMonth=new Date().getMonth();
   const fp=document.getElementById('fechaVentas');if(fp) fp.value=currentFecha;
   const fn=document.getElementById('fechaNomina');if(fn){fn.value=currentFechaNomina;updateNomSemanaLabel();}
   loadVF(CP);
@@ -1160,15 +1325,28 @@ function onFechaChange(){
 function limpiarV(){
   ['mar','mie','jue','vie','sab','dom'].forEach(d=>{['ef','tj'].forEach(t=>{const el=document.getElementById(`ve-${d}-${t}`);if(el)el.value='';});});
   ['gas','hie','rep','cas','otr'].forEach(k=>{const el=document.getElementById(`g-${k}`);if(el)el.value='';});
-  MP.forEach((_,i)=>{const el=document.getElementById(`mp-inp-${i}`);if(el)el.value='';});
+  MP.forEach((_,i)=>{
+    const sal=document.getElementById(`mp-sal-${i}`);if(sal)sal.value='';
+    const reg=document.getElementById(`mp-reg-${i}`);if(reg)reg.value='';
+    const con=document.getElementById(`mp-con-${i}`);if(con){con.textContent='—';con.className='mp-consumido zero';}
+  });
+  const wrap=document.getElementById('mp-costo-total');if(wrap)wrap.style.display='none';
   calcV();showToast('🗑️ Formulario limpiado');
 }
 async function guardarVentas(){
   const d={};
   ['mar','mie','jue','vie','sab','dom'].forEach(dia=>{d[`ve-${dia}-ef`]=parseFloat(document.getElementById(`ve-${dia}-ef`)?.value||0);d[`ve-${dia}-tj`]=parseFloat(document.getElementById(`ve-${dia}-tj`)?.value||0);});
   ['gas','hie','rep','cas','otr'].forEach(k=>{d[`g-${k}`]=parseFloat(document.getElementById(`g-${k}`)?.value||0);});
-  // Save dynamic materia prima
-  MP.forEach((_,i)=>{d[`mp-${i}`]=parseFloat(document.getElementById(`mp-inp-${i}`)?.value||0);});
+  // Save materia prima: salida, regreso y consumido
+  MP.forEach((item,i)=>{
+    const sal=parseFloat(document.getElementById(`mp-sal-${i}`)?.value||0);
+    const reg=parseFloat(document.getElementById(`mp-reg-${i}`)?.value||0);
+    const consumido=Math.max(0,sal-reg);
+    d[`mp-sal-${i}`]=sal;
+    d[`mp-reg-${i}`]=reg;
+    d[`mp-con-${i}`]=consumido;
+    d[`mp-cos-${i}`]=consumido*item.precio; // costo
+  });
   const ds=['mar','mie','jue','vie','sab','dom'];
   d.totalVentas=ds.reduce((a,dia)=>a+d[`ve-${dia}-ef`]+d[`ve-${dia}-tj`],0);
   d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
@@ -1179,10 +1357,17 @@ async function guardarVentas(){
   const antes=DP[key];
   DP[key]=d;
   await SD('DP',DP);
+  // Build MP summary for log
+  const mpResumen=MP.map((item,i)=>{
+    const sal=d[`mp-sal-${i}`]||0;const reg=d[`mp-reg-${i}`]||0;const con=d[`mp-con-${i}`]||0;
+    return sal>0?`${item.emoji}${item.nombre}: ${sal}→${reg} (usó ${con})`:null;
+  }).filter(Boolean).join(', ');
+
   await logChange('Ventas',`${CP} — ${fmtFecha(currentFecha)}`,
     antes?`$${fmt(antes.totalVentas||0)} ventas`:null,
-    `$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos`);
-  renderDash();renderReportes();showToast('✅ Guardado — '+CP+' · '+fmtFecha(currentFecha));
+    `$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos${mpResumen?` | MP: ${mpResumen}`:''}`);
+  renderDash();renderReportes();
+  showToast('✅ Guardado — '+CP+' · '+fmtFecha(currentFecha));
 }
 
 // ASISTENCIA
@@ -1371,8 +1556,63 @@ async function guardarGG(){
 }
 
 // Get aggregated data for a puesto (sum all dates)
-function getDPuesto(p){
-  const keys=Object.keys(DP).filter(k=>k.startsWith(p+'__')||k===p);
+// ── DASHBOARD STATE ──
+let dashPeriod='all'; // 'all','today','week','month','custom'
+let calYear=new Date().getFullYear();
+let calMonth=new Date().getMonth();
+let calSelectedDate=null;
+
+function setDashPeriod(period,btn){
+  dashPeriod=period;
+  document.querySelectorAll('.dash-period-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const wrap=document.getElementById('dash-custom-wrap');
+  if(wrap) wrap.style.display=period==='custom'?'block':'none';
+  // If custom but no dates set, set today as default
+  if(period==='custom'){
+    const from=document.getElementById('dash-date-from');
+    const to=document.getElementById('dash-date-to');
+    if(from&&!from.value) from.value=todayStr();
+    if(to&&!to.value) to.value=todayStr();
+  }
+  renderDash();
+}
+
+// Get date range based on current period
+function getDashRange(){
+  const today=todayStr();
+  if(dashPeriod==='all') return{from:null,to:null};
+  if(dashPeriod==='today') return{from:today,to:today};
+  if(dashPeriod==='week'){
+    const d=new Date();const day=d.getDay();
+    const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
+    const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    return{from:mon.toISOString().split('T')[0],to:sun.toISOString().split('T')[0]};
+  }
+  if(dashPeriod==='month'){
+    const d=new Date();
+    return{from:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`,
+           to:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-31`};
+  }
+  if(dashPeriod==='custom'){
+    return{from:document.getElementById('dash-date-from')?.value||null,
+           to:document.getElementById('dash-date-to')?.value||null};
+  }
+  return{from:null,to:null};
+}
+
+// Get aggregated data for a puesto filtered by date range
+function getDPuestoFiltered(p,from,to){
+  let keys=Object.keys(DP).filter(k=>k.startsWith(p+'__')||k===p);
+  if(from||to){
+    keys=keys.filter(k=>{
+      const fecha=k.includes('__')?k.split('__')[1]:null;
+      if(!fecha) return !from&&!to; // legacy key — include if no filter
+      if(from&&fecha<from) return false;
+      if(to&&fecha>to) return false;
+      return true;
+    });
+  }
   let totalVentas=0,totalGastos=0,lastFecha='',lastGuardado='',lastUser='';
   keys.forEach(k=>{
     const d=DP[k]||{};
@@ -1383,68 +1623,270 @@ function getDPuesto(p){
   return{totalVentas,totalGastos,fechaGuardado:lastGuardado?`${fmtFecha(lastFecha)} · ${lastUser}`:'Sin registro'};
 }
 
-// DASHBOARD
+function getDPuesto(p){return getDPuestoFiltered(p,null,null);}
+
+// MAIN DASHBOARD RENDER
 function renderDash(){
   const isA=CU?.rol==='admin';
   const ciudades=getUserCiudades();
-  let tV=0,tG=0,tN=0;
-  // Sum nómina only for accessible cities
+  const{from,to}=getDashRange();
+
+  // Update period label
+  const lbl=document.getElementById('dash-period-label');
+  if(lbl){
+    if(!from&&!to) lbl.textContent='Todos los registros';
+    else if(from===to) lbl.textContent=fmtFecha(from);
+    else lbl.textContent=`${fmtFecha(from)} → ${fmtFecha(to)}`;
+  }
+
+  // Compute Washington stats
+  const showWash=isA||ciudades.includes('wash');
+  const showChi=isA||ciudades.includes('chi');
+  let wV=0,wG=0,cV=0,cG=0;
+
+  if(showWash){
+    const washPuestos=isA?PW:getUserPuestos().filter(p=>PW.includes(p));
+    washPuestos.forEach(p=>{const d=getDPuestoFiltered(p,from,to);wV+=d.totalVentas;wG+=d.totalGastos;});
+  }
+  if(showChi){
+    const chiPuestos=isA?PC:getUserPuestos().filter(p=>PC.includes(p));
+    chiPuestos.forEach(p=>{const d=getDPuestoFiltered(p,from,to);cV+=d.totalVentas;cG+=d.totalGastos;});
+  }
+
+  // Nómina total
+  let tN=0;
   const nomCities=isA?['wash','chi']:ciudades;
   nomCities.forEach(city=>{
-    const emps=city==='wash'?EW:EC;
-    // Sum across all date keys for this city
     Object.keys(DN).filter(k=>k.startsWith(city+'__')||k===city).forEach(key=>{
-      const s=DN[key]||{};
+      const s=DN[key]||{};const emps=city==='wash'?EW:EC;
       emps.forEach((_,i)=>{if(s[i]?.pago)tN+=parseFloat(s[i].pago||0);else if(s[i]?.sueldo)tN+=parseFloat(s[i].sueldo||0);});
     });
   });
-  const lista=getUserPuestos();
-  lista.forEach(p=>{const d=getDPuesto(p);tV+=d.totalVentas;tG+=d.totalGastos;});
-  const util=tV-tG;
+
+  const tV=wV+cV, tG=wG+cG, util=tV-tG;
+
+  // Global KPIs
   document.getElementById('kv').textContent='$'+fmt(tV);
   document.getElementById('kg').textContent='$'+fmt(tG);
   document.getElementById('kn').textContent=(isA||ciudades.length>0)?'$'+fmt(tN):'—';
   document.getElementById('ku').textContent='$'+fmt(util);
-  // Show only accessible city puestos
-  const showWash=isA||ciudades.includes('wash');
-  const showChi=isA||ciudades.includes('chi');
-  renderPL('lwash',showWash?PW:lista.filter(p=>PW.includes(p)),'w');
-  renderPL('lchi',showChi?PC:lista.filter(p=>PC.includes(p)),'c');
-  renderMB();
+
+  // Washington section
+  const washSec=document.getElementById('dash-wash-section');
+  if(washSec) washSec.style.display=showWash?'block':'none';
+  if(showWash){
+    document.getElementById('wash-total-badge').textContent='$'+fmt(wV);
+    document.getElementById('wash-kv').textContent='$'+fmt(wV);
+    document.getElementById('wash-kg').textContent='$'+fmt(wG);
+    document.getElementById('wash-ku').textContent='$'+fmt(wV-wG);
+    renderCityBars('dash-wash-bars', isA?PW:getUserPuestos().filter(p=>PW.includes(p)), 'wash', from, to);
+    renderPL('lwash', isA?PW:getUserPuestos().filter(p=>PW.includes(p)), 'w', from, to);
+  }
+
+  // Chicago section
+  const chiSec=document.getElementById('dash-chi-section');
+  if(chiSec) chiSec.style.display=showChi?'block':'none';
+  if(showChi){
+    document.getElementById('chi-total-badge').textContent='$'+fmt(cV);
+    document.getElementById('chi-kv').textContent='$'+fmt(cV);
+    document.getElementById('chi-kg').textContent='$'+fmt(cG);
+    document.getElementById('chi-ku').textContent='$'+fmt(cV-cG);
+    renderCityBars('dash-chi-bars', isA?PC:getUserPuestos().filter(p=>PC.includes(p)), 'chi', from, to);
+    renderPL('lchi', isA?PC:getUserPuestos().filter(p=>PC.includes(p)), 'c', from, to);
+  }
+
+  // Comparative chart (only if both cities visible)
+  const compareSec=document.getElementById('dash-compare-card');
+  if(compareSec) compareSec.style.display=(showWash&&showChi)?'block':'none';
+  if(showWash&&showChi) renderCompareBars(wV,wG,cV,cG);
+
+  // Calendar
+  renderCalendar();
 }
-function renderPL(cid,puestos,ciudad){
+
+// City bar chart
+function renderCityBars(containerId, puestos, ciudad, from, to){
+  const c=document.getElementById(containerId);if(!c)return;c.innerHTML='';
+  if(!puestos.length){c.innerHTML='<p style="font-size:.8rem;color:var(--t3)">Sin puestos</p>';return;}
+  const maxV=Math.max(...puestos.map(p=>getDPuestoFiltered(p,from,to).totalVentas),1);
+  [...puestos].sort((a,b)=>getDPuestoFiltered(b,from,to).totalVentas-getDPuestoFiltered(a,from,to).totalVentas).forEach(p=>{
+    const v=getDPuestoFiltered(p,from,to).totalVentas;
+    const pct=Math.round(v/maxV*100);
+    const color=ciudad==='wash'?'linear-gradient(90deg,var(--n),var(--n2))':'linear-gradient(90deg,var(--az),#1d4ed8)';
+    const row=document.createElement('div');row.className='city-bar-row';
+    row.innerHTML=`
+      <div class="city-bar-lbl">${p}</div>
+      <div class="city-bar-track">
+        <div class="city-bar-fill" style="width:${pct}%;background:${color}">
+          ${v>0?`<span>$${fmt(v)}</span>`:''}
+        </div>
+      </div>
+      <div class="city-bar-pct">${pct}%</div>`;
+    c.appendChild(row);
+  });
+}
+
+// Comparison chart
+function renderCompareBars(wV,wG,cV,cG){
+  const c=document.getElementById('dash-compare-bars');if(!c)return;c.innerHTML='';
+  const maxV=Math.max(wV,cV,1);
+  const items=[
+    {lbl:'🌲 Washington Ventas',v:wV,color:'linear-gradient(90deg,var(--n),var(--n2))'},
+    {lbl:'🌆 Chicago Ventas',v:cV,color:'linear-gradient(90deg,var(--az),#1d4ed8)'},
+    {lbl:'🌲 Wash. Utilidad',v:wV-wG,color:'linear-gradient(90deg,var(--v),#15803d)'},
+    {lbl:'🌆 Chi. Utilidad',v:cV-cG,color:'linear-gradient(90deg,#0ea5e9,#0369a1)'},
+  ];
+  items.forEach(item=>{
+    const pct=Math.max(0,Math.round(item.v/maxV*100));
+    const row=document.createElement('div');row.className='city-bar-row';
+    row.innerHTML=`
+      <div class="city-bar-lbl">${item.lbl}</div>
+      <div class="city-bar-track">
+        <div class="city-bar-fill" style="width:${pct}%;background:${item.color}">
+          ${item.v>0?`<span>$${fmt(item.v)}</span>`:''}
+        </div>
+      </div>
+      <div class="city-bar-pct">$${fmt(item.v)}</div>`;
+    c.appendChild(row);
+  });
+}
+
+// Updated renderPL to respect date filter
+function renderPL(cid,puestos,ciudad,from,to){
   const c=document.getElementById(cid);if(!c)return;c.innerHTML='';
   if(!puestos||!puestos.length){c.innerHTML='<p style="color:var(--t3);font-size:.85rem;padding:8px 0;text-align:center">Sin puestos</p>';return;}
   puestos.forEach(p=>{
-    const d=getDPuesto(p);const v=d.totalVentas;
+    const d=getDPuestoFiltered(p,from,to);const v=d.totalVentas;
     const row=document.createElement('div');row.className='prow';
     row.innerHTML=`<div class="pdot ${ciudad}"></div><div style="flex:1"><div class="pname">${p}</div><div class="psub">${d.fechaGuardado}</div></div><div class="pven">$${fmt(v)}</div><span style="color:var(--t3);font-size:18px;margin-left:4px">›</span>`;
     row.onclick=()=>{setP(p);document.querySelectorAll('.pbtn').forEach(b=>b.classList.toggle('active',b.textContent===p));showV('ventas',document.querySelectorAll('.nbtn')[1]);};
     c.appendChild(row);
   });
 }
-function renderMB(){
-  const c=document.getElementById('minibars');if(!c)return;c.innerHTML='';
-  const todos=allP();const maxV=Math.max(...todos.map(p=>getDPuesto(p).totalVentas),1);
-  todos.forEach(p=>{
-    const v=getDPuesto(p).totalVentas;const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
-    const col=document.createElement('div');col.className='mdia';
-    col.innerHTML=`<div class="mdbar"><div class="mdfil" style="height:${pct}%;background:${isW?'var(--n)':'var(--az)'}"></div></div><div class="mdlbl">${p.replace('Chi-','').substring(0,4)}</div>`;
-    c.appendChild(col);
+
+// Deprecated renderMB — kept for compatibility
+function renderMB(){}
+
+// ── CALENDAR ──
+function toggleCalendar(){
+  const card=document.getElementById('dash-calendar-card');
+  const icon=document.getElementById('cal-toggle-icon');
+  const btn=document.getElementById('cal-toggle-btn');
+  const isOpen=card.style.display!=='none';
+  card.style.display=isOpen?'none':'block';
+  icon.textContent=isOpen?'▼ Abrir':'▲ Cerrar';
+  btn.style.background=isOpen?'white':'var(--ns)';
+  btn.style.borderColor=isOpen?'var(--g3)':'var(--n)';
+  btn.style.color=isOpen?'var(--t2)':'var(--n2)';
+  if(!isOpen) renderCalendar();
+}
+
+function calNavMonth(dir){
+  calMonth+=dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const title=document.getElementById('cal-title');
+  const grid=document.getElementById('cal-grid');
+  const headers=document.getElementById('cal-headers');
+  if(!title||!grid) return;
+
+  // Build day-of-week headers
+  if(headers){
+    headers.innerHTML='';
+    ['D','L','M','M','J','V','S'].forEach(d=>{
+      const el=document.createElement('div');
+      el.style.cssText='text-align:center;font-size:.6rem;font-weight:900;color:var(--t3);padding:4px 0';
+      el.textContent=d;
+      headers.appendChild(el);
+    });
+  }
+
+  const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  title.textContent=`${meses[calMonth]} ${calYear}`;
+
+  const firstDay=new Date(calYear,calMonth,1).getDay(); // 0=Sun
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const todayDate=todayStr();
+  const yStr=String(calYear);
+  const mStr=String(calMonth+1).padStart(2,'0');
+
+  // Build map of dates with sales for accessible puestos
+  const salesByDate={};
+  const lista=getUserPuestos();
+  Object.keys(DP).forEach(key=>{
+    const d=DP[key];if(!d) return;
+    const fecha=d.fechaRegistro||key.split('__')[1];
+    if(!fecha||!fecha.startsWith(`${yStr}-${mStr}`)) return;
+    const puesto=key.split('__')[0];
+    if(!lista.includes(puesto)) return;
+    if(!salesByDate[fecha]) salesByDate[fecha]={v:0,g:0};
+    salesByDate[fecha].v+=parseFloat(d.totalVentas||0);
+    salesByDate[fecha].g+=parseFloat(d.totalGastos||0);
   });
+
+  grid.innerHTML='';
+
+  // Empty cells before first day
+  for(let i=0;i<firstDay;i++){
+    const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);
+  }
+
+  for(let day=1;day<=daysInMonth;day++){
+    const dateStr=`${yStr}-${mStr}-${String(day).padStart(2,'0')}`;
+    const data=salesByDate[dateStr];
+    const el=document.createElement('div');
+    el.className='cal-day '+(data?'has-data':'no-data');
+    if(dateStr===todayDate) el.classList.add('today');
+    if(dateStr===calSelectedDate) el.classList.add('selected');
+    el.innerHTML=`<div class="cal-num">${day}</div>${data?`<div class="cal-amt">$${fmtK(data.v)}</div>`:''}`;
+    el.onclick=()=>calSelectDate(dateStr,data);
+    grid.appendChild(el);
+  }
+}
+
+function fmtK(n){
+  if(n>=1000) return Math.round(n/100)/10+'k';
+  return fmt(n);
+}
+
+function calSelectDate(dateStr,data){
+  calSelectedDate=calSelectedDate===dateStr?null:dateStr;
+  if(calSelectedDate){
+    // Set custom period to this date
+    dashPeriod='custom';
+    document.querySelectorAll('.dash-period-btn').forEach(b=>b.classList.remove('active'));
+    const customBtn=document.querySelector('.dash-period-btn:last-child');
+    if(customBtn) customBtn.classList.add('active');
+    const from=document.getElementById('dash-date-from');
+    const to=document.getElementById('dash-date-to');
+    if(from) from.value=dateStr;if(to) to.value=dateStr;
+    const wrap=document.getElementById('dash-custom-wrap');
+    if(wrap) wrap.style.display='block';
+  } else {
+    dashPeriod='all';
+    document.querySelectorAll('.dash-period-btn').forEach((b,i)=>{b.classList.toggle('active',i===0);});
+    const wrap=document.getElementById('dash-custom-wrap');
+    if(wrap) wrap.style.display='none';
+  }
+  renderCalendar();
+  renderDash();
 }
 
 // REPORTES
 function renderReportes(){
   let wV=0,wG=0,cV=0,cG=0;
-  PW.forEach(p=>{const d=getDPuesto(p);wV+=d.totalVentas;wG+=d.totalGastos;});
-  PC.forEach(p=>{const d=getDPuesto(p);cV+=d.totalVentas;cG+=d.totalGastos;});
+  PW.forEach(p=>{const d=getDPuestoFiltered(p,null,null);wV+=d.totalVentas;wG+=d.totalGastos;});
+  PC.forEach(p=>{const d=getDPuestoFiltered(p,null,null);cV+=d.totalVentas;cG+=d.totalGastos;});
   const map={'rwv':wV,'rwg':wG,'rwu':wV-wG,'rcv':cV,'rcg':cG,'rcu':cV-cG};
   Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent='$'+fmt(v);});
   const c=document.getElementById('rpuestos');if(!c)return;c.innerHTML='';
-  const maxV=Math.max(...allP().map(p=>getDPuesto(p).totalVentas),1);
-  [...allP()].sort((a,b)=>getDPuesto(b).totalVentas-getDPuesto(a).totalVentas).forEach((p,i)=>{
-    const v=getDPuesto(p).totalVentas;const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
+  const maxV=Math.max(...allP().map(p=>getDPuestoFiltered(p,null,null).totalVentas),1);
+  [...allP()].sort((a,b)=>getDPuestoFiltered(b,null,null).totalVentas-getDPuestoFiltered(a,null,null).totalVentas).forEach((p,i)=>{
+    const v=getDPuestoFiltered(p,null,null).totalVentas;const pct=Math.round(v/maxV*100);const isW=PW.includes(p);
     const m=['🥇 ','🥈 ','🥉 '][i]||'';
     const row=document.createElement('div');row.className='brow';
     row.innerHTML=`<div class="blbl">${m}${p}</div><div class="btrk"><div class="bfil" style="width:${pct}%;background:${isW?'linear-gradient(90deg,var(--n),var(--n2))':'linear-gradient(90deg,var(--az),#1d4ed8)'}"> ${v>0?`<span>$${fmt(v)}</span>`:''}</div></div>`;
@@ -1869,27 +2311,76 @@ async function guardarEdicion(){
 function renderMPRows(){
   const c=document.getElementById('mp-rows');if(!c)return;c.innerHTML='';
   if(!MP.length){
-    c.innerHTML='<p style="color:var(--t3);font-size:.85rem;padding:8px 0;text-align:center">Sin productos. Toca + Agregar</p>';
+    c.innerHTML='<p style="color:var(--t3);font-size:.85rem;padding:8px 0;text-align:center">Sin productos. Toca + Producto</p>';
     return;
   }
+  const key=dpKey(CP,currentFecha);
+  const saved=DP[key]||{};
   MP.forEach((item,i)=>{
-    const row=document.createElement('div');row.className='crow';
-    row.style.cssText='display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--g2)';
+    const sal=saved[`mp-sal-${i}`]||'';
+    const reg=saved[`mp-reg-${i}`]||'';
+    const consumido=sal!==''&&reg!==''?Math.max(0,parseFloat(sal||0)-parseFloat(reg||0)):null;
+    const cls=consumido===null?'zero':consumido<0?'negative':'';
+    const row=document.createElement('div');row.className='mp-row';
     row.innerHTML=`
-      <span style="font-size:1.1rem;flex-shrink:0">${item.emoji}</span>
-      <span class="clbl" style="flex:1">${item.nombre} <span style="font-size:.65rem;color:var(--t3)">($${item.precio}/${item.unidad})</span></span>
-      <input class="cinp" type="number" min="0" id="mp-inp-${i}" placeholder="0" style="width:85px" value="${getMPVal(i)}">
-      <button class="bedit" style="padding:5px 8px;font-size:.75rem" onclick="editMP(${i})">✏️</button>
-      <button class="bdang" style="padding:5px 8px;font-size:.75rem" onclick="delMP(${i})">🗑️</button>
-    `;
+      <div style="min-width:0">
+        <div style="font-size:.82rem;font-weight:800;color:var(--t)">${item.emoji} ${item.nombre}</div>
+        <div style="font-size:.6rem;color:var(--t3);display:flex;gap:6px;margin-top:2px;flex-wrap:wrap">
+          <span>$${item.precio}/${item.unidad}</span>
+          ${consumido!==null?`<span style="color:var(--n);font-weight:800">Costo: $${fmt(consumido*item.precio)}</span>`:''}
+          <button class="bedit" style="padding:2px 6px;font-size:.65rem;border-radius:6px" onclick="editMP(${i})">✏️</button>
+          <button class="bdang" style="padding:2px 6px;font-size:.65rem;border-radius:6px" onclick="delMP(${i})">🗑️</button>
+        </div>
+      </div>
+      <input class="mp-inp-sal" type="number" min="0" id="mp-sal-${i}" placeholder="0"
+        value="${sal}" oninput="calcMPRow(${i})" title="Cantidad que sale">
+      <input class="mp-inp-reg" type="number" min="0" id="mp-reg-${i}" placeholder="0"
+        value="${reg}" oninput="calcMPRow(${i})" title="Cantidad que regresa">
+      <div class="mp-consumido ${cls}" id="mp-con-${i}">
+        ${consumido!==null?consumido:'—'}
+      </div>`;
     c.appendChild(row);
   });
+  calcMPTotal();
+}
+
+function calcMPRow(i){
+  const sal=parseFloat(document.getElementById(`mp-sal-${i}`)?.value||0);
+  const reg=parseFloat(document.getElementById(`mp-reg-${i}`)?.value||0);
+  const hasSal=document.getElementById(`mp-sal-${i}`)?.value!=='';
+  const hasReg=document.getElementById(`mp-reg-${i}`)?.value!=='';
+  const el=document.getElementById(`mp-con-${i}`);
+  if(!el) return;
+  if(hasSal&&hasReg){
+    const consumido=Math.max(0,sal-reg);
+    el.textContent=consumido;
+    el.className='mp-consumido'+(consumido===0?' zero':'');
+    if(sal>0&&reg>sal){el.textContent=`⚠️${reg-sal} extra`;el.className='mp-consumido negative';}
+  } else {
+    el.textContent='—';el.className='mp-consumido zero';
+  }
+  calcMPTotal();
+}
+
+function calcMPTotal(){
+  let total=0;let hasAny=false;
+  MP.forEach((item,i)=>{
+    const sal=parseFloat(document.getElementById(`mp-sal-${i}`)?.value||0);
+    const reg=parseFloat(document.getElementById(`mp-reg-${i}`)?.value||0);
+    const hasSal=document.getElementById(`mp-sal-${i}`)?.value!=='';
+    const hasReg=document.getElementById(`mp-reg-${i}`)?.value!=='';
+    if(hasSal&&hasReg){const consumido=Math.max(0,sal-reg);total+=consumido*item.precio;hasAny=true;}
+  });
+  const wrap=document.getElementById('mp-costo-total');
+  const val=document.getElementById('mp-costo-val');
+  if(wrap) wrap.style.display=hasAny?'block':'none';
+  if(val) val.textContent='$'+fmt(total);
 }
 
 function getMPVal(idx){
-  // Try to get saved value for current puesto
-  const d=DP[CP]||{};
-  return d[`mp-${idx}`]||'';
+  const key=dpKey(CP,currentFecha);
+  const d=DP[key]||{};
+  return d[`mp-sal-${idx}`]||'';
 }
 
 function openM_addMP_reset(){
