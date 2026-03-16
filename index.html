@@ -254,14 +254,26 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 <div id="loginScreen">
   <div class="ll">🌮</div>
   <div class="lt">La Cuadra Tacos</div>
-  <div class="ls">Ingresa con tu usuario y contraseña</div>
+  <div class="ls">Ingresa con tu nombre y contraseña</div>
   <div class="lc">
-    <div class="lerr" id="loginErr">❌ Usuario o contraseña incorrectos</div>
-    <label class="ll2">Usuario</label>
-    <input class="li" id="liUser" placeholder="tu usuario" autocapitalize="none" autocomplete="username">
+    <div class="lerr" id="loginErr">❌ Nombre o contraseña incorrectos</div>
+    <label class="ll2">Tu Nombre</label>
+    <input class="li" id="liUser" placeholder="Ej: José María, Cirilo..." autocapitalize="words" autocomplete="name">
     <label class="ll2">Contraseña</label>
     <input class="li" id="liPass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     <button class="btn-login" onclick="doLogin()">🔐 ENTRAR</button>
+  </div>
+</div>
+
+<!-- PUESTO SELECTOR SCREEN — shown when encargado has no puesto assigned -->
+<div id="puestoScreen" style="position:fixed;inset:0;background:var(--cb);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:490;padding:24px">
+  <div style="font-size:48px;margin-bottom:8px">📍</div>
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--n);letter-spacing:2px;margin-bottom:6px">¿En qué puesto estás?</div>
+  <div style="color:#a16207;font-size:.85rem;margin-bottom:28px;text-align:center">Selecciona el puesto donde trabajas hoy</div>
+  <div style="background:white;border-radius:20px;padding:20px;width:100%;max-width:380px;box-shadow:var(--sh2)">
+    <label class="mlbl">Selecciona tu puesto</label>
+    <select class="msel" id="puestoScreenSel" style="font-size:1rem;margin-bottom:16px"></select>
+    <button class="btn-login" onclick="confirmarPuesto()">✅ CONFIRMAR</button>
   </div>
 </div>
 
@@ -347,13 +359,11 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <div class="ftot d"><span>Total Gastos</span><span id="gtot">$0</span></div>
   </div>
   <div class="card">
-    <div class="ctit">🧅 Materia Prima</div>
-    <div class="crow"><span class="clbl">🫓 Tortillas</span><input class="cinp" type="number" id="mp-tor"></div>
-    <div class="crow"><span class="clbl">🌯 Burritos</span><input class="cinp" type="number" id="mp-bur"></div>
-    <div class="crow"><span class="clbl">🥤 Vasos</span><input class="cinp" type="number" id="mp-vas"></div>
-    <div class="crow"><span class="clbl">🥤 Sodas</span><input class="cinp" type="number" id="mp-sod"></div>
-    <div class="crow"><span class="clbl">🍞 Teleras</span><input class="cinp" type="number" id="mp-tel"></div>
-    <div class="crow"><span class="clbl">🫓 Mulitas</span><input class="cinp" type="number" id="mp-mul"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="ctit" style="margin-bottom:0">🧅 Materia Prima</div>
+      <button class="shbtn" onclick="openM('addMP')">+ Agregar</button>
+    </div>
+    <div id="mp-rows"></div>
   </div>
   <button class="bsave" onclick="guardarVentas()">💾 GUARDAR REGISTRO</button>
   <button class="boutl" style="width:100%;margin-top:8px" onclick="limpiarV()">🗑️ Limpiar formulario</button>
@@ -446,7 +456,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <button class="tab" onclick="setCT('editar',this)">✏️ Editar</button>
     <button class="tab" onclick="setCT('usuarios',this)">🔐 Usuarios</button>
   </div>
-  <div id="cfg-puestos">
+  <div id="cfg-puestos" style="display:none">
     <div class="sh"><span>🌲 Washington</span><button class="shbtn" onclick="openM('addP','wash')">+ Agregar</button></div>
     <div class="card" id="cfg-pw"></div>
     <div class="sh"><span>🌆 Chicago</span><button class="shbtn" onclick="openM('addP','chi')">+ Agregar</button></div>
@@ -485,7 +495,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     <div class="sh"><span>🔐 Usuarios del Sistema</span><button class="shbtn" onclick="openM('addU')">+ Agregar</button></div>
     <div class="card" id="cfg-ul"></div>
     <div class="infobox" style="margin-top:8px">
-      <p>👑 <strong>Admin</strong> — Acceso total a toda la app<br><br>👷 <strong>Encargado</strong> — Solo ve y registra su puesto asignado (ventas y asistencia)</p>
+      <p>👑 <strong>Admin</strong> — Acceso total a toda la app<br><br>👷 <strong>Encargado</strong> — Solo ve y registra su puesto asignado</p>
     </div>
   </div>
 </div>
@@ -522,12 +532,42 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 </div>
 
 <!-- ADD / EDIT USER MODAL -->
+<div class="moverlay" id="m-addMP">
+  <div class="modal"><div class="mhandle"></div>
+    <div class="mtitle" id="mp-modal-title">🧅 Agregar Materia Prima</div>
+    <input type="hidden" id="mp-edit-idx" value="-1">
+    <label class="mlbl">Emoji / Ícono</label>
+    <input class="minput" id="mp-emoji" placeholder="🧅" maxlength="4" style="font-size:1.5rem;text-align:center">
+    <label class="mlbl">Nombre del Producto</label>
+    <input class="minput" id="mp-nombre" placeholder="Ej: Cilantro, Cebolla...">
+    <label class="mlbl">Precio Unitario ($)</label>
+    <input class="minput" type="number" min="0" step="0.001" id="mp-precio" placeholder="0.00">
+    <label class="mlbl">Unidad</label>
+    <select class="msel" id="mp-unidad">
+      <option value="pza">pza (pieza)</option>
+      <option value="kg">kg (kilogramo)</option>
+      <option value="lb">lb (libra)</option>
+      <option value="lata">lata</option>
+      <option value="botella">botella</option>
+      <option value="bolsa">bolsa</option>
+      <option value="caja">caja</option>
+      <option value="lt">lt (litro)</option>
+    </select>
+    <div class="macts">
+      <button class="bmcancel" onclick="closeM('addMP')">Cancelar</button>
+      <button class="bsave" id="mp-savebtn" onclick="saveMP()">✅ GUARDAR</button>
+    </div>
+  </div>
+</div>
+
 <div class="moverlay" id="m-addU">
   <div class="modal"><div class="mhandle"></div>
-    <div class="mtitle" id="mu-title">🔐 Nuevo Usuario</div>
+    <div class="mtitle" id="mu-title">👷 Nuevo Usuario</div>
     <input type="hidden" id="mu-idx" value="-1">
-    <label class="mlbl">Usuario (sin espacios)</label><input class="minput" id="mu-user" placeholder="Ej: northgate" autocapitalize="none">
-    <label class="mlbl">Contraseña <span id="mu-pass-hint" style="font-size:.7rem;color:var(--t3);font-weight:400;text-transform:none">(dejar vacío = no cambiar)</span></label>
+    <label class="mlbl">Nombre del Empleado</label>
+    <input class="minput" id="mu-user" placeholder="Ej: José María, Cirilo..." autocapitalize="words">
+    <label class="mlbl">Contraseña</label>
+    <label class="mlbl" style="display:inline" id="mu-pass-hint"><span style="font-size:.7rem;color:var(--t3);font-weight:400;text-transform:none">(dejar vacío = no cambiar)</span></label>
     <input class="minput" type="password" id="mu-pass" placeholder="••••••••">
     <label class="mlbl">Rol</label>
     <select class="msel" id="mu-rol" onchange="togglePuestoField()">
@@ -536,7 +576,40 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
     </select>
     <div id="mu-puesto-wrap">
       <label class="mlbl">Puesto Asignado</label>
-      <select class="msel" id="mu-puesto"></select>
+      <select class="msel" id="mu-puesto">
+        <option value="">— El empleado elige al entrar —</option>
+      </select>
+      <p style="font-size:.72rem;color:var(--t3);margin-top:-8px;margin-bottom:12px">💡 Si lo dejas vacío, el empleado podrá elegir su puesto cuando inicie sesión</p>
+    </div>
+    <div id="mu-permisos-wrap" style="background:var(--g2);border-radius:var(--Rs);padding:14px;margin-bottom:12px">
+      <label class="mlbl" style="margin-bottom:12px">🔑 Permisos del Encargado</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
+          <input type="checkbox" id="perm-ventas" style="width:17px;height:17px;accent-color:var(--n)">
+          <span style="font-size:.82rem;font-weight:800">💰 Ventas</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
+          <input type="checkbox" id="perm-asist" style="width:17px;height:17px;accent-color:var(--n)">
+          <span style="font-size:.82rem;font-weight:800">✅ Asistencia</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
+          <input type="checkbox" id="perm-nomina" style="width:17px;height:17px;accent-color:var(--n)">
+          <span style="font-size:.82rem;font-weight:800">👷 Nómina</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
+          <input type="checkbox" id="perm-reportes" style="width:17px;height:17px;accent-color:var(--n)">
+          <span style="font-size:.82rem;font-weight:800">📊 Reportes</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
+          <input type="checkbox" id="perm-config" style="width:17px;height:17px;accent-color:var(--n)">
+          <span style="font-size:.82rem;font-weight:800">⚙️ Config</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
+          <input type="checkbox" id="perm-dashboard" style="width:17px;height:17px;accent-color:var(--n)">
+          <span style="font-size:.82rem;font-weight:800">🏠 Dashboard</span>
+        </label>
+      </div>
+      <p style="font-size:.7rem;color:var(--t3);margin-top:10px">💡 Ventas y Dashboard siempre activos por defecto</p>
     </div>
     <div class="macts"><button class="bmcancel" onclick="closeM('addU')">Cancelar</button><button class="bsave" id="mu-savebtn" onclick="saveUsuario()">✅ GUARDAR</button></div>
   </div>
@@ -559,16 +632,35 @@ const SYNC_MS=3000; // 3 SECONDS
 // DEFAULTS
 const DW=['North Gate','Sahara','Renton','Tacoma','Rainier Beach','Pendiente'];
 const DC=['Chi-1a','Chi-2b','Chi-3c','Chi-4d','Chi-5e','Chi-6f','Chi-7g','Chi-8h'];
-const DEW=[{n:'Dagoberto',p:'Pastorero'},{n:'José María',p:'Pastorero'},{n:'Isaías',p:'Pastorero'},{n:'Eleazar',p:'Pastorero'},{n:'Cirilo',p:'Taquero'},{n:'Heidelberg',p:'Taquero'},{n:'José',p:'Taquero'},{n:'Julián',p:'Taquero'},{n:'Hilda',p:'Cajera'},{n:'Mayra',p:'Cajera'},{n:'Amada',p:'Cajera'},{n:'Nayeli',p:'Cajera'},{n:'Paula',p:'Cajera'},{n:'Alejandra',p:'Cajera'}];
-const DEC=[{n:'Erik',p:'Pastorero'},{n:'Luis',p:'Pastorero'},{n:'Abelardo',p:'Taquero'},{n:'Rigo',p:'Taquero'},{n:'Sebas',p:'Cajero'},{n:'Isaías Chiapas',p:'Pastorero'},{n:'Chepe',p:'Pastorero'},{n:'Mario',p:'Cajero'},{n:'Ruby',p:'Cajera'},{n:'Jazzmin',p:'Cajera'},{n:'Miguel',p:'Pastorero'},{n:'Chuy',p:'Taquero'},{n:'Lennin',p:'Taquero'},{n:'Eus',p:'Cajera'},{n:'Noel',p:'Pastorero'},{n:'Edgar',p:'Taquero'},{n:'Leonel',p:'Pastorero'},{n:'Rosario',p:'Encargada'}];
+// Washington — 14 equipo + Carlos encargado fijo (según Excel actualizado)
+const DEW=[
+  {n:'Dagoberto',p:'Pastorero'},{n:'José María',p:'Pastorero'},{n:'Isaías',p:'Pastorero'},
+  {n:'Eleazar',p:'Pastorero'},{n:'Cirilo',p:'Taquero'},{n:'Heidelberg',p:'Taquero'},
+  {n:'José',p:'Taquero'},{n:'Julián',p:'Taquero'},{n:'Hilda',p:'Cajera'},
+  {n:'Mayra',p:'Cajera'},{n:'Amada',p:'Cajera'},{n:'Nayeli',p:'Cajera'},
+  {n:'Paula',p:'Cajera'},{n:'Alejandra',p:'Cajera'},{n:'Carlos',p:'Encargado'}
+];
+// Chicago — 20 equipo + Rosario encargada + Jonatan bodeguero (según Excel actualizado)
+const DEC=[
+  {n:'Erik',p:'Pastorero'},{n:'Luis',p:'Pastorero'},{n:'Abelardo',p:'Taquero'},
+  {n:'Rigo',p:'Taquero'},{n:'Sebas',p:'Cajero'},{n:'Isaías Chiapas',p:'Pastorero'},
+  {n:'Chepe',p:'Pastorero'},{n:'Mario',p:'Cajero'},{n:'Ruby',p:'Cajera'},
+  {n:'Jazzmin',p:'Cajera'},{n:'Miguel',p:'Pastorero'},{n:'Chuy',p:'Taquero'},
+  {n:'Isaías Ramírez',p:'Taquero'},{n:'Eus',p:'Cajera'},{n:'Lennin',p:'Taquero'},
+  {n:'Joel',p:'Cajero'},{n:'Luisito',p:'Cajero'},{n:'Edgar',p:'Taquero'},
+  {n:'Fili',p:'Pastorero'},{n:'Nueva',p:'Cajera'},
+  {n:'Rosario',p:'Encargada'},{n:'Jonatan',p:'Bodeguero'}
+];
 const DU=[
   {user:'admin',pass:'cuadra2024',rol:'admin',puesto:''},
+  // Washington
   {user:'northgate',pass:'ng2024',rol:'encargado',puesto:'North Gate'},
   {user:'sahara',pass:'sa2024',rol:'encargado',puesto:'Sahara'},
   {user:'renton',pass:'re2024',rol:'encargado',puesto:'Renton'},
   {user:'tacoma',pass:'ta2024',rol:'encargado',puesto:'Tacoma'},
   {user:'rainier',pass:'rb2024',rol:'encargado',puesto:'Rainier Beach'},
   {user:'pendiente',pass:'pe2024',rol:'encargado',puesto:'Pendiente'},
+  // Chicago
   {user:'chi1a',pass:'c1a2024',rol:'encargado',puesto:'Chi-1a'},
   {user:'chi2b',pass:'c2b2024',rol:'encargado',puesto:'Chi-2b'},
   {user:'chi3c',pass:'c3c2024',rol:'encargado',puesto:'Chi-3c'},
@@ -580,6 +672,16 @@ const DU=[
 ];
 
 // STATE
+// Default materia prima catalog (from Excel Precios y Productos)
+const DMP=[
+  {emoji:'🫓',nombre:'Tortillas',precio:0.025,unidad:'pza'},
+  {emoji:'🌯',nombre:'Burritos',precio:0.175,unidad:'pza'},
+  {emoji:'🥤',nombre:'Vasos',precio:0.05,unidad:'pza'},
+  {emoji:'🥤',nombre:'Sodas',precio:1.00,unidad:'lata'},
+  {emoji:'🍞',nombre:'Teleras',precio:0.20,unidad:'pza'},
+  {emoji:'🫓',nombre:'Mulitas',precio:0.16,unidad:'pza'},
+];
+
 let CU=null,CP='',NCity='wash',CECity='wash',AS={};
 let syncInterval=null,barInterval=null;
 let lastPuestosHash=''; // detect changes from other users
@@ -591,6 +693,7 @@ const SL=(k,v)=>{try{localStorage.setItem('lct_'+k,JSON.stringify(v))}catch{}};
 let PW=LL('PW',[...DW]),PC=LL('PC',[...DC]);
 let EW=LL('EW',[...DEW]),EC=LL('EC',[...DEC]);
 let US=LL('US',[...DU]);
+let MP=LL('MP',[...DMP]); // Materia prima catalog
 let DP=LL('DP',{}),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG=LL('DG',{});
 
 const allP=()=>[...PW,...PC];
@@ -628,7 +731,7 @@ function animateBar(){
 
 async function liveSync(){
   setDot('orange');
-  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','US'];
+  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','US','MP'];
   let changed=[];
   for(const t of tabs){
     const data=await gsG(t);
@@ -649,6 +752,7 @@ async function liveSync(){
         if(t==='EW')EW=newVal;
         if(t==='EC')EC=newVal;
         if(t==='US')US=newVal;
+        if(t==='MP'){MP=newVal;renderMPRows();}
       }
     }
   }
@@ -669,12 +773,44 @@ async function syncNow(){showToast('🔄 Sincronizando...');await liveSync();ren
 
 // AUTH
 function doLogin(){
-  const user=document.getElementById('liUser').value.trim().toLowerCase();
+  const nombre=document.getElementById('liUser').value.trim();
   const pass=document.getElementById('liPass').value;
   const err=document.getElementById('loginErr');
-  const found=US.find(u=>u.user===user&&u.pass===pass);
-  if(!found){err.style.display='block';document.getElementById('liPass').value='';setTimeout(()=>err.style.display='none',3000);return;}
-  CU=found;SL('session',found);err.style.display='none';showApp();
+  // Search by name (case insensitive) and password
+  const found=US.find(u=>u.user.toLowerCase()===nombre.toLowerCase()&&u.pass===pass);
+  if(!found){
+    err.style.display='block';
+    document.getElementById('liPass').value='';
+    setTimeout(()=>err.style.display='none',3000);
+    return;
+  }
+  CU=found;SL('session',found);err.style.display='none';
+  // If encargado with no puesto assigned, show puesto selector
+  if(CU.rol==='encargado'&&!CU.puesto){
+    showPuestoSelector();
+  } else {
+    showApp();
+  }
+}
+
+function showPuestoSelector(){
+  document.getElementById('loginScreen').classList.remove('show');
+  const sel=document.getElementById('puestoScreenSel');
+  sel.innerHTML='<option value="">— Selecciona tu puesto —</option>';
+  allP().forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+  document.getElementById('puestoScreen').style.display='flex';
+}
+
+function confirmarPuesto(){
+  const p=document.getElementById('puestoScreenSel').value;
+  if(!p){showToast('⚠️ Selecciona tu puesto');return;}
+  // Save puesto to user
+  CU.puesto=p;
+  const idx=US.findIndex(u=>u.user===CU.user);
+  if(idx!==-1){US[idx].puesto=p;SD('US',US);}
+  SL('session',CU);
+  document.getElementById('puestoScreen').style.display='none';
+  showApp();
 }
 
 function doLogout(){
@@ -683,6 +819,7 @@ function doLogout(){
   if(syncInterval)clearInterval(syncInterval);
   if(barInterval)clearInterval(barInterval);
   document.getElementById('loginScreen').classList.add('show');
+  document.getElementById('puestoScreen').style.display='none';
   ['mainHdr','appContent','mainNav'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('liUser').value='';document.getElementById('liPass').value='';
 }
@@ -691,14 +828,33 @@ function showApp(){
   document.getElementById('loginScreen').classList.remove('show');
   ['mainHdr','appContent','mainNav'].forEach(id=>document.getElementById(id).style.display=id==='mainNav'?'flex':'block');
   const isA=CU.rol==='admin';
+  const perms=CU.perms||{};
+
+  // Helper: can user access this section?
+  const can=(section)=>isA||perms[section]===true;
+
+  // Admin-only nav buttons (nomina, reportes, config)
   document.querySelectorAll('.ao').forEach(el=>el.style.display=isA?'':'none');
+
+  // Per-permission nav buttons for encargados
+  document.querySelectorAll('.nbtn').forEach(btn=>{
+    const lbl=btn.querySelector('.nl')?.textContent||'';
+    if(lbl==='Ventas')   btn.style.display=can('ventas')?'':'none';
+    if(lbl==='Asist.')   btn.style.display=can('asist')?'':'none';
+    if(lbl==='Nómina')   btn.style.display=isA||can('nomina')?'':'none';
+    if(lbl==='Reportes') btn.style.display=isA||can('reportes')?'':'none';
+    if(lbl==='Config')   btn.style.display=isA||can('config')?'':'none';
+  });
   document.getElementById('ubName').textContent=CU.user;
   document.getElementById('ubRole').innerHTML=isA?'<span class="r-admin">Admin</span>':'<span class="r-enc">Encargado</span>';
-  document.getElementById('hdrSub').textContent=isA?'Washington · Chicago · 14 Puestos':`Puesto: ${CU.puesto}`;
+  document.getElementById('hdrSub').textContent=isA?'Washington · Chicago · 14 Puestos · 37 Empleados':`Puesto: ${CU.puesto}`;
   CP=isA?(PW[0]||PC[0]):CU.puesto;
-  buildPSel();renderDash();renderAsist();
-  if(isA){renderNomina();renderReportes();}
+  buildPSel();renderDash();
+  if(can('asist'))renderAsist();
+  if(isA||can('nomina'))renderNomina();
+  if(isA||can('reportes'))renderReportes();
   populateEditSel();updateTip();startSync();
+  renderMPRows();
   document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'});
   loadVF(CP);
 }
@@ -711,10 +867,14 @@ document.addEventListener('DOMContentLoaded',()=>{
       s.style.display='none';
       const saved=LL('session',null);
       if(saved&&saved.user){
-        // Re-validate saved session against current users
-        const valid=US.find(u=>u.user===saved.user&&u.pass===saved.pass);
-        if(valid){CU=valid;showApp();}
-        else document.getElementById('loginScreen').classList.add('show');
+        // Re-validate saved session against current users (case insensitive)
+        const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
+        if(valid){
+          CU=valid;
+          // If encargado with no puesto, show selector
+          if(CU.rol==='encargado'&&!CU.puesto) showPuestoSelector();
+          else showApp();
+        } else document.getElementById('loginScreen').classList.add('show');
       } else document.getElementById('loginScreen').classList.add('show');
     },500);
   },2000);
@@ -761,12 +921,38 @@ function setTab(id,btn){
   ['mensual','flujo','gasgen'].forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.style.display=t===id?'block':'none';});
 }
 function setCT(id,btn){
-  document.querySelectorAll('#view-config .tabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
-  ['puestos','empleados','editar','usuarios'].forEach(t=>{const el=document.getElementById('cfg-'+t);if(el)el.style.display=t===id?'block':'none';});
-  if(id==='usuarios')renderCfgU();
+  document.querySelectorAll('#view-config .tabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['puestos','empleados','editar','usuarios'].forEach(t=>{
+    const el=document.getElementById('cfg-'+t);
+    if(el) el.style.display=t===id?'block':'none';
+  });
+  if(id==='puestos') renderCfgP();
+  if(id==='empleados') renderCfgE();
+  if(id==='editar') populateEditSel();
+  if(id==='usuarios') renderCfgU();
 }
 function setNC(city,btn){NCity=city;document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
-function setCEC(city,btn){CECity=city;document.querySelectorAll('#view-config .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.getElementById('cet').textContent=city==='wash'?'Empleados Washington':'Empleados Chicago';renderCfgE();}
+function renderCfg(){
+  // Always start on puestos tab
+  document.querySelectorAll('#view-config .tabs .tab').forEach((t,i)=>{
+    t.classList.toggle('active', i===0);
+  });
+  ['puestos','empleados','editar','usuarios'].forEach(t=>{
+    const el=document.getElementById('cfg-'+t);
+    if(el) el.style.display=t==='puestos'?'block':'none';
+  });
+  renderCfgP();
+  populateEditSel();
+}
+
+function setCEC(city,btn){
+  CECity=city;
+  document.querySelectorAll('#cfg-empleados .cchip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cet').textContent=city==='wash'?'Empleados Washington':'Empleados Chicago';
+  renderCfgE();
+}
 
 // VENTAS
 function calcV(){
@@ -785,20 +971,21 @@ function loadVF(p){
     if(ef)ef.value=d[`ve-${dia}-ef`]||'';if(tj)tj.value=d[`ve-${dia}-tj`]||'';
   });
   ['gas','hie','rep','cas','otr'].forEach(k=>{const el=document.getElementById(`g-${k}`);if(el)el.value=d[`g-${k}`]||'';});
-  ['tor','bur','vas','sod','tel','mul'].forEach(k=>{const el=document.getElementById(`mp-${k}`);if(el)el.value=d[`mp-${k}`]||'';});
+  renderMPRows(); // render dynamic MP with saved values
   calcV();
 }
 function limpiarV(){
   ['mar','mie','jue','vie','sab','dom'].forEach(d=>{['ef','tj'].forEach(t=>{const el=document.getElementById(`ve-${d}-${t}`);if(el)el.value='';});});
   ['gas','hie','rep','cas','otr'].forEach(k=>{const el=document.getElementById(`g-${k}`);if(el)el.value='';});
-  ['tor','bur','vas','sod','tel','mul'].forEach(k=>{const el=document.getElementById(`mp-${k}`);if(el)el.value='';});
+  MP.forEach((_,i)=>{const el=document.getElementById(`mp-inp-${i}`);if(el)el.value='';});
   calcV();showToast('🗑️ Formulario limpiado');
 }
 async function guardarVentas(){
   const d={};
   ['mar','mie','jue','vie','sab','dom'].forEach(dia=>{d[`ve-${dia}-ef`]=parseFloat(document.getElementById(`ve-${dia}-ef`)?.value||0);d[`ve-${dia}-tj`]=parseFloat(document.getElementById(`ve-${dia}-tj`)?.value||0);});
   ['gas','hie','rep','cas','otr'].forEach(k=>{d[`g-${k}`]=parseFloat(document.getElementById(`g-${k}`)?.value||0);});
-  ['tor','bur','vas','sod','tel','mul'].forEach(k=>{d[`mp-${k}`]=parseFloat(document.getElementById(`mp-${k}`)?.value||0);});
+  // Save dynamic materia prima
+  MP.forEach((_,i)=>{d[`mp-${i}`]=parseFloat(document.getElementById(`mp-inp-${i}`)?.value||0);});
   const ds=['mar','mie','jue','vie','sab','dom'];
   d.totalVentas=ds.reduce((a,dia)=>a+d[`ve-${dia}-ef`]+d[`ve-${dia}-tj`],0);
   d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
@@ -918,7 +1105,7 @@ function renderReportes(){
 }
 
 // CONFIG
-function renderCfg(){renderCfgP();renderCfgE();populateEditSel();}
+// CONFIG
 function renderCfgP(){
   ['w','c'].forEach(city=>{
     const lista=city==='w'?PW:PC;
@@ -946,15 +1133,28 @@ function renderCfgU(){
   const c=document.getElementById('cfg-ul');if(!c)return;c.innerHTML='';
   US.forEach((u,i)=>{
     const row=document.createElement('div');row.className='eitem';
+    row.style.alignItems='flex-start';
     const bg=u.rol==='admin'?'linear-gradient(135deg,var(--n),var(--n2))':'linear-gradient(135deg,var(--az),#1d4ed8)';
     const prot=u.user==='admin';
+    const p=u.perms||{};
+    const permBadges=u.rol==='encargado'?`
+      <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:5px">
+        ${p.ventas!==false?'<span style="font-size:.58rem;background:var(--ns);color:var(--n2);padding:2px 6px;border-radius:20px;font-weight:800">💰Ventas</span>':'<span style="font-size:.58rem;background:var(--rs);color:var(--r);padding:2px 6px;border-radius:20px;font-weight:800">💰Ventas</span>'}
+        ${p.asist?'<span style="font-size:.58rem;background:var(--vs);color:var(--v);padding:2px 6px;border-radius:20px;font-weight:800">✅Asist.</span>':'<span style="font-size:.58rem;background:var(--rs);color:var(--r);padding:2px 6px;border-radius:20px;font-weight:800">✅Asist.</span>'}
+        ${p.nomina?'<span style="font-size:.58rem;background:var(--ams);color:#92400E;padding:2px 6px;border-radius:20px;font-weight:800">👷Nómina</span>':''}
+        ${p.reportes?'<span style="font-size:.58rem;background:var(--azs);color:var(--az);padding:2px 6px;border-radius:20px;font-weight:800">📊Rep.</span>':''}
+        ${p.config?'<span style="font-size:.58rem;background:var(--g3);color:var(--t2);padding:2px 6px;border-radius:20px;font-weight:800">⚙️Config</span>':''}
+        ${p.dashboard!==false?'<span style="font-size:.58rem;background:var(--vs);color:var(--v);padding:2px 6px;border-radius:20px;font-weight:800">🏠Inicio</span>':''}
+      </div>`:
+      '<div style="font-size:.68rem;color:var(--t3);margin-top:3px">Acceso total a todo el sistema</div>';
     row.innerHTML=`
-      <div class="eav" style="background:${bg}">${u.rol==='admin'?'👑':'👷'}</div>
-      <div class="einfo">
+      <div class="eav" style="background:${bg};margin-top:2px">${u.rol==='admin'?'👑':'👷'}</div>
+      <div class="einfo" style="flex:1;min-width:0">
         <div class="ename">${u.user}</div>
-        <div class="epos">${u.rol==='admin'?'Admin — Acceso total':`Encargado — ${u.puesto||'Sin puesto'}`}</div>
+        <div class="epos">${u.rol==='admin'?'Admin':`Encargado — ${u.puesto||'Sin puesto'}`}</div>
+        ${permBadges}
       </div>
-      <div class="ebtns">
+      <div class="ebtns" style="flex-shrink:0;margin-top:2px">
         <button class="bedit" onclick="editUsuario(${i})">✏️</button>
         ${!prot?`<button class="bdang" onclick="confirmDel('usuario',null,${i})">🗑️</button>`:'<span style="font-size:.6rem;color:var(--t3)">🔒</span>'}
       </div>`;
@@ -964,16 +1164,18 @@ function renderCfgU(){
 
 // MODALS
 function openM(id,data){
+  if(id==='addMP'){openM_addMP_reset();}
   if(id==='addP'&&data)document.getElementById('np-ciu').value=data;
   if(id==='addE')document.getElementById('ne-ciu').value=CECity;
   if(id==='addU'){
     // Reset for new user
-    document.getElementById('mu-title').textContent='🔐 Nuevo Usuario';
+    document.getElementById('mu-title').textContent='👷 Nuevo Usuario';
     document.getElementById('mu-idx').value='-1';
     document.getElementById('mu-user').value='';document.getElementById('mu-user').disabled=false;
     document.getElementById('mu-pass').value='';
     document.getElementById('mu-rol').value='encargado';
     document.getElementById('mu-pass-hint').style.display='none';
+    setPermsToForm({}); // all unchecked by default
     togglePuestoField();
     populatePuestoSelect();
     document.getElementById('mu-savebtn').innerHTML='✅ CREAR USUARIO';
@@ -984,11 +1186,29 @@ function closeM(id){document.getElementById(`m-${id}`).classList.remove('open');
 
 function togglePuestoField(){
   const rol=document.getElementById('mu-rol').value;
-  document.getElementById('mu-puesto-wrap').style.display=rol==='encargado'?'block':'none';
+  const isEnc=rol==='encargado';
+  document.getElementById('mu-puesto-wrap').style.display=isEnc?'block':'none';
+  document.getElementById('mu-permisos-wrap').style.display=isEnc?'block':'none';
+}
+
+const ALL_PERMS=['ventas','asist','nomina','reportes','config','dashboard'];
+
+function getPermsFromForm(){
+  const p={};
+  ALL_PERMS.forEach(k=>p[k]=document.getElementById(`perm-${k}`)?.checked||false);
+  return p;
+}
+
+function setPermsToForm(perms){
+  ALL_PERMS.forEach(k=>{
+    const el=document.getElementById(`perm-${k}`);
+    if(el) el.checked=perms?.[k]===true;
+  });
 }
 
 function populatePuestoSelect(){
   const sel=document.getElementById('mu-puesto');sel.innerHTML='';
+  const empty=document.createElement('option');empty.value='';empty.textContent='— El empleado elige al entrar —';sel.appendChild(empty);
   allP().forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
 }
 
@@ -997,13 +1217,14 @@ function editUsuario(idx){
   document.getElementById('mu-title').textContent='✏️ Editar Usuario';
   document.getElementById('mu-idx').value=idx;
   document.getElementById('mu-user').value=u.user;
-  document.getElementById('mu-user').disabled=u.user==='admin'; // protect admin username
+  document.getElementById('mu-user').disabled=u.user==='admin';
   document.getElementById('mu-pass').value='';
   document.getElementById('mu-pass-hint').style.display='inline';
   document.getElementById('mu-rol').value=u.rol;
   populatePuestoSelect();
   togglePuestoField();
   if(u.puesto)document.getElementById('mu-puesto').value=u.puesto;
+  setPermsToForm(u.perms||{asistencia:u.asistencia});
   document.getElementById('mu-savebtn').innerHTML='💾 GUARDAR CAMBIOS';
   document.getElementById('m-addU').classList.add('open');
 }
@@ -1011,32 +1232,35 @@ function editUsuario(idx){
 async function saveUsuario(){
   const idx=parseInt(document.getElementById('mu-idx').value);
   const isNew=idx===-1;
-  const user=document.getElementById('mu-user').value.trim().toLowerCase();
+  const user=document.getElementById('mu-user').value.trim(); // keep original casing
   const pass=document.getElementById('mu-pass').value;
   const rol=document.getElementById('mu-rol').value;
   const puesto=rol==='encargado'?document.getElementById('mu-puesto').value:'';
+  const asistencia=rol==='encargado'?document.getElementById('perm-asist').checked:true;
+  const perms=rol==='encargado'?getPermsFromForm():{};
 
-  if(!user){showToast('⚠️ Escribe el nombre de usuario');return;}
+  if(!user){showToast('⚠️ Escribe el nombre del empleado');return;}
   if(isNew&&!pass){showToast('⚠️ La contraseña es requerida');return;}
   if(pass&&pass.length<4){showToast('⚠️ Contraseña mínimo 4 caracteres');return;}
 
-  // Check duplicate username (only for new users or changed username)
-  const existIdx=US.findIndex(u=>u.user===user);
-  if(isNew&&existIdx!==-1){showToast('⚠️ Ese usuario ya existe');return;}
-  if(!isNew&&existIdx!==-1&&existIdx!==idx){showToast('⚠️ Ese nombre de usuario ya está en uso');return;}
+  // Check duplicate name (case insensitive)
+  const existIdx=US.findIndex(u=>u.user.toLowerCase()===user.toLowerCase());
+  if(isNew&&existIdx!==-1){showToast('⚠️ Ya existe un usuario con ese nombre');return;}
+  if(!isNew&&existIdx!==-1&&existIdx!==idx){showToast('⚠️ Ese nombre ya está en uso');return;}
 
   if(isNew){
-    US.push({user,pass,rol,puesto});
+    US.push({user,pass,rol,puesto,asistencia,perms});
   } else {
     US[idx].user=user;
-    if(pass)US[idx].pass=pass; // only update if new pass provided
+    if(pass)US[idx].pass=pass;
     US[idx].rol=rol;
     US[idx].puesto=puesto;
+    US[idx].asistencia=asistencia;
+    US[idx].perms=perms;
     // If current user edited themselves, update session
     if(CU&&CU.user===US[idx].user||(US[idx]&&US[idx].user===user)){
       const updUser=US[idx];
       SL('session',updUser);
-      // Update header
       document.getElementById('ubName').textContent=updUser.user;
     }
   }
@@ -1123,6 +1347,79 @@ async function guardarEdicion(){
   d.totalVentas=ef+tj;d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
   d.fechaGuardado=new Date().toLocaleString('es');d.editadoPor=CU?.user||'admin';
   DP[p]=d;await SD('DP',DP);renderDash();renderReportes();showToast(`✅ "${p}" actualizado`);
+}
+
+// ── MATERIA PRIMA ──
+function renderMPRows(){
+  const c=document.getElementById('mp-rows');if(!c)return;c.innerHTML='';
+  if(!MP.length){
+    c.innerHTML='<p style="color:var(--t3);font-size:.85rem;padding:8px 0;text-align:center">Sin productos. Toca + Agregar</p>';
+    return;
+  }
+  MP.forEach((item,i)=>{
+    const row=document.createElement('div');row.className='crow';
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--g2)';
+    row.innerHTML=`
+      <span style="font-size:1.1rem;flex-shrink:0">${item.emoji}</span>
+      <span class="clbl" style="flex:1">${item.nombre} <span style="font-size:.65rem;color:var(--t3)">($${item.precio}/${item.unidad})</span></span>
+      <input class="cinp" type="number" min="0" id="mp-inp-${i}" placeholder="0" style="width:85px" value="${getMPVal(i)}">
+      <button class="bedit" style="padding:5px 8px;font-size:.75rem" onclick="editMP(${i})">✏️</button>
+      <button class="bdang" style="padding:5px 8px;font-size:.75rem" onclick="delMP(${i})">🗑️</button>
+    `;
+    c.appendChild(row);
+  });
+}
+
+function getMPVal(idx){
+  // Try to get saved value for current puesto
+  const d=DP[CP]||{};
+  return d[`mp-${idx}`]||'';
+}
+
+function openM_addMP_reset(){
+  document.getElementById('mp-modal-title').textContent='🧅 Agregar Materia Prima';
+  document.getElementById('mp-edit-idx').value='-1';
+  document.getElementById('mp-emoji').value='';
+  document.getElementById('mp-nombre').value='';
+  document.getElementById('mp-precio').value='';
+  document.getElementById('mp-unidad').value='pza';
+  document.getElementById('mp-savebtn').innerHTML='✅ GUARDAR';
+}
+
+function editMP(idx){
+  const item=MP[idx];if(!item)return;
+  document.getElementById('mp-modal-title').textContent='✏️ Editar Producto';
+  document.getElementById('mp-edit-idx').value=idx;
+  document.getElementById('mp-emoji').value=item.emoji;
+  document.getElementById('mp-nombre').value=item.nombre;
+  document.getElementById('mp-precio').value=item.precio;
+  document.getElementById('mp-unidad').value=item.unidad;
+  document.getElementById('mp-savebtn').innerHTML='💾 GUARDAR CAMBIOS';
+  document.getElementById('m-addMP').classList.add('open');
+}
+
+async function saveMP(){
+  const idx=parseInt(document.getElementById('mp-edit-idx').value);
+  const isNew=idx===-1;
+  const emoji=document.getElementById('mp-emoji').value.trim()||'📦';
+  const nombre=document.getElementById('mp-nombre').value.trim();
+  const precio=parseFloat(document.getElementById('mp-precio').value||0);
+  const unidad=document.getElementById('mp-unidad').value;
+  if(!nombre){showToast('⚠️ Escribe el nombre del producto');return;}
+  if(isNew){MP.push({emoji,nombre,precio,unidad});}
+  else{MP[idx]={emoji,nombre,precio,unidad};}
+  await SD('MP',MP);
+  renderMPRows();closeM('addMP');
+  showToast(isNew?`✅ "${nombre}" agregado`:`✅ "${nombre}" actualizado`);
+}
+
+async function delMP(idx){
+  const nom=MP[idx]?.nombre;
+  if(!confirm(`¿Eliminar "${nom}" de la lista?`))return;
+  MP.splice(idx,1);
+  await SD('MP',MP);
+  renderMPRows();
+  showToast(`🗑️ "${nom}" eliminado`);
 }
 
 // UTILS
