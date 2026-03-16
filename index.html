@@ -580,6 +580,20 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
 <div class="view" id="view-ventas">
   <div class="sh" id="vtit">Ventas</div>
 
+  <!-- DATE PICKER CARD — ARRIBA -->
+  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-size:.68rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:4px">📅 Fecha del Registro</div>
+        <input type="date" id="fechaVentas" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:10px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:white;outline:none;color-scheme:dark" onchange="onFechaChange()">
+      </div>
+      <div style="text-align:right">
+        <div id="fechaVentasLabel" style="font-size:.75rem;color:#fed7aa;font-weight:700"></div>
+        <div id="fechaVentasStatus" style="font-size:.65rem;color:#a16207;margin-top:2px"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- META DEL PUESTO -->
   <div id="venta-meta-card">
     <div class="card" style="border-left:4px solid var(--v);padding:12px 14px">
@@ -596,20 +610,6 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
       <div style="display:flex;justify-content:space-between;margin-top:5px">
         <div id="venta-meta-pct" style="font-size:.78rem;font-weight:900;color:var(--v)">—</div>
         <div id="venta-meta-falta" style="font-size:.72rem;color:var(--t3);font-weight:600"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DATE PICKER CARD -->
-  <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div>
-        <div style="font-size:.68rem;font-weight:900;letter-spacing:1px;color:#a16207;text-transform:uppercase;margin-bottom:4px">📅 Fecha del Registro</div>
-        <input type="date" id="fechaVentas" style="background:rgba(255,255,255,.1);border:1.5px solid rgba(234,88,12,.4);border-radius:10px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:white;outline:none;color-scheme:dark" onchange="onFechaChange()">
-      </div>
-      <div style="text-align:right">
-        <div id="fechaVentasLabel" style="font-size:.75rem;color:#fed7aa;font-weight:700"></div>
-        <div id="fechaVentasStatus" style="font-size:.65rem;color:#a16207;margin-top:2px"></div>
       </div>
     </div>
   </div>
