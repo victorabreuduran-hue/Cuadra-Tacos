@@ -243,14 +243,15 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .city-bar-fill{height:100%;border-radius:12px;transition:width .6s ease;display:flex;align-items:center;padding:0 8px;min-width:4px}
 .city-bar-fill span{font-size:.62rem;font-weight:800;color:white;white-space:nowrap}
 .city-bar-pct{font-size:.65rem;font-weight:800;color:var(--t3);width:34px;text-align:right;flex-shrink:0}
-/* MP INVENTORY ROW */
-.mp-row{display:grid;grid-template-columns:1fr 70px 70px 70px;gap:4px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--g2)}
+.mp-row{display:grid;grid-template-columns:1fr 56px 56px 56px 56px;gap:3px;align-items:start;padding:10px 2px;border-bottom:1px solid var(--g2)}
 .mp-row:last-child{border-bottom:none}
-.mp-inp-sal{text-align:center;border:1.5px solid var(--azs);border-radius:8px;padding:7px 4px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#eff6ff;outline:none;color:var(--az);width:100%;transition:all .15s}
+.mp-inp-sal{text-align:center;border:1.5px solid var(--azs);border-radius:8px;padding:7px 3px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#eff6ff;outline:none;color:var(--az);width:100%;transition:all .15s}
 .mp-inp-sal:focus{border-color:var(--az);background:white}
-.mp-inp-reg{text-align:center;border:1.5px solid var(--vs);border-radius:8px;padding:7px 4px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#f0fdf4;outline:none;color:var(--v);width:100%;transition:all .15s}
+.mp-inp-reg{text-align:center;border:1.5px solid var(--vs);border-radius:8px;padding:7px 3px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#f0fdf4;outline:none;color:var(--v);width:100%;transition:all .15s}
 .mp-inp-reg:focus{border-color:var(--v);background:white}
-.mp-consumido{text-align:center;border-radius:8px;padding:7px 4px;font-size:.82rem;font-weight:900;background:var(--ns);color:var(--n);width:100%}
+.mp-inp-des{text-align:center;border:1.5px solid #fca5a5;border-radius:8px;padding:7px 3px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:var(--rs);outline:none;color:var(--r);width:100%;transition:all .15s}
+.mp-inp-des:focus{border-color:var(--r);background:white}
+.mp-consumido{text-align:center;border-radius:8px;padding:7px 3px;font-size:.82rem;font-weight:900;background:var(--ns);color:var(--n);width:100%}
 .mp-consumido.zero{background:var(--g2);color:var(--t3)}
 .mp-consumido.negative{background:var(--rs);color:var(--r)}
 
@@ -531,18 +532,21 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
       <div class="ctit" style="margin-bottom:0">🧅 Control de Materia Prima</div>
       <button class="shbtn" onclick="openM('addMP')">+ Producto</button>
     </div>
-    <p style="font-size:.72rem;color:var(--t3);margin-bottom:12px">Registra cuánto llevas y cuánto regresas — el sistema calcula lo consumido.</p>
+    <p style="font-size:.72rem;color:var(--t3);margin-bottom:12px">Registra salida, regreso y desperdicios — el sistema calcula lo consumido y su costo.</p>
     <!-- Column headers -->
-    <div style="display:grid;grid-template-columns:1fr 70px 70px 70px;gap:4px;align-items:center;margin-bottom:6px;padding:0 2px">
-      <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase">Producto</div>
-      <div style="font-size:.6rem;font-weight:900;color:var(--az);text-align:center;text-transform:uppercase">📦 Sale</div>
-      <div style="font-size:.6rem;font-weight:900;color:var(--v);text-align:center;text-transform:uppercase">📥 Regresa</div>
-      <div style="font-size:.6rem;font-weight:900;color:var(--n);text-align:center;text-transform:uppercase">🔥 Usó</div>
+    <div style="display:grid;grid-template-columns:1fr 56px 56px 56px 56px;gap:3px;align-items:center;margin-bottom:6px;padding:0 2px">
+      <div style="font-size:.58rem;font-weight:900;color:var(--t3);text-transform:uppercase">Producto</div>
+      <div style="font-size:.58rem;font-weight:900;color:var(--az);text-align:center;text-transform:uppercase">📦 Sale</div>
+      <div style="font-size:.58rem;font-weight:900;color:var(--v);text-align:center;text-transform:uppercase">📥 Regresa</div>
+      <div style="font-size:.58rem;font-weight:900;color:var(--r);text-align:center;text-transform:uppercase">🗑️ Daño</div>
+      <div style="font-size:.58rem;font-weight:900;color:var(--n);text-align:center;text-transform:uppercase">🔥 Usó</div>
     </div>
     <div id="mp-rows"></div>
-    <!-- Resumen costo -->
-    <div id="mp-costo-total" style="display:none;margin-top:10px">
-      <div class="ftot d" style="margin-top:0"><span>💸 Costo total consumido</span><span id="mp-costo-val">$0</span></div>
+    <!-- Resumen totales -->
+    <div id="mp-totales" style="display:none;margin-top:10px;border-top:1px solid var(--g3);padding-top:10px">
+      <div class="ftot" style="margin-top:0"><span>🔥 Costo consumido</span><span id="mp-costo-val">$0</span></div>
+      <div class="ftot d" style="margin-top:6px"><span>🗑️ Costo desperdicios</span><span id="mp-desp-val">$0</span></div>
+      <div class="ftot b" style="margin-top:6px"><span>💸 Costo total MP</span><span id="mp-total-val">$0</span></div>
     </div>
   </div>
   <button class="bsave" onclick="guardarVentas()">💾 GUARDAR REGISTRO</button>
@@ -1326,9 +1330,10 @@ function limpiarV(){
   MP.forEach((_,i)=>{
     const sal=document.getElementById(`mp-sal-${i}`);if(sal)sal.value='';
     const reg=document.getElementById(`mp-reg-${i}`);if(reg)reg.value='';
+    const des=document.getElementById(`mp-des-${i}`);if(des)des.value='';
     const con=document.getElementById(`mp-con-${i}`);if(con){con.textContent='—';con.className='mp-consumido zero';}
   });
-  const wrap=document.getElementById('mp-costo-total');if(wrap)wrap.style.display='none';
+  const wrap=document.getElementById('mp-totales');if(wrap)wrap.style.display='none';
   calcV();showToast('🗑️ Formulario limpiado');
 }
 
@@ -1344,9 +1349,11 @@ async function guardarVentas(){
   MP.forEach((item,i)=>{
     const sal=parseFloat(document.getElementById(`mp-sal-${i}`)?.value||0);
     const reg=parseFloat(document.getElementById(`mp-reg-${i}`)?.value||0);
+    const des=parseFloat(document.getElementById(`mp-des-${i}`)?.value||0);
     const consumido=Math.max(0,sal-reg);
-    d[`mp-sal-${i}`]=sal;d[`mp-reg-${i}`]=reg;
+    d[`mp-sal-${i}`]=sal;d[`mp-reg-${i}`]=reg;d[`mp-des-${i}`]=des;
     d[`mp-con-${i}`]=consumido;d[`mp-cos-${i}`]=consumido*item.precio;
+    d[`mp-des-cos-${i}`]=des*item.precio;
   });
   d.totalVentas=d['ve-ef']+d['ve-tj']+d['ve-ot'];
   d.totalGastos=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
@@ -1358,9 +1365,10 @@ async function guardarVentas(){
   DP[key]=d;
   await SD('DP',DP);
   const mpResumen=MP.map((item,i)=>{
-    const sal=d[`mp-sal-${i}`]||0;const reg=d[`mp-reg-${i}`]||0;const con=d[`mp-con-${i}`]||0;
-    return sal>0?`${item.emoji}${item.nombre}: ${sal}→${reg} (usó ${con})`:null;
-  }).filter(Boolean).join(', ');
+    const sal=d[`mp-sal-${i}`]||0;const reg=d[`mp-reg-${i}`]||0;
+    const con=d[`mp-con-${i}`]||0;const des=d[`mp-des-${i}`]||0;
+    return sal>0?`${item.emoji}${item.nombre}: sal ${sal}→reg ${reg} (usó ${con}${des>0?`, daño ${des}`:''})`:null;
+  }).filter(Boolean).join(' | ');
   const otrosDesc=d['g-otr-desc']?` | Otros: ${d['g-otr-desc']}`:'';
   await logChange('Ventas',`${CP} — ${fmtFecha(currentFecha)}`,
     antes?`$${fmt(antes.totalVentas||0)} ventas`:null,
@@ -2318,26 +2326,36 @@ function renderMPRows(){
   const key=dpKey(CP,currentFecha);
   const saved=DP[key]||{};
   MP.forEach((item,i)=>{
-    const sal=saved[`mp-sal-${i}`]||'';
-    const reg=saved[`mp-reg-${i}`]||'';
-    const consumido=sal!==''&&reg!==''?Math.max(0,parseFloat(sal||0)-parseFloat(reg||0)):null;
-    const cls=consumido===null?'zero':consumido<0?'negative':'';
+    const sal=saved[`mp-sal-${i}`]??'';
+    const reg=saved[`mp-reg-${i}`]??'';
+    const des=saved[`mp-des-${i}`]??'';
+    const hasSal=sal!=='';const hasReg=reg!=='';
+    const consumido=hasSal&&hasReg?Math.max(0,parseFloat(sal)-parseFloat(reg)):null;
+    const despVal=des!==''?parseFloat(des):0;
+    const costoConsumo=consumido!==null?consumido*item.precio:0;
+    const costoDesp=despVal*item.precio;
     const row=document.createElement('div');row.className='mp-row';
     row.innerHTML=`
-      <div style="min-width:0">
+      <div style="min-width:0;padding-top:2px">
         <div style="font-size:.82rem;font-weight:800;color:var(--t)">${item.emoji} ${item.nombre}</div>
-        <div style="font-size:.6rem;color:var(--t3);display:flex;gap:6px;margin-top:2px;flex-wrap:wrap">
-          <span>$${item.precio}/${item.unidad}</span>
-          ${consumido!==null?`<span style="color:var(--n);font-weight:800">Costo: $${fmt(consumido*item.precio)}</span>`:''}
-          <button class="bedit" style="padding:2px 6px;font-size:.65rem;border-radius:6px" onclick="editMP(${i})">✏️</button>
-          <button class="bdang" style="padding:2px 6px;font-size:.65rem;border-radius:6px" onclick="delMP(${i})">🗑️</button>
+        <div style="font-size:.6rem;color:var(--t3);margin-top:3px">$${item.precio}/${item.unidad}</div>
+        ${consumido!==null||despVal>0?`
+        <div style="margin-top:4px;display:flex;flex-direction:column;gap:2px">
+          ${consumido!==null?`<span style="font-size:.62rem;color:var(--n);font-weight:800">🔥 $${fmt(costoConsumo)}</span>`:''}
+          ${despVal>0?`<span style="font-size:.62rem;color:var(--r);font-weight:800">🗑️ $${fmt(costoDesp)}</span>`:''}
+        </div>`:''}
+        <div style="display:flex;gap:4px;margin-top:4px">
+          <button class="bedit" style="padding:2px 7px;font-size:.62rem;border-radius:6px" onclick="editMP(${i})">✏️</button>
+          <button class="bdang" style="padding:2px 7px;font-size:.62rem;border-radius:6px" onclick="delMP(${i})">🗑️</button>
         </div>
       </div>
       <input class="mp-inp-sal" type="number" min="0" id="mp-sal-${i}" placeholder="0"
-        value="${sal}" oninput="calcMPRow(${i})" title="Cantidad que sale">
+        value="${sal}" oninput="calcMPRow(${i})">
       <input class="mp-inp-reg" type="number" min="0" id="mp-reg-${i}" placeholder="0"
-        value="${reg}" oninput="calcMPRow(${i})" title="Cantidad que regresa">
-      <div class="mp-consumido ${cls}" id="mp-con-${i}">
+        value="${reg}" oninput="calcMPRow(${i})">
+      <input class="mp-inp-des" type="number" min="0" id="mp-des-${i}" placeholder="0"
+        value="${des}" oninput="calcMPRow(${i})" title="Productos dañados o desperdiciados">
+      <div class="mp-consumido ${consumido===null?'zero':''}" id="mp-con-${i}">
         ${consumido!==null?consumido:'—'}
       </div>`;
     c.appendChild(row);
@@ -2346,36 +2364,57 @@ function renderMPRows(){
 }
 
 function calcMPRow(i){
-  const sal=parseFloat(document.getElementById(`mp-sal-${i}`)?.value||0);
-  const reg=parseFloat(document.getElementById(`mp-reg-${i}`)?.value||0);
-  const hasSal=document.getElementById(`mp-sal-${i}`)?.value!=='';
-  const hasReg=document.getElementById(`mp-reg-${i}`)?.value!=='';
-  const el=document.getElementById(`mp-con-${i}`);
-  if(!el) return;
-  if(hasSal&&hasReg){
-    const consumido=Math.max(0,sal-reg);
-    el.textContent=consumido;
-    el.className='mp-consumido'+(consumido===0?' zero':'');
-    if(sal>0&&reg>sal){el.textContent=`⚠️${reg-sal} extra`;el.className='mp-consumido negative';}
-  } else {
-    el.textContent='—';el.className='mp-consumido zero';
+  const item=MP[i];if(!item)return;
+  const salEl=document.getElementById(`mp-sal-${i}`);
+  const regEl=document.getElementById(`mp-reg-${i}`);
+  const desEl=document.getElementById(`mp-des-${i}`);
+  const conEl=document.getElementById(`mp-con-${i}`);
+  const sal=parseFloat(salEl?.value||0);
+  const reg=parseFloat(regEl?.value||0);
+  const des=parseFloat(desEl?.value||0);
+  const hasSal=salEl?.value!=='';
+  const hasReg=regEl?.value!=='';
+
+  if(conEl){
+    if(hasSal&&hasReg){
+      const consumido=Math.max(0,sal-reg);
+      conEl.textContent=consumido;
+      conEl.className='mp-consumido'+(consumido===0?' zero':'');
+    } else {
+      conEl.textContent='—';conEl.className='mp-consumido zero';
+    }
+  }
+
+  // Update inline costs in the product label area
+  const costoConsumo=hasSal&&hasReg?Math.max(0,sal-reg)*item.precio:0;
+  const costoDesp=des*item.precio;
+  const row=conEl?.closest('.mp-row');
+  if(row){
+    let costDiv=row.querySelector('.mp-cost-inline');
+    if(!costDiv){costDiv=document.createElement('div');costDiv.className='mp-cost-inline';costDiv.style.cssText='margin-top:4px;display:flex;flex-direction:column;gap:2px';row.querySelector('div').appendChild(costDiv);}
+    costDiv.innerHTML=`
+      ${hasSal&&hasReg?`<span style="font-size:.62rem;color:var(--n);font-weight:800">🔥 $${fmt(costoConsumo)}</span>`:''}
+      ${des>0?`<span style="font-size:.62rem;color:var(--r);font-weight:800">🗑️ $${fmt(costoDesp)}</span>`:''}`;
   }
   calcMPTotal();
 }
 
 function calcMPTotal(){
-  let total=0;let hasAny=false;
+  let totalConsumo=0,totalDesp=0;let hasAny=false;
   MP.forEach((item,i)=>{
     const sal=parseFloat(document.getElementById(`mp-sal-${i}`)?.value||0);
     const reg=parseFloat(document.getElementById(`mp-reg-${i}`)?.value||0);
+    const des=parseFloat(document.getElementById(`mp-des-${i}`)?.value||0);
     const hasSal=document.getElementById(`mp-sal-${i}`)?.value!=='';
     const hasReg=document.getElementById(`mp-reg-${i}`)?.value!=='';
-    if(hasSal&&hasReg){const consumido=Math.max(0,sal-reg);total+=consumido*item.precio;hasAny=true;}
+    if(hasSal&&hasReg){totalConsumo+=Math.max(0,sal-reg)*item.precio;hasAny=true;}
+    if(des>0){totalDesp+=des*item.precio;hasAny=true;}
   });
-  const wrap=document.getElementById('mp-costo-total');
-  const val=document.getElementById('mp-costo-val');
+  const wrap=document.getElementById('mp-totales');
   if(wrap) wrap.style.display=hasAny?'block':'none';
-  if(val) val.textContent='$'+fmt(total);
+  const cv=document.getElementById('mp-costo-val');if(cv)cv.textContent='$'+fmt(totalConsumo);
+  const dv=document.getElementById('mp-desp-val');if(dv)dv.textContent='$'+fmt(totalDesp);
+  const tv=document.getElementById('mp-total-val');if(tv)tv.textContent='$'+fmt(totalConsumo+totalDesp);
 }
 
 function getMPVal(idx){
