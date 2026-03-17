@@ -960,11 +960,7 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <div style="padding:0 16px;margin-bottom:4px;margin-top:14px">
       <div style="font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px">🔐 Sistema</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <button class="cfg-card" onclick="goCfg('usuarios')">
-          <span class="cfg-card-icon" style="background:linear-gradient(135deg,#dc2626,#b91c1c)">🔐</span>
-          <span class="cfg-card-lbl">Usuarios</span>
-          <span class="cfg-card-sub">Acceso y permisos</span>
-        </button>
+
         <button class="cfg-card" onclick="goCfg('ajustes')">
           <span class="cfg-card-icon" style="background:linear-gradient(135deg,#374151,#1f2937)">⚙️</span>
           <span class="cfg-card-lbl">Ajustes</span>
@@ -988,12 +984,44 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <div class="card" id="cfg-pc"></div>
   </div>
   <div id="cfg-empleados" style="display:none">
-    <div class="cchips">
-      <button class="cchip w active" onclick="setCEC('wash',this)">🌲 Washington</button>
-      <button class="cchip c" onclick="setCEC('chi',this)">🌆 Chicago</button>
+
+    <!-- HEADER HERO -->
+    <div style="background:linear-gradient(135deg,var(--cb),var(--cb2));border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.08;transform:rotate(-10deg)">👷</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:white;letter-spacing:1px" id="cet">Washington</div>
+          <div id="emp-count-label" style="font-size:.72rem;color:#fed7aa;font-weight:700"></div>
+        </div>
+        <button onclick="openM('addE')" style="background:var(--n);border:none;border-radius:12px;padding:10px 16px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px">
+          <span style="font-size:1rem">+</span> Empleado
+        </button>
+      </div>
+      <!-- Ciudad tabs -->
+      <div style="display:flex;gap:6px">
+        <button class="emp-city-tab active" id="emp-tab-wash" onclick="setCEC('wash',this)" 
+          style="flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.2);color:white;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s">
+          🌲 Washington
+        </button>
+        <button class="emp-city-tab" id="emp-tab-chi" onclick="setCEC('chi',this)"
+          style="flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s">
+          🌆 Chicago
+        </button>
+      </div>
     </div>
-    <div class="sh"><span id="cet">Empleados Washington</span><button class="shbtn" onclick="openM('addE')">+ Agregar</button></div>
-    <div class="card" id="cfg-el"></div>
+
+    <!-- STATS ROW -->
+    <div id="emp-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px"></div>
+
+    <!-- TOOLBAR: filtros + posiciones -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--t3)">Filtrar por posición</div>
+      <button onclick="openM('addPos')" style="background:none;border:1px solid var(--g3);border-radius:8px;padding:4px 10px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:var(--t3);cursor:pointer">🏷️ Gestionar</button>
+    </div>
+    <div id="emp-pos-filters" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+
+    <!-- EMPLOYEE LIST -->
+    <div id="cfg-el"></div>
   </div>
   <div id="cfg-editar" style="display:none">
     <div class="card">
@@ -1020,19 +1048,6 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
       <button class="bsave" onclick="guardarEdicion()">💾 GUARDAR CAMBIOS</button>
     </div>
   </div>
-  <div id="cfg-usuarios" style="display:none">
-    <div class="sh"><span>🔐 Usuarios del Sistema</span>
-      <div style="display:flex;gap:6px">
-        <button class="bdang" style="font-size:.7rem;padding:4px 10px" onclick="eliminarTodosUsuarios()">🗑️ Borrar todos</button>
-        <button class="shbtn" onclick="openM('addU')">+ Agregar</button>
-      </div>
-    </div>
-    <div class="card" id="cfg-ul"></div>
-    <div class="infobox" style="margin-top:8px">
-      <p>👑 <strong>Admin</strong> — Acceso total a toda la app<br><br>👷 <strong>Encargado</strong> — Solo ve y registra su puesto asignado</p>
-    </div>
-  </div>
-
   <div id="cfg-historial" style="display:none">
     <div class="sh">
       <span>📋 Historial de Cambios</span>
@@ -1125,6 +1140,17 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
       <div id="push-status" style="font-size:.8rem;color:var(--t3);margin-bottom:10px">Estado: verificando...</div>
       <button class="bsave" id="push-btn" onclick="togglePush()">🔔 ACTIVAR NOTIFICACIONES</button>
     </div>
+    <!-- Admin -->
+    <div class="card" style="border-left:4px solid var(--n)">
+      <div class="ctit">👑 Cuenta Admin</div>
+      <p style="font-size:.78rem;color:var(--t3);margin-bottom:12px">Cambia la contraseña del administrador del sistema.</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="password" id="admin-pass-new" placeholder="Nueva contraseña..."
+          style="flex:1;border:2px solid var(--g3);border-radius:10px;padding:10px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;outline:none;background:var(--g2)">
+        <button class="bsave" style="margin:0;padding:10px 16px" onclick="cambiarPassAdmin()">💾 Cambiar</button>
+      </div>
+      <div style="font-size:.7rem;color:var(--t3);margin-top:8px">Usuario: <strong>${ADMIN?.user||'admin'}</strong></div>
+    </div>
     <!-- PIN Rápido -->
     <div class="card">
       <div class="ctit">🔢 PIN Rápido</div>
@@ -1199,11 +1225,25 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   </div>
 </div>
 
+<!-- MANAGE POSITIONS MODAL -->
+<div class="moverlay" id="m-addPos">
+  <div class="modal"><div class="mhandle"></div>
+    <div class="mtitle">🏷️ Posiciones de Trabajo</div>
+    <p style="font-size:.78rem;color:var(--t3);margin-bottom:12px">Agrega o elimina posiciones para organizar a tus empleados.</p>
+    <div id="pos-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px"></div>
+    <div style="display:flex;gap:8px">
+      <input class="minput" id="new-pos-inp" placeholder="Nueva posición..." style="margin:0;flex:1" onkeydown="if(event.key==='Enter')agregarPosicion()">
+      <button class="bsave" style="margin:0;padding:10px 16px" onclick="agregarPosicion()">+ Agregar</button>
+    </div>
+    <div class="macts"><button class="bmcancel" onclick="closeM('addPos')">Cerrar</button></div>
+  </div>
+</div>
+
 <div class="moverlay" id="m-addE">
   <div class="modal"><div class="mhandle"></div><div class="mtitle">👷 Agregar Empleado</div>
     <label class="mlbl">Nombre Completo</label><input class="minput" id="ne-nom" placeholder="Nombre del empleado">
     <label class="mlbl">Posición</label>
-    <select class="msel" id="ne-pos"><option>Taquero</option><option>Pastorero</option><option>Cajero</option><option>Cajera</option><option>Planchero</option><option>Encargado</option><option>Encargada</option><option>Ayudante</option></select>
+    <select class="msel" id="ne-pos"></select>
     <label class="mlbl">Ciudad</label><select class="msel" id="ne-ciu"><option value="wash">🌲 Washington</option><option value="chi">🌆 Chicago</option></select>
     <div class="macts"><button class="bmcancel" onclick="closeM('addE')">Cancelar</button><button class="bsave" onclick="addEmpleado()">✅ AGREGAR</button></div>
   </div>
@@ -1242,6 +1282,8 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   <div class="modal"><div class="mhandle"></div>
     <div class="mtitle" id="mu-title">👷 Nuevo Empleado</div>
     <input type="hidden" id="mu-idx" value="-1">
+    <label class="mlbl">Posición de Trabajo</label>
+    <select class="msel" id="mu-posicion"></select>
     <label class="mlbl">Nombre del Empleado</label>
     <input class="minput" id="mu-user" placeholder="Ej: dagoberto, jose..." autocapitalize="none" autocomplete="off">
     <label class="mlbl">Nombre de usuario <span style="font-size:.7rem;color:var(--t3);font-weight:400">(para iniciar sesión)</span></label>
@@ -1308,7 +1350,10 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
         </label>
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
           <input type="checkbox" id="perm-dashboard" style="width:17px;height:17px;accent-color:var(--n)">
-          <span style="font-size:.82rem;font-weight:800">🏠 Dashboard</span>
+          <div>
+            <div style="font-size:.82rem;font-weight:800">🏠 Pantalla de Inicio</div>
+            <div style="font-size:.65rem;color:var(--t3);margin-top:1px">Ver ventas, totales y estadísticas generales</div>
+          </div>
         </label>
       </div>
       <p style="font-size:.68rem;color:var(--t3);margin-top:10px">💡 Un manager de ciudad ve todos los puestos de esa ciudad en el selector de puestos</p>
@@ -1466,6 +1511,8 @@ let DP=LL('DP',{}),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG
 let HIST=LL('HIST',[]); // Change history log
 let METAS=LL('METAS',{}); // Sales goals per puesto
 let PROV=LL('PROV',[]); // Proveedores
+let POSICIONES=LL('POSICIONES',['Taquero','Pastorero','Cajero','Cajera','Planchero','Encargado','Encargada','Ayudante','Bodeguero']);
+let empPosFilter='todos';
 let BACKUPS=LL('BACKUPS',[]); // Backup log
 let PUSH_SUB=LL('PUSH_SUB',null); // Push subscription
 let DARK_MODE=LL('DARK_MODE',false); // Dark mode
@@ -1620,6 +1667,7 @@ function showApp(){
   // Per-permission nav buttons
   document.querySelectorAll('.nbtn').forEach(btn=>{
     const lbl=btn.querySelector('.nl')?.textContent||'';
+    if(lbl==='Inicio')   btn.style.display=isA||can('dashboard')?'':'none';
     if(lbl==='Ventas')   btn.style.display=can('ventas')?'':'none';
     if(lbl==='Asist.')   btn.style.display=can('asist')?'':'none';
     if(lbl==='Nómina')   btn.style.display=isA||can('nomina')?'':'none';
@@ -1647,9 +1695,21 @@ function showApp(){
   const userPuestos=isA?allP():getUserPuestos();
   CP=userPuestos[0]||'';
   buildPSel();
-  const psel=document.getElementById('puestoSel');
-  if(psel) psel.style.display='none';
-  renderDash();
+
+  // Show initial view — dashboard or first available
+  if(isA||can('dashboard')){
+    renderDash();
+    showV('dashboard', document.querySelector('.nbtn[onclick*="dashboard"]'));
+  } else {
+    // Redirect to first accessible section
+    const firstView=
+      can('ventas')?'ventas':
+      can('asist')?'asist':
+      can('nomina')?'nomina':
+      can('config')?'config':'ventas';
+    const firstBtn=document.querySelector(`.nbtn[onclick*="${firstView}"]`);
+    showV(firstView, firstBtn);
+  }
   
   if(can('asist')){currentAsistFecha=todayStr();updateAsistSemanaUI();renderAsist();}
   if(isA||can('nomina')){updateNomSemanaLabel();renderNomina();}
@@ -1764,7 +1824,7 @@ function setTab(id,btn){
 }
 const CFG_LABELS={
   puestos:'📍 Puestos',empleados:'👷 Empleados',editar:'✏️ Editar Ventas',
-  usuarios:'🔐 Usuarios',mp:'🧅 Materia Prima',metas:'🎯 Metas',
+mp:'🧅 Materia Prima',metas:'🎯 Metas',
   reportes:'📊 Reportes',ajustes:'⚙️ Ajustes',historial:'📋 Historial'
 };
 function goCfg(id){
@@ -1772,13 +1832,12 @@ function goCfg(id){
   document.getElementById('cfg-section').style.display='block';
   const lbl=document.getElementById('cfg-back-lbl');
   if(lbl) lbl.textContent=CFG_LABELS[id]||'Configuración';
-  ['puestos','empleados','editar','usuarios','mp','metas','reportes','ajustes','historial'].forEach(t=>{
+  ['puestos','empleados','editar','mp','metas','reportes','ajustes','historial'].forEach(t=>{
     const el=document.getElementById('cfg-'+t);if(el)el.style.display=t===id?'block':'none';
   });
   if(id==='puestos')renderCfgP();
   if(id==='empleados')renderCfgE();
   if(id==='editar')populateEditSel();
-  if(id==='usuarios')renderCfgU();
   if(id==='mp')renderCfgMP();
   if(id==='metas')renderCfgMetas();
   if(id==='reportes'){renderReportes();mountReportesInConfig();}
@@ -1794,10 +1853,19 @@ function setNC(city,btn){NCity=city;document.querySelectorAll('#view-nomina .cch
 function renderCfg(){goCfgHome();populateEditSel();}
 
 function setCEC(city,btn){
-  CECity=city;
-  document.querySelectorAll('#cfg-empleados .cchip').forEach(c=>c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('cet').textContent=city==='wash'?'Empleados Washington':'Empleados Chicago';
+  CECity=city;empPosFilter='todos';
+  // Update city tab styles
+  ['wash','chi'].forEach(c=>{
+    const t=document.getElementById('emp-tab-'+c);
+    if(!t)return;
+    if(c===city){
+      t.style.background='rgba(255,255,255,.2)';t.style.color='white';
+    } else {
+      t.style.background='rgba(255,255,255,.08)';t.style.color='rgba(255,255,255,.6)';
+    }
+  });
+  const cet=document.getElementById('cet');
+  if(cet) cet.textContent=city==='wash'?'Washington':'Chicago';
   renderCfgE();
 }
 
@@ -2865,108 +2933,268 @@ function renderCfgP(){
     });
   });
 }
+// ── POSICIONES DE TRABAJO ──
+function getPosColor(pos){
+  const colors={
+    'Taquero':'#ea580c','Pastorero':'#16a34a','Cajero':'#2563eb','Cajera':'#7c3aed',
+    'Planchero':'#b45309','Encargado':'#0f766e','Encargada':'#be185d','Ayudante':'#6b7280','Bodeguero':'#92400e'
+  };
+  return colors[pos]||'#374151';
+}
+
+function renderPosFilters(){
+  const c=document.getElementById('emp-pos-filters');if(!c)return;
+  c.innerHTML='';
+  const emps=CECity==='wash'?EW:EC;
+  const posEnUso=[...new Set(emps.map(e=>e.p).filter(Boolean))];
+
+  // "Todos" chip
+  const all=document.createElement('button');
+  all.style.cssText=`padding:5px 14px;border-radius:20px;border:1.5px solid ${empPosFilter==='todos'?'var(--n)':'var(--g3)'};background:${empPosFilter==='todos'?'var(--n)':'white'};color:${empPosFilter==='todos'?'white':'var(--t3)'};font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer`;
+  all.textContent=`Todos (${emps.length})`;
+  all.onclick=()=>{empPosFilter='todos';renderCfgE();};
+  c.appendChild(all);
+
+  // "Con acceso" chip
+  const conAcc=document.createElement('button');
+  const accCount=emps.filter(e=>e.pass&&e.rol).length;
+  const accActive=empPosFilter==='__acceso__';
+  conAcc.style.cssText=`padding:5px 14px;border-radius:20px;border:1.5px solid ${accActive?'var(--az)':'var(--g3)'};background:${accActive?'var(--az)':'white'};color:${accActive?'white':'var(--t3)'};font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer`;
+  conAcc.textContent=`🔓 Con acceso (${accCount})`;
+  conAcc.onclick=()=>{empPosFilter='__acceso__';renderCfgE();};
+  c.appendChild(conAcc);
+
+  // Per-position chips
+  posEnUso.sort().forEach(pos=>{
+    const count=emps.filter(e=>e.p===pos).length;
+    const active=empPosFilter===pos;
+    const col=getPosColor(pos);
+    const btn=document.createElement('button');
+    btn.style.cssText=`padding:5px 14px;border-radius:20px;border:1.5px solid ${active?col:'var(--g3)'};background:${active?col:'white'};color:${active?'white':'var(--t2)'};font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s`;
+    btn.textContent=`${pos} (${count})`;
+    btn.onclick=()=>{empPosFilter=pos;renderCfgE();};
+    c.appendChild(btn);
+  });
+}
+
+function renderPosList(){
+  const c=document.getElementById('pos-list');if(!c)return;c.innerHTML='';
+  // Get all positions from EW+EC
+  const enUso=[...new Set([...EW,...EC].map(e=>e.p).filter(Boolean))];
+  POSICIONES.forEach((pos,i)=>{
+    const inUse=enUso.includes(pos);
+    const col=getPosColor(pos);
+    const tag=document.createElement('div');
+    tag.style.cssText=`display:flex;align-items:center;gap:6px;background:${col}18;border:1.5px solid ${col}55;border-radius:20px;padding:5px 10px 5px 12px`;
+    tag.innerHTML=`<span style="font-size:.8rem;font-weight:800;color:${col}">${pos}</span>
+      ${inUse?`<span style="font-size:.6rem;color:${col};opacity:.7">${enUso.filter(p=>p===pos).length} emp.</span>`:''}
+      ${!inUse?`<button onclick="eliminarPosicion(${i})" style="background:none;border:none;cursor:pointer;font-size:.75rem;color:${col};padding:0;line-height:1" title="Eliminar">✕</button>`:'<span style="font-size:.65rem;color:var(--t3)">en uso</span>'}`;
+    c.appendChild(tag);
+  });
+}
+
+function agregarPosicion(){
+  const inp=document.getElementById('new-pos-inp');
+  const val=inp.value.trim();
+  if(!val){showToast('⚠️ Escribe el nombre de la posición');return;}
+  if(POSICIONES.find(p=>p.toLowerCase()===val.toLowerCase())){showToast('⚠️ Esa posición ya existe');return;}
+  POSICIONES.push(val);
+  SL('POSICIONES',POSICIONES);
+  inp.value='';
+  renderPosList();
+  populatePosSelect();
+  showToast(`✅ Posición "${val}" agregada`);
+}
+
+function eliminarPosicion(idx){
+  POSICIONES.splice(idx,1);
+  SL('POSICIONES',POSICIONES);
+  renderPosList();
+  populatePosSelect();
+  showToast('🗑️ Posición eliminada');
+}
+
+function populatePosSelect(){
+  const sel=document.getElementById('ne-pos');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML=POSICIONES.map(p=>`<option value="${p}">${p}</option>`).join('');
+  if(cur&&POSICIONES.includes(cur)) sel.value=cur;
+}
+
 function renderCfgE(){
   const emps=CECity==='wash'?EW:EC;
   const c=document.getElementById('cfg-el');if(!c)return;c.innerHTML='';
-  if(!emps.length){c.innerHTML='<p style="color:var(--t3);font-size:.85rem;padding:8px">No hay empleados.</p>';return;}
 
-  // ── Asignación por grupo ──
-  const grupoWrap=document.createElement('div');
-  grupoWrap.style.cssText='background:var(--ns);border:1.5px solid var(--nm);border-radius:var(--Rs);padding:12px 14px;margin-bottom:12px';
-  grupoWrap.innerHTML=`
-    <div style="font-size:.75rem;font-weight:900;color:var(--n);margin-bottom:10px">👥 Asignar sueldo por grupo</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="emp-sel-btn" onclick="seleccionarTodos()" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--n);background:white;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--n);cursor:pointer">✅ Todos</button>
-      <button class="emp-sel-btn" onclick="deseleccionarTodos()" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--g3);background:white;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t3);cursor:pointer">⬜ Ninguno</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-      <div style="flex:1;min-width:120px">
-        <div style="font-size:.65rem;font-weight:800;color:var(--t3);margin-bottom:3px;text-transform:uppercase">Monto</div>
-        <input type="number" min="0" id="grupo-sueldo-inp" placeholder="Ej: 150"
-          style="width:100%;border:1.5px solid var(--nm);border-radius:8px;padding:9px 12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;background:white;outline:none;color:var(--t)"
-          onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--nm)'">
+  // Stats row
+  const statsRow=document.getElementById('emp-stats-row');
+  if(statsRow){
+    const conAcceso=emps.filter(e=>e.pass&&e.rol).length;
+    const conSueldo=emps.filter(e=>e.s>0).length;
+    const posiciones=[...new Set(emps.map(e=>e.p).filter(Boolean))].length;
+    statsRow.innerHTML=`
+      <div style="background:var(--g2);border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem;font-weight:900;color:var(--t)">${emps.length}</div>
+        <div style="font-size:.62rem;color:var(--t3);font-weight:700;margin-top:2px">Total</div>
       </div>
-      <div>
-        <div style="font-size:.65rem;font-weight:800;color:var(--t3);margin-bottom:3px;text-transform:uppercase">Tipo</div>
-        <div style="display:flex;border:1.5px solid var(--g3);border-radius:8px;overflow:hidden">
-          <button id="grupo-tipo-dia" onclick="setGrupoTipo('dia')"
-            style="padding:9px 14px;border:none;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;background:var(--n);color:white;transition:all .15s">
-            📅 Día
-          </button>
-          <button id="grupo-tipo-semana" onclick="setGrupoTipo('semana')"
-            style="padding:9px 14px;border:none;border-left:1.5px solid var(--g3);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;cursor:pointer;background:white;color:var(--t3);transition:all .15s">
-            📆 Semana
-          </button>
-        </div>
+      <div style="background:var(--vs);border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem;font-weight:900;color:var(--v)">${conAcceso}</div>
+        <div style="font-size:.62rem;color:var(--v);font-weight:700;margin-top:2px">Con acceso</div>
       </div>
-      <button onclick="aplicarSueldoGrupo()"
-        style="background:var(--n);border:none;border-radius:8px;padding:10px 16px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap">
-        ⚡ Aplicar
-      </button>
-    </div>
-    <div id="grupo-selcount" style="font-size:.7rem;color:var(--n);font-weight:700;margin-top:8px">0 empleados seleccionados</div>`;
-  c.appendChild(grupoWrap);
-
-  // ── Lista de empleados ──
-  emps.forEach((emp,i)=>{
-    const ini=emp.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const sueldo=emp.s||0;
-    const tieneAcceso=emp.pass&&emp.rol;
-    const username=emp.user||emp.n.split(' ')[0].toLowerCase();
-    const row=document.createElement('div');row.className='eitem';row.style.cssText='align-items:center;cursor:pointer;flex-wrap:wrap;gap:8px';
-    row.dataset.idx=i;
-    row.innerHTML=`
-      <div class="emp-check" data-idx="${i}"
-        style="width:22px;height:22px;border-radius:6px;border:2px solid var(--g3);background:white;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:.8rem"></div>
-      <div class="eav" style="margin-left:4px">${ini}</div>
-      <div class="einfo" style="flex:1;min-width:100px">
-        <div class="ename">${emp.n}</div>
-        <div class="epos">${emp.p||'—'}</div>
-        ${tieneAcceso?`<div style="font-size:.62rem;color:var(--az);font-weight:700;margin-top:2px">👤 @${username}</div>`:''}
-      </div>
-      <!-- Acceso toggle + edit -->
-      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0" onclick="event.stopPropagation()">
-        <div style="text-align:center">
-          <div style="font-size:.58rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:3px">Acceso portal</div>
-          <div style="display:flex;gap:4px;align-items:center">
-            <button onclick="toggleAccesoEmpleado(${i},'${CECity}')"
-              style="padding:6px 10px;border-radius:20px;border:none;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;background:${tieneAcceso?'var(--vs)':'var(--g2)'};color:${tieneAcceso?'var(--v)':'var(--t3)'}">
-              ${tieneAcceso?'🔓 Activo':'🔒 Inactivo'}
-            </button>
-            <button onclick="editAccesoEmpleado(${i},'${CECity}')" 
-              style="padding:5px 8px;border-radius:8px;border:1.5px solid var(--g3);background:white;font-size:.7rem;cursor:pointer;flex-shrink:0" 
-              title="${tieneAcceso?'Editar acceso, permisos y contraseña':'Configurar acceso y permisos'}">✏️</button>
-          </div>
-        </div>
-      </div>
-      <!-- Sueldo -->
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0" onclick="event.stopPropagation()">
-        <div style="text-align:right">
-          <div style="font-size:.6rem;font-weight:800;color:var(--t3);text-transform:uppercase;margin-bottom:2px">Tipo / Monto</div>
-          <div style="display:flex;align-items:center;gap:4px">
-            <div style="display:flex;border:1.5px solid var(--g3);border-radius:6px;overflow:hidden">
-              <button data-emp="${i}" data-city="${CECity}" data-tipo="dia"
-                class="cfg-tipo-btn"
-                onclick="setCfgTipo(${i},'dia',this)"
-                style="padding:4px 7px;border:none;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;cursor:pointer;background:${(emp.t||'dia')==='dia'?'var(--n)':'white'};color:${(emp.t||'dia')==='dia'?'white':'var(--t3)'}">Día</button>
-              <button data-emp="${i}" data-city="${CECity}" data-tipo="semana"
-                class="cfg-tipo-btn"
-                onclick="setCfgTipo(${i},'semana',this)"
-                style="padding:4px 7px;border:none;border-left:1.5px solid var(--g3);font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;cursor:pointer;background:${emp.t==='semana'?'var(--n)':'white'};color:${emp.t==='semana'?'white':'var(--t3)'}">Sem.</button>
-            </div>
-            <input type="number" min="0" data-city="${CECity}" data-idx="${i}" data-tipo="${emp.t||'dia'}"
-              value="${sueldo||''}" placeholder="$0"
-              onclick="event.stopPropagation()"
-              style="width:70px;text-align:right;border:1.5px solid var(--g3);border-radius:8px;padding:6px 8px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;background:var(--g2);outline:none;color:var(--t)"
-              class="emp-sueldo-inp"
-              onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
-          </div>
-        </div>
-        <button class="bdang" onclick="event.stopPropagation();confirmDel('emp',null,${i})">🗑️</button>
+      <div style="background:var(--ns);border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem;font-weight:900;color:var(--n)">${posiciones}</div>
+        <div style="font-size:.62rem;color:var(--n);font-weight:700;margin-top:2px">Posiciones</div>
       </div>`;
-    row.onclick=()=>toggleEmpSel(i, row);
-    c.appendChild(row);
+  }
+
+  // Count label
+  const countLbl=document.getElementById('emp-count-label');
+  if(countLbl) countLbl.textContent=`${emps.length} empleados · ${emps.filter(e=>e.s>0).length} con sueldo configurado`;
+
+  // Position filters
+  renderPosFilters();
+
+  // Apply filter
+  const filtered=empPosFilter==='todos'?emps:
+    empPosFilter==='__acceso__'?emps.filter(e=>e.pass&&e.rol):
+    emps.filter(e=>e.p===empPosFilter);
+
+  if(!filtered.length){
+    c.innerHTML=`<div style="padding:32px;text-align:center;color:var(--t3)">
+      <div style="font-size:2rem;margin-bottom:8px">👷</div>
+      <div style="font-size:.85rem;font-weight:700">Sin empleados${empPosFilter!=='todos'?' con posición '+empPosFilter:''}</div>
+    </div>`;
+    return;
+  }
+
+  // Group by position
+  const grupos={};
+  filtered.forEach(emp=>{
+    const pos=emp.p||'Sin posición';
+    if(!grupos[pos]) grupos[pos]=[];
+    grupos[pos].push({emp,origIdx:emps.indexOf(emp)});
   });
+  const showGroups=empPosFilter==='todos'&&Object.keys(grupos).length>1;
+  // Bulk salary panel — collapsible
+  const bulkToggle=document.createElement('div');
+  bulkToggle.style.cssText='margin-bottom:12px';
+  bulkToggle.innerHTML=`
+    <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector(\'.arr\').textContent=this.nextElementSibling.style.display==='none\'?\'▸\':\'▾\'"
+      style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--ns);border:1.5px solid var(--nm);border-radius:12px;padding:10px 14px;cursor:pointer;font-family:'Nunito',sans-serif;border:none">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:1rem">💰</span>
+        <span style="font-size:.82rem;font-weight:900;color:var(--n)">Asignar sueldo por grupo</span>
+      </div>
+      <span class="arr" style="color:var(--n);font-weight:700;font-size:.8rem">▸</span>
+    </button>
+    <div style="display:none;background:var(--ns);border-radius:0 0 12px 12px;padding:12px 14px;border:1.5px solid var(--nm);border-top:none;margin-top:-4px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button onclick="seleccionarTodos()" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--n);background:white;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--n);cursor:pointer">✅ Todos</button>
+        <button onclick="deseleccionarTodos()" style="padding:5px 12px;border-radius:20px;border:1.5px solid var(--g3);background:white;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t3);cursor:pointer">⬜ Ninguno</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:100px">
+          <div style="font-size:.62rem;font-weight:800;color:var(--t3);margin-bottom:3px;text-transform:uppercase">Monto</div>
+          <input type="number" min="0" id="grupo-sueldo-inp" placeholder="Ej: 150"
+            style="width:100%;border:1.5px solid var(--nm);border-radius:8px;padding:9px 12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;background:white;outline:none;color:var(--t)"
+            onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--nm)'">
+        </div>
+        <div>
+          <div style="font-size:.62rem;font-weight:800;color:var(--t3);margin-bottom:3px;text-transform:uppercase">Tipo</div>
+          <div style="display:flex;border:1.5px solid var(--g3);border-radius:8px;overflow:hidden">
+            <button id="grupo-tipo-dia" onclick="setGrupoTipo('dia')" style="padding:8px 12px;border:none;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer;background:var(--n);color:white">📅 Día</button>
+            <button id="grupo-tipo-semana" onclick="setGrupoTipo('semana')" style="padding:8px 12px;border:none;border-left:1.5px solid var(--g3);font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer;background:white;color:var(--t3)">📆 Sem.</button>
+          </div>
+        </div>
+        <button onclick="aplicarSueldoGrupo()" style="background:var(--n);border:none;border-radius:8px;padding:9px 14px;color:white;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer">⚡ Aplicar</button>
+      </div>
+      <div id="grupo-selcount" style="font-size:.7rem;color:var(--n);font-weight:700;margin-top:8px">0 empleados seleccionados</div>
+    </div>`;
+  c.appendChild(bulkToggle);
+
+  // Employee card renderer
+  const renderEmpCard=(emp,i)=>{
+    const ini=emp.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const tieneAcceso=!!(emp.pass&&emp.rol);
+    const username=emp.user||emp.n.split(' ')[0].toLowerCase();
+    const posCol=getPosColor(emp.p||'');
+    const sueldo=emp.s||0;
+    const tipo=emp.t||'dia';
+    const lblTipo=tipo==='dia'?'/día':'/sem';
+
+    const card=document.createElement('div');
+    card.style.cssText='background:white;border:1px solid var(--g3);border-radius:14px;padding:12px 14px;margin-bottom:8px;transition:all .15s;cursor:pointer';
+    card.dataset.idx=i;
+    card.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px">
+        <!-- Checkbox -->
+        <div class="emp-check" data-idx="${i}"
+          style="width:20px;height:20px;border-radius:6px;border:2px solid var(--g3);background:white;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:all .15s"></div>
+        <!-- Avatar -->
+        <div style="width:40px;height:40px;border-radius:12px;background:${posCol}22;color:${posCol};font-weight:900;font-size:.9rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Nunito',sans-serif">${ini}</div>
+        <!-- Info -->
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.88rem;font-weight:900;color:var(--t);line-height:1.2">${emp.n}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:3px;flex-wrap:wrap">
+            <span style="font-size:.62rem;font-weight:800;color:${posCol};background:${posCol}18;padding:1px 8px;border-radius:20px">${emp.p||'—'}</span>
+            ${sueldo>0?`<span style="font-size:.62rem;color:var(--t3);font-weight:700">$${sueldo}${lblTipo}</span>`:'<span style="font-size:.62rem;color:var(--r);font-weight:700">Sin sueldo</span>'}
+          </div>
+          ${tieneAcceso?`<div style="font-size:.6rem;color:var(--az);font-weight:700;margin-top:2px">🔓 @${username}</div>`:
+            `<div style="font-size:.6rem;color:var(--t3);font-weight:600;margin-top:2px">🔒 Sin acceso</div>`}
+        </div>
+        <!-- Actions -->
+        <div style="display:flex;gap:6px;flex-shrink:0" onclick="event.stopPropagation()">
+          <button onclick="editAccesoEmpleado(${i},'${CECity}')"
+            style="width:34px;height:34px;border-radius:10px;border:1px solid var(--g3);background:white;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center"
+            title="Editar">✏️</button>
+          <button onclick="confirmDel('emp',null,${i})"
+            style="width:34px;height:34px;border-radius:10px;border:1px solid var(--rs);background:var(--rs);font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center"
+            title="Eliminar">🗑️</button>
+        </div>
+      </div>
+      <!-- Sueldo inline inputs — hidden by default -->
+      <div class="emp-sueldo-row" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--g3)">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;border:1.5px solid var(--g3);border-radius:8px;overflow:hidden">
+            <button data-emp="${i}" data-city="${CECity}" data-tipo="dia" class="cfg-tipo-btn"
+              onclick="setCfgTipo(${i},'dia',this)"
+              style="padding:5px 10px;border:none;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;background:${(emp.t||'dia')==='dia'?'var(--n)':'white'};color:${(emp.t||'dia')==='dia'?'white':'var(--t3)'}">📅 Día</button>
+            <button data-emp="${i}" data-city="${CECity}" data-tipo="semana" class="cfg-tipo-btn"
+              onclick="setCfgTipo(${i},'semana',this)"
+              style="padding:5px 10px;border:none;border-left:1.5px solid var(--g3);font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;background:${emp.t==='semana'?'var(--n)':'white'};color:${emp.t==='semana'?'white':'var(--t3)'}">📆 Sem.</button>
+          </div>
+          <input type="number" min="0" data-city="${CECity}" data-idx="${i}" data-tipo="${emp.t||'dia'}"
+            value="${sueldo||''}" placeholder="$0"
+            style="flex:1;min-width:80px;border:1.5px solid var(--g3);border-radius:8px;padding:6px 10px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;background:var(--g2);outline:none;color:var(--t)"
+            class="emp-sueldo-inp"
+            onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
+          <span style="font-size:.65rem;color:var(--t3);font-weight:700">${tipo==='dia'?'$/día':'$/semana'}</span>
+        </div>
+      </div>`;
+
+    // Toggle sueldo row on card click
+    card.onclick=()=>{
+      const sRow=card.querySelector('.emp-sueldo-row');
+      const isOpen=sRow.style.display!=='none';
+      sRow.style.display=isOpen?'none':'block';
+      card.style.background=isOpen?'white':'var(--g2)';
+      toggleEmpSel(i,card);
+    };
+    return card;
+  };
+
+  // Render with or without groups
+  if(showGroups){
+    Object.keys(grupos).sort().forEach(pos=>{
+      const col=getPosColor(pos);
+      const hdr=document.createElement('div');
+      hdr.style.cssText=`display:flex;align-items:center;gap:8px;padding:8px 2px 4px;font-size:.72rem;font-weight:900;color:${col}`;
+      hdr.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>${pos}<span style="font-weight:600;opacity:.6;margin-left:2px">(${grupos[pos].length})</span>`;
+      c.appendChild(hdr);
+      grupos[pos].forEach(({emp,origIdx})=>c.appendChild(renderEmpCard(emp,origIdx)));
+    });
+  } else {
+    filtered.forEach(emp=>c.appendChild(renderEmpCard(emp,emps.indexOf(emp))));
+  }
 
   // Save button
   const saveBtn=document.createElement('button');
@@ -3080,10 +3308,17 @@ function editAccesoEmpleado(empIdx, city){
   idxEl.dataset.ciudad=city;
   idxEl.dataset.empIdx=empIdx;
 
-  // Username
+  // Posición de trabajo
+  const posEl=document.getElementById('mu-posicion');
+  if(posEl){
+    posEl.innerHTML=POSICIONES.map(p=>`<option value="${p}">${p}</option>`).join('');
+    posEl.value=emp.p||POSICIONES[0]||'';
+  }
+
+  // Username (nombre del empleado — solo lectura)
   const userEl=document.getElementById('mu-user');
   userEl.value=emp.n;
-  userEl.disabled=true; // name is fixed
+  userEl.disabled=true;
   const usernameEl=document.getElementById('mu-username');
   if(usernameEl) usernameEl.value=tieneAcceso?username:emp.n.split(' ')[0].toLowerCase();
 
@@ -3253,7 +3488,7 @@ async function quitarAccesoEmp(ciudad, nombre){
   const emp=emps.find(e=>e.n===nombre);if(!emp)return;
   delete emp.pass;delete emp.rol;delete emp.perms;
   await SD('EW',EW);await SD('EC',EC);
-  refreshUS();renderCfgE();renderCfgU();
+  refreshUS();renderCfgE();
   showToast(`🔒 Acceso quitado a ${nombre}`);
 }
 
@@ -3275,7 +3510,8 @@ function openM(id,data){
     }
   }
   if(id==='addP'&&data)document.getElementById('np-ciu').value=data;
-  if(id==='addE')document.getElementById('ne-ciu').value=CECity;
+  if(id==='addE'){populatePosSelect();document.getElementById('ne-ciu').value=CECity;}
+  if(id==='addPos'){renderPosList();}
   if(id==='addU'){
     // Reset for new user
     document.getElementById('mu-title').textContent='👷 Nuevo Usuario';
@@ -3283,6 +3519,8 @@ function openM(id,data){
     document.getElementById('mu-user').value='';document.getElementById('mu-user').disabled=false;
     document.getElementById('mu-username').value='';
     document.getElementById('mu-pass').value='';
+    const posEl=document.getElementById('mu-posicion');
+    if(posEl) posEl.innerHTML=POSICIONES.map(p=>`<option value="${p}">${p}</option>`).join('');
     document.getElementById('mu-rol').value='encargado';
     document.getElementById('mu-pass-hint').style.display='none';
     setPermsToForm({}); // all unchecked by default
@@ -3415,7 +3653,7 @@ async function saveUsuario(){
   if(rol==='admin'||idx===-1){
     ADMIN={user:ADMIN.user,pass:pass||ADMIN.pass,rol:'admin',puesto:''};
     SL('ADMIN',ADMIN);await gsS('ADMIN','ADMIN',ADMIN).catch(()=>{});
-    refreshUS();renderCfgE();renderCfgU();closeM('addU');
+    refreshUS();renderCfgE();closeM('addU');
     showToast('✅ Admin actualizado');return;
   }
 
@@ -3426,11 +3664,14 @@ async function saveUsuario(){
   let emp=empIdxData!==undefined?emps[parseInt(empIdxData)]:emps.find(e=>e.n.toLowerCase()===user.toLowerCase());
 
   if(emp){
-    emp.user=username||emp.user; // save username
+    emp.user=username||emp.user;
     if(pass) emp.pass=pass;
     emp.rol='encargado';
     emp.perms=perms;
-    if(puesto) emp.p=puesto;
+    // Save position from mu-posicion field
+    const posEl=document.getElementById('mu-posicion');
+    if(posEl&&posEl.value) emp.p=posEl.value;
+    else if(puesto) emp.p=puesto;
     emp.ciudad=ciudad||'wash';
     if(CU&&(CU.user.toLowerCase()===user.toLowerCase()||CU.n===emp.n)){
       Object.assign(CU,emp,{user:emp.user||emp.n});SL('session',CU);
@@ -3447,7 +3688,7 @@ async function saveUsuario(){
   await SD('EW',EW);await SD('EC',EC);
   refreshUS();
   await logChange('Usuarios',`Editado: ${user}`,null,`Permisos actualizados`);
-  renderCfgE();renderCfgU();closeM('addU');
+  renderCfgE();closeM('addU');
   showToast(`✅ "${user}" actualizado`);
 }
 async function addPuesto(){
@@ -3475,7 +3716,7 @@ async function eliminarTodosUsuarios(){
   EW.forEach(e=>{delete e.pass;delete e.rol;delete e.perms;});
   EC.forEach(e=>{delete e.pass;delete e.rol;delete e.perms;});
   await SD('EW',EW);await SD('EC',EC);
-  refreshUS();renderCfgE();renderCfgU();
+  refreshUS();renderCfgE();
   showToast('🗑️ Accesos eliminados');
 }
 
@@ -3508,7 +3749,7 @@ function confirmDel(type,sub,idx){
     title='⚠️ Eliminar Usuario';msg=`¿Eliminar a "${nom}"? Ya no podrá entrar a la app.`;
     action=async()=>{
       closeM('confirm');
-      US.splice(idx,1);SL('US',US);renderCfgU();
+      US.splice(idx,1);SL('US',US);renderCfgE();
       showToast(`🗑️ "${nom}" eliminado`);
       const ok=await gsS('US','US',JSON.stringify(US));
       await logChange('Usuarios',`Usuario eliminado: ${nom}`,`rol: ${rolU}`,null);
@@ -3884,6 +4125,17 @@ async function iniciarBorradoTotal(){
 function faceIDSupported(){
   return window.PublicKeyCredential !== undefined &&
     typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+}
+
+async function cambiarPassAdmin(){
+  const inp=document.getElementById('admin-pass-new');
+  const pass=inp?.value?.trim();
+  if(!pass||pass.length<4){showToast('⚠️ Mínimo 4 caracteres');return;}
+  ADMIN.pass=pass;
+  SL('ADMIN',ADMIN);
+  await gsS('ADMIN','ADMIN',ADMIN).catch(()=>{});
+  inp.value='';
+  showToast('✅ Contraseña de admin actualizada');
 }
 
 async function initFaceIDStatus(){
