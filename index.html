@@ -738,6 +738,8 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <button class="cchip w active" id="asist-btn-wash" onclick="setAsistCity('wash',this)">🌲 Washington</button>
     <button class="cchip c" id="asist-btn-chi" onclick="setAsistCity('chi',this)">🌆 Chicago</button>
   </div>
+  <!-- Filtros por posición -->
+  <div id="asist-pos-filters" style="display:flex;flex-wrap:wrap;gap:6px;padding:0 0 4px"></div>
 
   <div class="card">
     <!-- Leyenda -->
@@ -784,6 +786,8 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <button class="cchip w active" onclick="setNC('wash',this)">🌲 Washington</button>
     <button class="cchip c" onclick="setNC('chi',this)">🌆 Chicago</button>
   </div>
+  <!-- Filtros por posición -->
+  <div id="nom-pos-filters" style="display:flex;flex-wrap:wrap;gap:6px;padding:0 0 4px"></div>
   <div id="nomcontent"></div>
   <button class="bsave" onclick="guardarNomina()">💾 GUARDAR NÓMINA</button>
 </div>
@@ -1475,6 +1479,8 @@ const DMP=[
 let CU=null,CP='',NCity='wash',CECity='wash',AS={};
 let asistCity='wash';
 let currentAsistFecha=todayStr();
+let asistPosFilter='todos';
+let nomPosFilter='todos';
 let isSaving=false;
 
 // STORAGE
@@ -1849,7 +1855,7 @@ function goCfgHome(){
   document.getElementById('cfg-section').style.display='none';
 }
 function setCT(id,btn){goCfg(id);}
-function setNC(city,btn){NCity=city;document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
+function setNC(city,btn){NCity=city;nomPosFilter='todos';document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
 function renderCfg(){goCfgHome();populateEditSel();}
 
 function setCEC(city,btn){
@@ -2034,18 +2040,31 @@ async function guardarVentas(){
   showToast('✅ Guardado — '+CP+' · '+fmtFecha(currentFecha));
 }
 
-// ASISTENCIA
+// ── POSITION FILTER CHIPS (reusable) ──
+function renderViewPosFilters(containerId, emps, activeFilter, onSelect){
+  const c=document.getElementById(containerId);if(!c)return;
+  c.innerHTML='';
+  const posiciones=[...new Set(emps.map(e=>e.p).filter(Boolean))].sort();
+  if(posiciones.length<=1){c.style.display='none';return;}
+  c.style.display='flex';c.style.flexWrap='wrap';c.style.gap='6px';
+  const mkChip=(label,val,col)=>{
+    const active=activeFilter===val;
+    const btn=document.createElement('button');
+    btn.style.cssText=`padding:4px 12px;border-radius:20px;border:1.5px solid ${active?(col||'var(--n)'):'var(--g3)'};background:${active?(col||'var(--n)'):'white'};color:${active?'white':'var(--t2)'};font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;cursor:pointer;transition:all .15s`;
+    btn.textContent=label;btn.onclick=()=>onSelect(val);
+    c.appendChild(btn);
+  };
+  mkChip(`Todos (${emps.length})`,'todos',null);
+  posiciones.forEach(pos=>mkChip(`${pos} (${emps.filter(e=>e.p===pos).length})`,pos,getPosColor(pos)));
+}
 
-
-
-
-
+// ── ASISTENCIA ──
 
 
 
 // ── ASISTENCIA ──
 function setAsistCity(city, btn){
-  asistCity=city;
+  asistCity=city;asistPosFilter='todos';
   document.querySelectorAll('#view-asist .cchip').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
   const atit=document.getElementById('atit');
@@ -2056,28 +2075,58 @@ function setAsistCity(city, btn){
 
 
 function renderAsist(){
-  const emps=asistCity==='wash'?EW:EC;
+  const allEmps=asistCity==='wash'?EW:EC;
   const key=`asist-city__${asistCity}__${currentAsistFecha}`;
   const saved=DA[key]||{};AS=JSON.parse(JSON.stringify(saved));
   const dks=['mar','mie','jue','vie','sab','dom'];
   const c=document.getElementById('arows');if(!c)return;c.innerHTML='';
-  emps.forEach((emp,i)=>{
+
+  // Position filter chips
+  renderViewPosFilters('asist-pos-filters',allEmps,asistPosFilter,(val)=>{
+    asistPosFilter=val;renderAsist();
+  });
+
+  const filtered=asistPosFilter==='todos'?allEmps:allEmps.filter(e=>e.p===asistPosFilter);
+
+  // Group by position if showing all
+  const grupos={};
+  filtered.forEach(emp=>{
+    const pos=emp.p||'—';if(!grupos[pos])grupos[pos]=[];
+    grupos[pos].push({emp,i:allEmps.indexOf(emp)});
+  });
+  const showGroups=asistPosFilter==='todos'&&Object.keys(grupos).length>1;
+
+  const renderRow=(emp,i)=>{
     const row=document.createElement('div');row.className='agrid';
+    const posCol=getPosColor(emp.p||'');
     const nd=document.createElement('div');nd.className='aname';
-    nd.innerHTML=`<div style="font-size:.82rem;font-weight:800">${emp.n}</div><div style="font-size:.6rem;color:var(--t3)">${emp.p||''}</div>`;
+    nd.innerHTML=`<div style="font-size:.82rem;font-weight:800">${emp.n}</div>
+      <span style="font-size:.58rem;font-weight:800;color:${posCol};background:${posCol}18;padding:1px 6px;border-radius:20px">${emp.p||'—'}</span>`;
     row.appendChild(nd);
     dks.forEach(dk=>{
       const k=`${i}-${dk}`;const state=AS[k]||'P';
       const btn=document.createElement('button');btn.className=`abtn ${state}`;btn.textContent=state;
-      btn.onclick=()=>{const cy={P:'MD',MD:'A',A:'P'};const nx=cy[btn.textContent]||'P';btn.textContent=nx;btn.className=`abtn ${nx}`;AS[k]=nx;updAR(emps.length)};
+      btn.onclick=()=>{const cy={P:'MD',MD:'A',A:'P'};const nx=cy[btn.textContent]||'P';btn.textContent=nx;btn.className=`abtn ${nx}`;AS[k]=nx;updAR(filtered.length)};
       row.appendChild(btn);
     });
-    c.appendChild(row);
-  });
-  updAR(emps.length);
+    return row;
+  };
+
+  if(showGroups){
+    Object.keys(grupos).sort().forEach(pos=>{
+      const col=getPosColor(pos);
+      const hdr=document.createElement('div');
+      hdr.style.cssText=`font-size:.68rem;font-weight:900;color:${col};padding:8px 2px 3px;border-top:1px solid var(--g3);margin-top:4px;display:flex;align-items:center;gap:6px`;
+      hdr.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block"></span>${pos} <span style="opacity:.6">(${grupos[pos].length})</span>`;
+      c.appendChild(hdr);
+      grupos[pos].forEach(({emp,i})=>c.appendChild(renderRow(emp,i)));
+    });
+  } else {
+    filtered.forEach(emp=>c.appendChild(renderRow(emp,allEmps.indexOf(emp))));
+  }
+  updAR(filtered.length);
   updateAsistSemanaUI();
 }
-
 function updAR(total){
   let p=0,md=0,a=0;
   Object.values(AS).forEach(v=>{if(v==='P')p++;else if(v==='MD')md++;else if(v==='A')a++;});
@@ -2226,7 +2275,8 @@ function getDiasDeAsistencia(city, empIdx, fechaSemana){
 }
 
 function sincronizarAsistencia(silencioso=false){
-  const emps=NCity==='wash'?EW:EC;
+  const allEmps=NCity==='wash'?EW:EC;
+  const emps=nomPosFilter==='todos'?allEmps:allEmps.filter(e=>e.p===nomPosFilter);
   const dayKeys=['mar','mie','jue','vie','sab','dom'];
   const cityRecords=Object.keys(DA)
     .filter(k=>k.startsWith('asist-city__'+NCity+'__'))
@@ -2241,7 +2291,8 @@ function sincronizarAsistencia(silencioso=false){
   const allBtns=document.querySelectorAll('.nday-btn');
   if(!allBtns.length) return;
   let syncCount=0;
-  emps.forEach((emp,i)=>{
+  emps.forEach(emp=>{
+    const i=allEmps.indexOf(emp); // original index for asist keys
     dayKeys.forEach((dk,di)=>{
       const state=rec[i+'-'+dk];
       const finalState=(state&&['P','MD','A'].includes(state))?state:'P';
@@ -2249,9 +2300,7 @@ function sincronizarAsistencia(silencioso=false){
       if(btn){
         const cls=finalState==='P'?'on':finalState==='MD'?'half':'off';
         const icon=finalState==='P'?'✓':finalState==='MD'?'½':'✗';
-        btn.className='nday-btn '+cls;
-        btn.textContent=icon;
-        syncCount++;
+        btn.className='nday-btn '+cls;btn.textContent=icon;syncCount++;
       }
     });
   });
@@ -2296,13 +2345,17 @@ function renderNomina(){
 
   const c=document.getElementById('nomcontent');if(!c)return;c.innerHTML='';
 
+  // Position filter chips
+  renderViewPosFilters('nom-pos-filters', emps, nomPosFilter, (val)=>{
+    nomPosFilter=val; renderNomina();
+  });
 
-
-  const card=document.createElement('div');card.className='card';
+  // Apply filter (keep original indices for saved data lookup)
+  const filtered=nomPosFilter==='todos'?emps:emps.filter(e=>e.p===nomPosFilter);
   const headerDiv=document.createElement('div');
   headerDiv.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
   headerDiv.innerHTML=`
-    <div class="ctit" style="margin-bottom:0">👷 ${NCity==='wash'?'Washington':'Chicago'} — ${emps.length} empleados</div>
+    <div class="ctit" style="margin-bottom:0">👷 ${NCity==='wash'?'Washington':'Chicago'} — ${filtered.length}${filtered.length!==emps.length?' / '+emps.length:''} empleados</div>
     <button onclick="sincronizarAsistencia()"
       style="background:${hasAsistData?'var(--vs)':'var(--g2)'};color:${hasAsistData?'var(--v)':'var(--t3)'};border:1.5px solid ${hasAsistData?'var(--v)':'var(--g3)'};border-radius:8px;padding:5px 10px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer">
       ${hasAsistData?'✅ Sincronizar Asistencia':'📋 Sin asistencia registrada'}
@@ -2310,7 +2363,8 @@ function renderNomina(){
   card.appendChild(headerDiv);
 
   let total=0;
-  emps.forEach((emp,i)=>{
+  filtered.forEach(emp=>{
+    const i=emps.indexOf(emp);
     const empData=saved[i]||{};
     const sueldoBase=emp.s||0;
     const tipoBase=emp.t||'dia';
