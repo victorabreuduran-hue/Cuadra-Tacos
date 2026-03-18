@@ -55,8 +55,9 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 /* SYNC BAR — 3s countdown */
 #syncBar{height:3px;background:var(--g3)}
 #syncBarFill{height:100%;background:linear-gradient(90deg,var(--n),var(--am));border-radius:2px;width:0%;transition:width .6s ease}
-#pending-banner{display:none;animation:bannerPulse 2s infinite}
-@keyframes bannerPulse{0%,100%{opacity:1}50%{opacity:.85}}
+#pending-banner{display:none}
+@keyframes bannerPulse{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes bannerSlide{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 
 /* HEADER */
 .hdr{background:linear-gradient(135deg,var(--cb) 0%,var(--cb2) 100%);color:white;padding:14px 16px 0;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.4)}
@@ -71,7 +72,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .3s}
 .sdot.green{background:var(--v)}
 .sdot.orange{background:var(--am);animation:pulse .6s infinite}
-.sdot.red{background:var(--r)}
+.sdot.red{background:var(--r);animation:pulse .8s infinite}
 .ubadge{font-size:.62rem;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,.1);color:#fed7aa;display:flex;align-items:center;gap:4px;cursor:pointer}
 .r-admin{background:linear-gradient(135deg,var(--n),var(--n2));color:white;padding:1px 7px;border-radius:20px;font-size:.6rem;font-weight:900}
 .r-enc{background:var(--azs);color:var(--az);padding:1px 7px;border-radius:20px;font-size:.6rem;font-weight:900}
@@ -2411,7 +2412,9 @@ const allP=()=>[...PW,...PC];
 async function gsG(t){
   try{
     const r=await fetch(`${GS}?tabla=${t}&ts=${Date.now()}`);
+    if(!r.ok) return null;
     const j=await r.json();
+    if(!j||j.error) return null;
     const raw=j.data||{};
     const res={};
     Object.entries(raw).forEach(([k,v])=>{
@@ -2420,6 +2423,47 @@ async function gsG(t){
     });
     return res;
   }catch{return null;}
+}
+
+// ── Validar que un dato de Sheets tiene sentido antes de aplicarlo ──
+function _validarDato(tabla, valor){
+  if(valor===null||valor===undefined) return false;
+  // Tablas que deben ser arrays
+  const debenSerArray=['EW','EC','PW','PC','MP','PROV','GG','TIPS'];
+  if(debenSerArray.includes(tabla)){
+    if(!Array.isArray(valor)) return false;
+    // No reemplazar array existente con array vacío (posible error de red)
+    const local=LL(tabla,null);
+    if(Array.isArray(local)&&local.length>0&&valor.length===0){
+      console.warn(`⚠️ Sheets devolvió array vacío para ${tabla} — ignorando`);
+      return false;
+    }
+    return true;
+  }
+  // Tablas que deben ser objetos
+  const debenSerObj=['DP','DN','DA','DF','DG','METAS'];
+  if(debenSerObj.includes(tabla)){
+    if(typeof valor!=='object'||Array.isArray(valor)) return false;
+    // No reemplazar objeto con datos con objeto vacío
+    const local=LL(tabla,null);
+    if(local&&typeof local==='object'&&Object.keys(local).length>2&&Object.keys(valor).length===0){
+      console.warn(`⚠️ Sheets devolvió objeto vacío para ${tabla} — ignorando`);
+      return false;
+    }
+    return true;
+  }
+  return true; // Para otros tipos, aceptar
+}
+
+// ── Aplicar datos de Sheets de forma segura ──
+function _aplicarDatoSeguro(t, valor, apply){
+  if(!_validarDato(t, valor)){
+    console.warn(`⚠️ Dato inválido para ${t} — manteniendo local`);
+    return false;
+  }
+  SL(t, valor);
+  if(apply[t]) apply[t](valor);
+  return true;
 }
 // ═══════════════════════════════════════════════════════════
 // 🔒 SISTEMA DE SINCRONIZACIÓN ROBUSTO v2
@@ -2448,26 +2492,53 @@ const MAX_RETRIES=8;
 function _updatePendingBadge(){
   const count=Object.keys(_syncQueue).length;
   const stxt=document.getElementById('stxt');
-  const sdotEl=document.getElementById('sdot');
-  // Banner rojo en header
   let banner=document.getElementById('pending-banner');
+
   if(count>0){
     if(stxt) stxt.textContent=`⚠️ ${count} sin guardar`;
     setDot('red');
-    // Mostrar banner rojo persistente
+
+    // Crear banner si no existe
     if(!banner){
       banner=document.createElement('div');
       banner.id='pending-banner';
-      banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#dc2626;color:white;font-family:Nunito,sans-serif;font-size:.78rem;font-weight:900;text-align:center;padding:6px 16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer';
+      banner.style.cssText=[
+        'position:fixed','top:0','left:0','right:0','z-index:9999',
+        'background:#991b1b','color:white',
+        'font-family:Nunito,sans-serif',
+        'padding:0','display:flex','flex-direction:column',
+        'cursor:pointer','box-shadow:0 4px 20px rgba(0,0,0,.5)'
+      ].join(';');
       banner.onclick=()=>_flushSyncQueue(true);
       document.body.appendChild(banner);
     }
-    banner.textContent=`⚠️ ${count} dato${count>1?'s':''} pendiente${count>1?'s':''} de guardar — Toca para reintentar`;
+
+    // Contenido del banner — advertencia clara
+    banner.innerHTML=`
+      <div style="background:#7f1d1d;padding:8px 16px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.82rem;font-weight:900">
+        <span style="font-size:1.1rem;animation:bannerPulse 1s infinite">⚠️</span>
+        <span>${count} dato${count>1?'s':''} pendiente${count>1?'s':''} — enviando a la nube...</span>
+      </div>
+      <div style="background:#dc2626;padding:7px 16px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.75rem;font-weight:800;border-top:1px solid rgba(255,255,255,.15)">
+        <span>🚫</span>
+        <span>NO CIERRES LA APP hasta que este aviso desaparezca</span>
+        <span>🚫</span>
+      </div>
+      <div style="background:#b91c1c;padding:5px 16px;text-align:center;font-size:.68rem;font-weight:700;opacity:.9">
+        Toca aquí para reintentar si tarda mucho
+      </div>`;
     banner.style.display='flex';
+
+    // Vibrar para llamar atención (si disponible)
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+
   } else {
     if(stxt){stxt.textContent='✅ Sincronizado';setDot('green');}
     if(banner) banner.style.display='none';
-    setTimeout(()=>{const e=document.getElementById('stxt');if(e&&e.textContent==='✅ Sincronizado')e.textContent='🔄 Actualizar';},3000);
+    setTimeout(()=>{
+      const e=document.getElementById('stxt');
+      if(e&&e.textContent==='✅ Sincronizado') e.textContent='🔄 Actualizar';
+    },3000);
   }
 }
 
@@ -2483,15 +2554,42 @@ async function gsS(t,k,v){
       signal:ctrl.signal
     });
     clearTimeout(timer);
-    // Verificar que la respuesta fue exitosa
-    if(!resp.ok) return false;
+    if(!resp.ok){_checkSheetsHealth(false);return false;}
     try{
       const j=await resp.json();
-      if(j.status==='error') return false;
-    }catch{} // Si no devuelve JSON válido, asumir éxito
+      if(j.status==='error'){_checkSheetsHealth(false);return false;}
+    }catch{}
+    _checkSheetsHealth(true);
     return true;
-  }catch{return false;}
+  }catch{_checkSheetsHealth(false);return false;}
 }
+
+let _sheetsDownSince=null; // timestamp cuando Sheets dejó de responder
+let _sheetsAlertShown=false;
+
+function _checkSheetsHealth(ok){
+  if(!ok){
+    if(!_sheetsDownSince) _sheetsDownSince=Date.now();
+    const downMin=Math.round((Date.now()-_sheetsDownSince)/60000);
+    if(downMin>=5&&!_sheetsAlertShown){
+      _sheetsAlertShown=true;
+      showToast('🚨 Sheets sin respuesta por '+downMin+' min — tus datos están seguros en el dispositivo',6000);
+      // Notificar al admin si es posible
+      if(CU?.rol==='admin') logChange('Sistema','Sheets sin respuesta por '+downMin+' minutos','—','—').catch(()=>{});
+    }
+  } else {
+    if(_sheetsDownSince){
+      const downMin=Math.round((Date.now()-_sheetsDownSince)/60000);
+      if(downMin>1) showToast('✅ Conexión con Sheets restaurada después de '+downMin+' min');
+    }
+    _sheetsDownSince=null;
+    _sheetsAlertShown=false;
+  }
+}
+
+// Timestamps de última modificación local
+const _localTS={};
+function _touchTS(k){ _localTS[k]=Date.now(); }
 
 async function _flushSyncQueue(force=false){
   if(_isSyncing&&!force)return;
@@ -2510,11 +2608,19 @@ async function _flushSyncQueue(force=false){
       _retryCount[k]=(_retryCount[k]||0)+1;
       if(_retryCount[k]<=MAX_RETRIES) failed[k]=v;
       else{
-        // Datos perdidos después de MAX_RETRIES — guardar en backup local
-        console.warn(`⚠️ No se pudo sincronizar ${k} después de ${MAX_RETRIES} intentos`);
+        // Guardar en backup local de emergencia
+        try{
+          const emergencia=LL('EMERGENCIA_SYNC',{});
+          emergencia[k]={v,ts:Date.now(),intentos:_retryCount[k]};
+          SL('EMERGENCIA_SYNC',emergencia);
+        }catch{}
+        console.warn(`⚠️ No se pudo sincronizar ${k} — guardado en backup de emergencia`);
         delete _retryCount[k];
       }
-    } else { delete _retryCount[k]; }
+    } else {
+      delete _retryCount[k];
+      _touchTS(k);
+    }
   }));
   if(f) setTimeout(()=>{f.style.width='0%';},500);
   _syncQueue=failed;
@@ -2525,7 +2631,14 @@ async function _flushSyncQueue(force=false){
 }
 
 // ── SD: guardar con confirmación ──
+// Índice de versiones — evita que sync descargue versión más vieja
+const _dataVersions={};
+function _bumpVersion(k){ _dataVersions[k]=(_dataVersions[k]||0)+1; return _dataVersions[k]; }
+function _getVersion(k){ return _dataVersions[k]||0; }
+
 async function SD(k,v){
+  _bumpVersion(k); // Incrementar versión local
+  _touchTS(k);     // Actualizar timestamp
   SL(k,v); // Guardar en localStorage inmediatamente
   const f=document.getElementById('syncBarFill');
   if(f){f.style.width='100%';setTimeout(()=>{f.style.width='0%';},400);}
@@ -2535,6 +2648,22 @@ async function SD(k,v){
   clearTimeout(_syncTimer);
   _syncTimer=setTimeout(()=>_flushSyncQueue(),800);
   return true;
+}
+
+// Limpiar DP antiguo (>90 días) para no llenar el storage
+function _limpiarDPAntiguo(){
+  const cutoff=new Date();
+  cutoff.setDate(cutoff.getDate()-90);
+  const cutoffStr=cutoff.toISOString().split('T')[0];
+  let borrados=0;
+  Object.keys(DP).forEach(k=>{
+    const fecha=k.split('__')[1]||'';
+    if(fecha&&fecha<cutoffStr){delete DP[k];borrados++;}
+  });
+  if(borrados>0){
+    SL('DP',DP);
+    console.log(`🧹 Limpiados ${borrados} registros de DP anteriores a ${cutoffStr}`);
+  }
 }
 
 // ── PUNTO 2: Sync automático cada 3 minutos ──
@@ -2557,8 +2686,9 @@ async function _silentRefresh(){
     const tabs=['DP','DN','DA','PROV','GG'];
     const results=await Promise.all(tabs.map(t=>gsG(t).then(d=>({t,d})).catch(()=>({t,d:null}))));
     const apply={DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;}};
+    const safeApply={DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;}};
     results.forEach(({t,d})=>{
-      if(d&&d[t]!==undefined){SL(t,d[t]);apply[t]?.(d[t]);}
+      if(d&&d[t]!==undefined) _aplicarDatoSeguro(t,d[t],safeApply);
     });
     // Re-render silently
     if(CU?.rol==='admin') renderDash();
@@ -2585,13 +2715,33 @@ window.addEventListener('visibilitychange',()=>{
 });
 
 window.addEventListener('pagehide',()=>{if(Object.keys(_syncQueue).length>0)_flushSyncQueue(true);});
-window.addEventListener('beforeunload',()=>{if(Object.keys(_syncQueue).length>0)_flushSyncQueue(true);});
+window.addEventListener('beforeunload',(e)=>{
+  if(Object.keys(_syncQueue).length>0){
+    _flushSyncQueue(true);
+    // Mostrar diálogo nativo del navegador advirtiendo del cierre
+    const msg='⚠️ Tienes datos sin guardar. Si cierras ahora podrías perder información.';
+    e.preventDefault();
+    e.returnValue=msg;
+    return msg;
+  }
+});
 window.addEventListener('online',()=>{
   const el=document.getElementById('stxt');if(el)el.textContent='🔄 Reconectando...';
+  const banner=document.getElementById('offline-banner');
+  if(banner) banner.style.display='none';
   setTimeout(()=>_flushSyncQueue(true),1000);
 });
 window.addEventListener('offline',()=>{
   setST('📵 Sin conexión');setDot('red');
+  let banner=document.getElementById('offline-banner');
+  if(!banner){
+    banner=document.createElement('div');
+    banner.id='offline-banner';
+    banner.style.cssText='position:fixed;bottom:80px;left:16px;right:16px;z-index:9998;background:#1f2937;color:#f9fafb;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:800;text-align:center;padding:10px 16px;border-radius:12px;border:1.5px solid #374151;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+    document.body.appendChild(banner);
+  }
+  banner.innerHTML='📵 Sin conexión — tus datos se guardan aquí y se envían cuando vuelva la señal';
+  banner.style.display='block';
 });
 
 // ── PUNTO 6: Backup diario automático a Sheets ──
@@ -2614,6 +2764,8 @@ async function _backupDiario(){
     SL('AUTO_BACKUPS',backups.slice(0,7)); // Guardar últimos 7 días
     SL(LAST_BACKUP_KEY,hoy);
     console.log('✅ Backup diario completado:',hoy);
+    // Aprovechar el backup para limpiar datos viejos
+    _limpiarDPAntiguo();
   }catch(e){console.warn('Backup diario falló:',e);}
 }
 
@@ -2635,8 +2787,14 @@ async function syncNow(){
     POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
   };
   const loaded=results.filter(r=>r.data);
+  const applyMap={
+    DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},DF:v=>{DF=v;},DG:v=>{DG=v;},
+    PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
+    MP:v=>{MP=v;renderMPRows();},HIST:v=>{HIST=v;},METAS:v=>{METAS=v;},
+    PROV:v=>{PROV=v;},GG:v=>{GG=v;},POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
+  };
   loaded.forEach(({t,data})=>{
-    if(data&&data[t]!==undefined){SL(t,data[t]);apply[t]?.(data[t]);}
+    if(data&&data[t]!==undefined) _aplicarDatoSeguro(t,data[t],applyMap);
   });
   refreshUS();
   buildPSel();renderDash();renderReportes();renderAsist();renderNomina();renderEgresosView();
@@ -2692,15 +2850,21 @@ async function logChange(seccion,detalle,valorAntes,valorDespues){
     fecha:new Date().toLocaleString('es'),
     fechaISO:new Date().toISOString(),
     usuario:CU?.user||'—',
+    puesto:CU?.puesto||'—',
     seccion,
     detalle,
     antes:valorAntes||'—',
     despues:valorDespues||'—'
   };
   HIST.unshift(entry);
-  if(HIST.length>500) HIST=HIST.slice(0,500); // keep last 500 entries
+  if(HIST.length>500) HIST=HIST.slice(0,500);
   SL('HIST',HIST);
-  await gsS('HIST','HIST',JSON.stringify(HIST));
+  // Guardar HIST completo en Sheets
+  gsS('HIST','HIST',JSON.stringify(HIST)).catch(()=>{});
+  // También guardar entrada individual en hoja de auditoría por fecha
+  const hojaAudit='AUDIT_'+todayStr();
+  const keyAudit='log_'+entry.id;
+  gsS(hojaAudit,keyAudit,JSON.stringify(entry)).catch(()=>{});
 }
 
 // AUTH
@@ -2802,10 +2966,15 @@ async function showApp(){
       PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
       MP:v=>{MP=v;},METAS:v=>{METAS=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;},TIPS:v=>{TIPS=v;}
     };
+    let cargados=0,fallidos=[];
     results.forEach(({t,data})=>{
-      if(data&&data[t]!==undefined){SL(t,data[t]);apply[t]?.(data[t]);}
+      if(data&&data[t]!==undefined){
+        const ok=_aplicarDatoSeguro(t,data[t],apply);
+        if(ok) cargados++; else fallidos.push(t);
+      }
     });
     refreshUS();
+    if(fallidos.length>0) console.warn('Tablas con datos sospechosos (mantenido local):',fallidos);
     setST('✅ Datos listos');setDot('green');
   }catch(e){
     setST('⚠️ Sin conexión');setDot('red');
@@ -2933,7 +3102,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     try{
       const saved=LL('session',null);
       if(saved&&saved.user){
-        const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
+        // Buscar usuario en local primero
+        let valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
+        // Si no está en local (puede pasar si US se vació), usar la sesión guardada directamente
+        if(!valid&&saved.rol&&saved.pass){
+          valid=saved; // Restaurar sesión desde localStorage aunque US esté vacío
+          console.warn('⚠️ Sesión restaurada desde localStorage — US local vacío');
+        }
         if(valid){
           CU=valid;
           const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
@@ -7035,17 +7210,38 @@ function openProvFoto(idx){
   document.getElementById('m-provFoto').classList.add('open');
 }
 
-function previewProvFoto(input){
+function _comprimirImagen(file, maxW=1200, quality=0.65){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        let w=img.width, h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        canvas.width=w; canvas.height=h;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg',quality));
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function previewProvFoto(input){
   const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    provFotoBase64=e.target.result;
-    const prev=document.getElementById('prov-foto-preview');
-    if(prev) prev.innerHTML=`<img src="${provFotoBase64}" style="width:100%;border-radius:10px;object-fit:cover;max-height:200px">`;
-    const delBtn=document.getElementById('prov-foto-del-btn');
-    if(delBtn) delBtn.style.display='block';
-  };
-  reader.readAsDataURL(file);
+  // Comprimir antes de guardar — reduce 1MB → ~150KB
+  const compressed=await _comprimirImagen(file);
+  provFotoBase64=compressed;
+  const prev=document.getElementById('prov-foto-preview');
+  if(prev) prev.innerHTML=`<img src="${provFotoBase64}" style="width:100%;border-radius:10px;object-fit:cover;max-height:200px">`;
+  const delBtn=document.getElementById('prov-foto-del-btn');
+  if(delBtn) delBtn.style.display='block';
+  // Mostrar tamaño comprimido
+  const kb=Math.round(compressed.length*0.75/1024);
+  showToast(`📸 Foto lista (${kb}KB)`);
 }
 
 async function guardarProvFoto(){
@@ -7079,17 +7275,15 @@ async function eliminarProvFoto(){
 // ═══════════════════════════════════════════
 let fotoBase64=null;
 
-function previewFoto(input){
+async function previewFoto(input){
   const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    fotoBase64=e.target.result;
-    const prev=document.getElementById('foto-preview');
-    if(prev) prev.innerHTML=`<img src="${fotoBase64}" style="width:100%;border-radius:10px;object-fit:cover;max-height:200px">`;
-  };
-  reader.readAsDataURL(file);
+  const compressed=await _comprimirImagen(file);
+  fotoBase64=compressed;
+  const prev=document.getElementById('foto-preview');
+  if(prev) prev.innerHTML=`<img src="${fotoBase64}" style="width:100%;border-radius:10px;object-fit:cover;max-height:200px">`;
+  const kb=Math.round(compressed.length*0.75/1024);
+  showToast(`📸 Foto lista (${kb}KB)`);
 }
-
 async function guardarFoto(){
   if(!fotoBase64){showToast('⚠️ Selecciona una foto primero');return;}
   const key=dpKey(CP,currentFecha);
