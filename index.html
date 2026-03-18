@@ -312,6 +312,32 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .meta-fill{height:100%;border-radius:4px;transition:width .5s}
 /* PROV */
 .prov-card{background:white;border-radius:var(--Rs);padding:14px;box-shadow:var(--sh);margin-bottom:10px;border-left:4px solid var(--v)}
+
+/* VENTAS WIZARD */
+.vstep-panel{display:none}
+.vstep-panel.active{display:block}
+.vstep-steps{display:flex;align-items:center;gap:0;margin-bottom:16px;padding:0 4px}
+.vstep{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1}
+.vstep-num{width:30px;height:30px;border-radius:50%;background:var(--g3);color:var(--t3);font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:900;display:flex;align-items:center;justify-content:center;transition:all .25s}
+.vstep-lbl{font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.4px;transition:color .25s}
+.vstep.active .vstep-num{background:var(--n);color:white;box-shadow:0 0 0 4px var(--ns)}
+.vstep.active .vstep-lbl{color:var(--n)}
+.vstep.done .vstep-num{background:var(--v);color:white}
+.vstep.done .vstep-lbl{color:var(--v)}
+.vstep-line{flex:1;height:2px;background:var(--g3);margin:0 4px;margin-bottom:14px;transition:background .25s}
+.vstep-line.done{background:var(--v)}
+.venta-inp-row{display:flex;align-items:center;gap:12px;background:var(--g2);border-radius:14px;padding:12px 14px;border:2px solid transparent;transition:border-color .2s}
+.venta-inp-row:focus-within{border-color:var(--n);background:white}
+.venta-inp-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.venta-big-inp{background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--t);width:100%;letter-spacing:.5px}
+.venta-big-inp::placeholder{color:var(--g3)}
+.gasto-row{display:flex;align-items:center;gap:10px;background:var(--g2);border-radius:12px;padding:10px 14px}
+.gasto-icon{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0}
+.gasto-lbl{font-size:.85rem;font-weight:700;color:var(--t2);flex:1}
+.gasto-inp{background:white;border:1.5px solid var(--g3);border-radius:9px;padding:9px 12px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;color:var(--t);outline:none;width:90px;text-align:right}
+.gasto-inp:focus{border-color:var(--n)}
+.venta-next-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--n),var(--n2));border:none;border-radius:14px;padding:15px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;color:white;cursor:pointer;letter-spacing:.3px;box-shadow:0 4px 14px rgba(234,88,12,.3)}
+.venta-back-btn{background:var(--g3);border:none;border-radius:14px;padding:15px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:var(--t2);cursor:pointer;margin-top:12px}
 /* DARK MODE */
 body.dark{--bg:#111827;--t:#f9fafb;--t2:#e5e7eb;--t3:#9ca3af;--g2:#1f2937;--g3:#374151;--sh:0 2px 8px rgba(0,0,0,.4)}
 body.dark .card{background:#1f2937}
@@ -650,9 +676,271 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
 
 </div>
 <div class="view" id="view-ventas">
-  <div class="sh" id="vtit">Ventas</div>
 
-  <!-- DATE PICKER CARD — ARRIBA -->
+  <!-- HEADER HERO con fecha y puesto -->
+  <div style="background:linear-gradient(135deg,#ea580c,#c2410c);border-radius:18px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-10px;top:-10px;font-size:90px;opacity:.08">💰</div>
+    <!-- Fecha -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:.62rem;font-weight:900;letter-spacing:1px;color:#fed7aa;text-transform:uppercase">📅 Fecha</div>
+        <input type="date" id="fechaVentas"
+          style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;color:white;outline:none;color-scheme:dark;margin-top:3px"
+          onchange="onFechaChange()">
+      </div>
+      <div style="text-align:right">
+        <div id="fechaVentasLabel" style="font-size:.78rem;color:#fed7aa;font-weight:700"></div>
+        <div id="fechaVentasStatus" style="font-size:.62rem;color:rgba(255,255,255,.6);margin-top:2px"></div>
+      </div>
+    </div>
+    <!-- Meta bar -->
+    <div id="venta-meta-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:.72rem;font-weight:900;color:white">🎯 Meta</span>
+          <span id="venta-meta-tipo" style="font-size:.6rem;font-weight:800;color:#ea580c;background:white;padding:2px 7px;border-radius:20px"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span id="venta-meta-nums" style="font-size:.7rem;color:#fed7aa;font-weight:700"></span>
+          <span id="venta-meta-pct" style="font-size:.82rem;font-weight:900;color:white">—</span>
+        </div>
+      </div>
+      <div style="height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden">
+        <div id="venta-meta-fill" style="height:100%;border-radius:4px;width:0%;transition:width .6s ease;background:white"></div>
+      </div>
+      <div id="venta-meta-falta" style="font-size:.65rem;color:rgba(255,255,255,.7);font-weight:600;margin-top:4px;text-align:right"></div>
+    </div>
+  </div>
+
+  <!-- STEP PROGRESS BAR -->
+  <div style="display:flex;align-items:center;gap:0;margin-bottom:16px;padding:0 4px" id="venta-steps-bar">
+    <div class="vstep active" id="vstep-0" onclick="goVStep(0)">
+      <div class="vstep-num">1</div>
+      <div class="vstep-lbl">Ventas</div>
+    </div>
+    <div class="vstep-line" id="vstep-line-0"></div>
+    <div class="vstep" id="vstep-1" onclick="goVStep(1)">
+      <div class="vstep-num">2</div>
+      <div class="vstep-lbl">Gastos</div>
+    </div>
+    <div class="vstep-line" id="vstep-line-1"></div>
+    <div class="vstep" id="vstep-2" onclick="goVStep(2)">
+      <div class="vstep-num">3</div>
+      <div class="vstep-lbl">Extra</div>
+    </div>
+    <div class="vstep-line" id="vstep-line-2"></div>
+    <div class="vstep" id="vstep-3" onclick="goVStep(3)">
+      <div class="vstep-num">4</div>
+      <div class="vstep-lbl">Guardar</div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 1: VENTAS ══ -->
+  <div class="vstep-panel active" id="vpanel-0">
+    <div class="card">
+      <div class="ctit">💰 Ventas del Día</div>
+      <p style="font-size:.75rem;color:var(--t3);margin-bottom:16px" id="ventas-dia-lbl">Registra el total cobrado por tipo de pago</p>
+
+      <!-- Big input buttons -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <div class="venta-inp-row" id="row-ef">
+          <div class="venta-inp-icon" style="background:linear-gradient(135deg,#16a34a,#15803d)">💵</div>
+          <div style="flex:1">
+            <div style="font-size:.7rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Efectivo</div>
+            <input class="venta-big-inp" type="number" min="0" id="ve-dia-ef" oninput="calcV()" placeholder="0.00" inputmode="decimal">
+          </div>
+          <div style="font-size:.9rem;font-weight:900;color:var(--v)" id="tef-inline">$0</div>
+        </div>
+        <div class="venta-inp-row" id="row-tj">
+          <div class="venta-inp-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)">💳</div>
+          <div style="flex:1">
+            <div style="font-size:.7rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Tarjeta</div>
+            <input class="venta-big-inp" type="number" min="0" id="ve-dia-tj" oninput="calcV()" placeholder="0.00" inputmode="decimal">
+          </div>
+          <div style="font-size:.9rem;font-weight:900;color:var(--az)" id="ttj-inline">$0</div>
+        </div>
+        <div class="venta-inp-row" id="row-ot">
+          <div class="venta-inp-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">📱</div>
+          <div style="flex:1">
+            <div style="font-size:.7rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Otros pagos</div>
+            <input class="venta-big-inp" type="number" min="0" id="ve-dia-ot" oninput="calcV()" placeholder="0.00" inputmode="decimal">
+          </div>
+          <div style="font-size:.9rem;font-weight:900;color:#7c3aed" id="tot-inline">$0</div>
+        </div>
+      </div>
+
+      <!-- Total bruto pill -->
+      <div style="background:linear-gradient(135deg,var(--n),var(--n2));border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:.8rem;font-weight:900;color:white;opacity:.85">🏆 VENTAS BRUTAS</div>
+        <div id="tbruto" style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:white;letter-spacing:1px">$0</div>
+      </div>
+    </div>
+
+    <button class="venta-next-btn" onclick="goVStep(1)">Siguiente: Gastos →</button>
+  </div>
+
+  <!-- ══ STEP 2: GASTOS ══ -->
+  <div class="vstep-panel" id="vpanel-1">
+    <div class="card">
+      <div class="ctit">📤 Gastos del Puesto</div>
+      <p style="font-size:.75rem;color:var(--t3);margin-bottom:16px">Solo llena los que apliquen hoy</p>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="gasto-row">
+          <span class="gasto-icon">⛽</span>
+          <span class="gasto-lbl">Gasolina</span>
+          <input class="gasto-inp" type="number" id="g-gas" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">🧊</span>
+          <span class="gasto-lbl">Hielo</span>
+          <input class="gasto-inp" type="number" id="g-hie" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">🔧</span>
+          <span class="gasto-lbl">Reparación</span>
+          <input class="gasto-inp" type="number" id="g-rep" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">🛣️</span>
+          <span class="gasto-lbl">Casetas</span>
+          <input class="gasto-inp" type="number" id="g-cas" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">📦</span>
+          <span class="gasto-lbl">Otros</span>
+          <input class="gasto-inp" type="number" id="g-otr" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <input type="text" id="g-otr-desc" placeholder="¿Qué compraron? ej: bolsas, servilletas..."
+          style="width:100%;padding:10px 14px;border:1.5px solid var(--g3);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:600;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box"
+          onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
+      </div>
+
+      <!-- Total gastos pill -->
+      <div style="background:linear-gradient(135deg,var(--r),#b91c1c);border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+        <div style="font-size:.8rem;font-weight:900;color:white;opacity:.85">💸 TOTAL GASTOS</div>
+        <div id="gtot" style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:white;letter-spacing:1px">$0</div>
+      </div>
+
+      <button class="boutl" style="width:100%;margin-top:10px;font-size:.8rem" onclick="openM('foto')">📸 Adjuntar foto de comprobante</button>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="venta-back-btn" onclick="goVStep(0)">← Volver</button>
+      <button class="venta-next-btn" style="flex:1" onclick="goVStep(2)">Siguiente: Extra →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: EXTRAS (Caja + MP) ══ -->
+  <div class="vstep-panel" id="vpanel-2">
+    <!-- Caja chica -->
+    <div class="card" style="border-left:4px solid var(--am)">
+      <div class="ctit">💵 Fondo de Caja</div>
+      <p style="font-size:.75rem;color:var(--t3);margin-bottom:12px">Dinero para dar cambio a los clientes</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <div style="font-size:.68rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:5px">🌅 Fondo inicial</div>
+          <input class="gasto-inp" type="number" id="caja-inicio" placeholder="$0" inputmode="decimal" style="width:100%;box-sizing:border-box" oninput="calcCaja()">
+        </div>
+        <div>
+          <div style="font-size:.68rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:5px">🌙 Cierre de caja</div>
+          <input class="gasto-inp" type="number" id="caja-cierre" placeholder="$0" inputmode="decimal" style="width:100%;box-sizing:border-box" oninput="calcCaja()">
+        </div>
+      </div>
+      <input type="text" id="caja-notas" placeholder="Notas opcionales..."
+        style="width:100%;padding:9px 14px;border:1.5px solid var(--g3);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:600;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box;margin-bottom:8px"
+        onfocus="this.style.borderColor='var(--am)'" onblur="this.style.borderColor='var(--g3)'">
+      <div id="caja-resultado" style="display:none">
+        <div id="caja-r-dif-wrap" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:var(--Rs);border:1px solid var(--g3);background:var(--g2)">
+          <span id="caja-r-dif-lbl" style="font-size:.82rem;font-weight:800">—</span>
+          <span id="caja-r-dif" style="font-size:.88rem;font-weight:900">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Materia Prima collapsible -->
+    <div class="card">
+      <button onclick="toggleMPSection()" style="width:100%;background:none;border:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:0;font-family:'Nunito',sans-serif">
+        <div>
+          <div class="ctit" style="margin:0;text-align:left">🧅 Materia Prima</div>
+          <div style="font-size:.7rem;color:var(--t3);margin-top:2px;text-align:left">Opcional — registra salidas y desperdicios</div>
+        </div>
+        <span id="mp-toggle-icon" style="font-size:1.1rem;color:var(--t3);transition:transform .25s">▼</span>
+      </button>
+      <div id="mp-section-body" style="display:none;margin-top:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase">Producto</div>
+          <div style="display:flex;gap:6px">
+            <div style="font-size:.6rem;font-weight:900;color:var(--az);text-align:center;width:52px;text-transform:uppercase">📦 Sale</div>
+            <div style="font-size:.6rem;font-weight:900;color:var(--v);text-align:center;width:52px;text-transform:uppercase">📥 Reg.</div>
+            <div style="font-size:.6rem;font-weight:900;color:var(--r);text-align:center;width:52px;text-transform:uppercase">🗑️ Daño</div>
+          </div>
+        </div>
+        <div id="mp-rows"></div>
+        <div id="mp-totales" style="display:none;margin-top:10px;border-top:1px solid var(--g3);padding-top:10px">
+          <div class="ftot" style="margin-top:0"><span>🔥 Costo consumido</span><span id="mp-costo-val">$0</span></div>
+          <div class="ftot d" style="margin-top:6px"><span>🗑️ Costo desperdicios</span><span id="mp-desp-val">$0</span></div>
+          <div class="ftot b" style="margin-top:6px"><span>💸 Costo total MP</span><span id="mp-total-val">$0</span></div>
+        </div>
+        <button class="shbtn" style="margin-top:10px" onclick="openM('addMP')">+ Producto</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="venta-back-btn" onclick="goVStep(1)">← Volver</button>
+      <button class="venta-next-btn" style="flex:1" onclick="goVStep(3)">Siguiente: Guardar →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4: RESUMEN Y GUARDAR ══ -->
+  <div class="vstep-panel" id="vpanel-3">
+    <!-- Resumen visual -->
+    <div class="card">
+      <div class="ctit">📋 Resumen del Día</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <div style="background:var(--ns);border-radius:12px;padding:12px;text-align:center;border:1.5px solid var(--n)">
+          <div style="font-size:.65rem;font-weight:900;color:var(--n2);text-transform:uppercase;margin-bottom:3px">💵 Efectivo</div>
+          <div id="res-ef" style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--n)">$0</div>
+        </div>
+        <div style="background:#eff6ff;border-radius:12px;padding:12px;text-align:center;border:1.5px solid var(--az)">
+          <div style="font-size:.65rem;font-weight:900;color:#1d4ed8;text-transform:uppercase;margin-bottom:3px">💳 Tarjeta+Otros</div>
+          <div id="res-tj" style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--az)">$0</div>
+        </div>
+        <div style="background:var(--rs);border-radius:12px;padding:12px;text-align:center;border:1.5px solid #fca5a5">
+          <div style="font-size:.65rem;font-weight:900;color:var(--r);text-transform:uppercase;margin-bottom:3px">📤 Gastos</div>
+          <div id="res-gas" style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--r)">$0</div>
+        </div>
+        <div style="background:var(--vs);border-radius:12px;padding:12px;text-align:center;border:1.5px solid var(--v)">
+          <div style="font-size:.65rem;font-weight:900;color:var(--v);text-transform:uppercase;margin-bottom:3px">💚 Utilidad</div>
+          <div id="res-util" style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--v)">$0</div>
+        </div>
+      </div>
+      <!-- Total grande -->
+      <div style="background:linear-gradient(135deg,var(--n),var(--n2));border-radius:14px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:.8rem;font-weight:900;color:white;opacity:.85">🏆 VENTAS BRUTAS</div>
+        <div id="res-bruto" style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:white;letter-spacing:1px">$0</div>
+      </div>
+    </div>
+
+    <!-- Firma -->
+    <div class="card" style="border-left:4px solid var(--az)">
+      <div style="font-size:.78rem;font-weight:900;color:var(--t2);margin-bottom:10px">✍️ Firma del Encargado</div>
+      <input type="text" id="ve-encargado" placeholder="Tu nombre completo..."
+        style="width:100%;padding:14px 16px;border:2px solid var(--g3);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box"
+        onfocus="this.style.borderColor='var(--az)'" onblur="this.style.borderColor='var(--g3)'">
+      <div style="font-size:.68rem;color:var(--t3);margin-top:6px">👆 Requerido antes de guardar</div>
+    </div>
+
+    <!-- Botones finales -->
+    <button class="bsave" style="font-size:1rem;padding:16px" onclick="guardarVentas()">💾 GUARDAR REGISTRO</button>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="venta-back-btn" onclick="goVStep(2)">← Volver</button>
+      <button class="boutl" style="flex:1" onclick="limpiarV()">🗑️ Limpiar</button>
+    </div>
+  </div>
+
+</div>
+
   <div class="card" style="background:linear-gradient(135deg,var(--cb),var(--cb2));border:none">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div>
@@ -968,11 +1256,33 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
 
 <!-- PROVEEDORES VIEW -->
 <div class="view" id="view-prov">
-  <div class="sh">
-    <span>🏪 Proveedores</span>
-    <button class="shbtn" onclick="openM('addProv')">+ Agregar</button>
+  <div style="background:linear-gradient(135deg,#0f766e,#0d9488);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
+    <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.08;transform:rotate(-10deg)">🏪</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:white;letter-spacing:1px">Proveedores</div>
+        <div id="prov-count-lbl" style="font-size:.72rem;color:#99f6e4;font-weight:700"></div>
+      </div>
+      <button onclick="openM('addProv')" style="background:rgba(255,255,255,.15);border:none;border-radius:12px;padding:10px 16px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer">+ Agregar</button>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button id="prov-tab-wash" onclick="setProvCity('wash',this)"
+        style="flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.2);color:white;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s">
+        🌲 Washington
+      </button>
+      <button id="prov-tab-chi" onclick="setProvCity('chi',this)"
+        style="flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s">
+        🌆 Chicago
+      </button>
+    </div>
   </div>
-  <div class="card" id="prov-view-list"></div>
+  <div style="position:relative;margin-bottom:12px">
+    <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.85rem;opacity:.4">🔍</span>
+    <input id="prov-search" type="text" placeholder="Buscar proveedor o producto..." oninput="renderProvView()"
+      style="width:100%;padding:9px 12px 9px 32px;border:1.5px solid var(--g3);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box"
+      onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
+  </div>
+  <div id="prov-view-list"></div>
 </div>
 
 <!-- CONFIG -->
@@ -1038,11 +1348,20 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
     <div style="padding:0 16px;margin-bottom:4px;margin-top:14px">
       <div style="font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--t3);margin-bottom:8px">🔐 Sistema</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-
         <button class="cfg-card" onclick="goCfg('ajustes')">
           <span class="cfg-card-icon" style="background:linear-gradient(135deg,#374151,#1f2937)">⚙️</span>
           <span class="cfg-card-lbl">Ajustes</span>
           <span class="cfg-card-sub">PIN, Face ID, tema</span>
+        </button>
+        <button class="cfg-card" onclick="irMiCuentaDesdeConfig()" data-cfg-id="micuenta">
+          <span class="cfg-card-icon" style="background:linear-gradient(135deg,#be123c,#9f1239)">🔐</span>
+          <span class="cfg-card-lbl">Mi Cuenta</span>
+          <span class="cfg-card-sub">PIN, biometría</span>
+        </button>
+        <button class="cfg-card" style="grid-column:span 2" onclick="irAyudaDesdeConfig()" data-cfg-id="manual">
+          <span class="cfg-card-icon" style="background:linear-gradient(135deg,#0369a1,#075985)">📖</span>
+          <span class="cfg-card-lbl">Ayuda</span>
+          <span class="cfg-card-sub">Manual de uso y preguntas frecuentes</span>
         </button>
       </div>
     </div>
@@ -1206,6 +1525,23 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
 
   <!-- AJUSTES -->
   <div id="cfg-ajustes" style="display:none">
+    <!-- USUARIOS CON ACCESO -->
+    <div class="card" style="border-left:4px solid var(--az)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="ctit" style="margin:0">🔐 Usuarios con Acceso</div>
+        <button onclick="openBulkPerms()" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border:none;border-radius:10px;padding:8px 12px;color:white;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px">
+          👥 Permisos en Masa
+        </button>
+      </div>
+      <div id="cfg-ul" style="margin-bottom:10px"></div>
+      <button onclick="openM('addU')" style="width:100%;background:var(--ns);border:1.5px dashed var(--n);border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;color:var(--n);cursor:pointer">+ Activar acceso a empleado</button>
+    </div>
+    <!-- Borrar todos usuarios -->
+    <div class="card" style="border-left:4px solid var(--r)">
+      <div class="ctit">🗑️ Borrar todos los accesos</div>
+      <p style="font-size:.78rem;color:var(--t3);margin-bottom:10px">Elimina el acceso de todos los empleados. Solo queda el admin.</p>
+      <button onclick="eliminarTodosUsuarios()" style="width:100%;background:var(--r);border:none;border-radius:10px;padding:10px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer">🗑️ Borrar todos los accesos</button>
+    </div>
     <!-- Dark Mode -->
     <div class="card">
       <div class="ctit">🌙 Apariencia</div>
@@ -1345,6 +1681,20 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   </div>
 </div>
 
+
+<!-- MANUAL DE USUARIO -->
+<div class="view" id="view-manual">
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:16px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;text-align:center">
+    <div style="position:absolute;right:-15px;top:-15px;font-size:90px;opacity:.08">📖</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:white;letter-spacing:2px">📖 Manual</div>
+    <div style="font-size:.85rem;color:#e9d5ff;font-weight:700;margin-top:4px">Guía rápida de La Cuadra Tacos App</div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.6);margin-top:4px">Toca cada sección para aprender cómo usarla</div>
+  </div>
+
+  <!-- Secciones del manual -->
+  <div id="manual-sections"></div>
+</div>
 </div><!-- end appContent -->
 
 <!-- BOTTOM NAV -->
@@ -1355,7 +1705,6 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   <button class="nbtn ao" onclick="showV('nomina',this)"><span class="ni">👷</span><span class="nl">Nómina</span></button>
   <button class="nbtn ao" onclick="showV('prov',this);renderProvView()"><span class="ni">🏪</span><span class="nl">Proveed.</span></button>
   <button class="nbtn ao" onclick="showV('config',this);renderCfg()"><span class="ni">⚙️</span><span class="nl">Config</span></button>
-  <button class="nbtn" id="nav-mi-cuenta" onclick="irMiCuenta(this)"><span class="ni">🔐</span><span class="nl">Mi Cuenta</span></button>
 </div>
 
 <!-- MODALS -->
@@ -1499,10 +1848,61 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
           <input type="checkbox" id="perm-reportes" style="width:17px;height:17px;accent-color:var(--n)">
           <span style="font-size:.82rem;font-weight:800">📊 Reportes</span>
         </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
-          <input type="checkbox" id="perm-config" style="width:17px;height:17px;accent-color:var(--n)">
-          <span style="font-size:.82rem;font-weight:800">⚙️ Config</span>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3);grid-column:span 2" id="perm-config-label">
+          <input type="checkbox" id="perm-config" style="width:17px;height:17px;accent-color:var(--n)" onchange="toggleCfgSubPerms()">
+          <div style="flex:1">
+            <div style="font-size:.82rem;font-weight:800">⚙️ Config</div>
+            <div style="font-size:.65rem;color:var(--t3)">Acceso a Configuración</div>
+          </div>
         </label>
+        <!-- SUB-PERMISOS DE CONFIG (se muestran solo si config está marcado) -->
+        <div id="cfg-sub-perms-wrap" style="display:none;grid-column:span 2;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 12px">
+          <div style="font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px">📂 Módulos visibles en Config</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-puestos" style="width:15px;height:15px;accent-color:var(--n)">
+              <span style="font-size:.78rem;font-weight:800">📍 Puestos</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-empleados" style="width:15px;height:15px;accent-color:var(--az)">
+              <span style="font-size:.78rem;font-weight:800">👷 Empleados</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-mp" style="width:15px;height:15px;accent-color:var(--v)">
+              <span style="font-size:.78rem;font-weight:800">🧅 Materia Prima</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-metas" style="width:15px;height:15px;accent-color:var(--am)">
+              <span style="font-size:.78rem;font-weight:800">🎯 Metas</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-editar" style="width:15px;height:15px;accent-color:#7c3aed">
+              <span style="font-size:.78rem;font-weight:800">✏️ Editar Ventas</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-historial" style="width:15px;height:15px;accent-color:#0891b2">
+              <span style="font-size:.78rem;font-weight:800">📋 Historial</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-reportes" style="width:15px;height:15px;accent-color:#db2777">
+              <span style="font-size:.78rem;font-weight:800">📊 Reportes</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-ajustes" style="width:15px;height:15px;accent-color:#374151">
+              <span style="font-size:.78rem;font-weight:800">⚙️ Ajustes</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-micuenta" style="width:15px;height:15px;accent-color:#be123c">
+              <span style="font-size:.78rem;font-weight:800">🔐 Mi Cuenta</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+              <input type="checkbox" id="perm-cfg-manual" style="width:15px;height:15px;accent-color:#0369a1">
+              <span style="font-size:.78rem;font-weight:800">📖 Ayuda</span>
+            </label>
+          </div>
+          <button onclick="toggleAllCfgSubs(true)" style="margin-top:8px;margin-right:6px;background:var(--ns);border:none;border-radius:7px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--n);cursor:pointer">✅ Todos</button>
+          <button onclick="toggleAllCfgSubs(false)" style="margin-top:8px;background:var(--g3);border:none;border-radius:7px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t2);cursor:pointer">❌ Ninguno</button>
+        </div>
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
           <input type="checkbox" id="perm-dashboard" style="width:17px;height:17px;accent-color:var(--n);margin-top:2px;flex-shrink:0" onchange="toggleDashTipoSelect()">
           <div style="flex:1">
@@ -1536,6 +1936,85 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   </div>
 </div>
 
+<!-- PERMISOS EN MASA MODAL -->
+<div class="moverlay" id="m-bulkPerms">
+  <div class="modal" style="max-height:90vh;overflow-y:auto"><div class="mhandle"></div>
+    <div class="mtitle">👥 Permisos en Masa</div>
+    <p style="font-size:.78rem;color:var(--t3);margin:-4px 0 14px;line-height:1.5">Selecciona empleados y asígnales los mismos permisos de una vez.</p>
+
+    <!-- Selección de empleados -->
+    <label class="mlbl" style="margin-bottom:8px">1️⃣ Selecciona empleados</label>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <button onclick="bulkSelectAll(true)" style="flex:1;background:var(--ns);border:none;border-radius:8px;padding:6px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--n);cursor:pointer">✅ Todos</button>
+      <button onclick="bulkSelectAll(false)" style="flex:1;background:var(--g3);border:none;border-radius:8px;padding:6px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t2);cursor:pointer">❌ Ninguno</button>
+    </div>
+    <div id="bulk-emp-list" style="background:var(--g2);border-radius:10px;padding:8px;max-height:180px;overflow-y:auto;margin-bottom:14px"></div>
+
+    <!-- Permisos a aplicar -->
+    <label class="mlbl" style="margin-bottom:8px">2️⃣ Permisos a aplicar</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+        <input type="checkbox" id="bulk-perm-ventas" style="width:15px;height:15px;accent-color:var(--n)">
+        <span style="font-size:.78rem;font-weight:800">💰 Ventas</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+        <input type="checkbox" id="bulk-perm-asist" style="width:15px;height:15px;accent-color:var(--n)">
+        <span style="font-size:.78rem;font-weight:800">✅ Asistencia</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+        <input type="checkbox" id="bulk-perm-nomina" style="width:15px;height:15px;accent-color:var(--n)">
+        <span style="font-size:.78rem;font-weight:800">👷 Nómina</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+        <input type="checkbox" id="bulk-perm-reportes" style="width:15px;height:15px;accent-color:var(--n)">
+        <span style="font-size:.78rem;font-weight:800">📊 Reportes</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+        <input type="checkbox" id="bulk-perm-dashboard" style="width:15px;height:15px;accent-color:var(--n)">
+        <span style="font-size:.78rem;font-weight:800">🏠 Inicio</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)" id="bulk-config-label">
+        <input type="checkbox" id="bulk-perm-config" style="width:15px;height:15px;accent-color:var(--n)" onchange="toggleBulkCfgSubs()">
+        <span style="font-size:.78rem;font-weight:800">⚙️ Config</span>
+      </label>
+    </div>
+    <!-- Sub-permisos config (bulk) -->
+    <div id="bulk-cfg-sub-wrap" style="display:none;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 12px;margin-bottom:10px">
+      <div style="font-size:.63rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px">📂 Módulos de Config</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-puestos" style="width:13px;height:13px;accent-color:var(--n)"><span style="font-size:.74rem;font-weight:800">📍 Puestos</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-empleados" style="width:13px;height:13px;accent-color:var(--az)"><span style="font-size:.74rem;font-weight:800">👷 Empleados</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-mp" style="width:13px;height:13px;accent-color:var(--v)"><span style="font-size:.74rem;font-weight:800">🧅 Materia Prima</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-metas" style="width:13px;height:13px;accent-color:var(--am)"><span style="font-size:.74rem;font-weight:800">🎯 Metas</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-editar" style="width:13px;height:13px;accent-color:#7c3aed"><span style="font-size:.74rem;font-weight:800">✏️ Editar Ventas</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-historial" style="width:13px;height:13px;accent-color:#0891b2"><span style="font-size:.74rem;font-weight:800">📋 Historial</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-reportes" style="width:13px;height:13px;accent-color:#db2777"><span style="font-size:.74rem;font-weight:800">📊 Reportes</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-ajustes" style="width:13px;height:13px;accent-color:#374151"><span style="font-size:.74rem;font-weight:800">⚙️ Ajustes</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-micuenta" style="width:13px;height:13px;accent-color:#be123c"><span style="font-size:.74rem;font-weight:800">🔐 Mi Cuenta</span></label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:white;padding:7px 9px;border-radius:7px;border:1.5px solid var(--g3)"><input type="checkbox" id="bulk-cfg-manual" style="width:13px;height:13px;accent-color:#0369a1"><span style="font-size:.74rem;font-weight:800">📖 Ayuda</span></label>
+      </div>
+    </div>
+
+    <!-- Nota de modo -->
+    <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:8px;padding:10px 12px;margin-bottom:14px">
+      <div style="font-size:.72rem;font-weight:800;color:#92400e;margin-bottom:4px">⚠️ Modo de aplicación</div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:6px">
+        <input type="radio" name="bulk-mode" value="replace" id="bulk-mode-replace" checked style="accent-color:var(--n)">
+        <div><div style="font-size:.76rem;font-weight:800">Reemplazar</div><div style="font-size:.65rem;color:var(--t3)">Sobreescribe todos los permisos actuales</div></div>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="radio" name="bulk-mode" value="add" id="bulk-mode-add" style="accent-color:var(--n)">
+        <div><div style="font-size:.76rem;font-weight:800">Agregar</div><div style="font-size:.65rem;color:var(--t3)">Solo activa los seleccionados, no quita nada</div></div>
+      </label>
+    </div>
+
+    <div class="macts">
+      <button class="bmcancel" onclick="closeM('bulkPerms')">Cancelar</button>
+      <button class="bsave" onclick="applyBulkPerms()">💾 APLICAR A SELECCIONADOS</button>
+    </div>
+  </div>
+</div>
+
 <div class="moverlay" id="m-confirm">
   <div class="modal"><div class="mhandle"></div>
     <div class="mtitle" id="cf-title">⚠️ Confirmar</div>
@@ -1549,6 +2028,12 @@ body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#
   <div class="modal"><div class="mhandle"></div>
     <div class="mtitle" id="prov-modal-title">🏪 Agregar Proveedor</div>
     <input type="hidden" id="prov-edit-idx" value="-1">
+    <label class="mlbl">🏙️ Ciudad</label>
+    <select class="msel" id="prov-ciudad">
+      <option value="wash">🌲 Washington</option>
+      <option value="chi">🌆 Chicago</option>
+      <option value="ambas">🌐 Ambas ciudades</option>
+    </select>
     <label class="mlbl">Nombre del Proveedor</label>
     <input class="minput" id="prov-nombre" placeholder="Ej: Tortillería La Esperanza">
     <label class="mlbl">📦 Producto que vende</label>
@@ -1690,6 +2175,7 @@ let METAS=LL('METAS',{}); // Sales goals per puesto
 let PROV=LL('PROV',[]); // Proveedores
 let POSICIONES=LL('POSICIONES',['Taquero','Pastorero','Cajero','Cajera','Planchero','Encargado','Encargada','Ayudante','Bodeguero']);
 const DEFAULT_TIPS=[
+  // 💪 Motivacionales
   '💪 Una sonrisa es el mejor ingrediente de un taco.',
   '⏱️ La rapidez sin descuidar la calidad fideliza clientes.',
   '🧹 Un puesto limpio vende más — los clientes lo notan.',
@@ -1705,6 +2191,43 @@ const DEFAULT_TIPS=[
   '⚡ En las horas pico, mantén la calma y el ritmo.',
   '📊 Conocer la meta diaria te ayuda a esforzarte más.',
   '🛡️ Cuida el efectivo como si fuera tuyo.',
+  '🌮 El que madruga, taco agarra.',
+  '🏆 Cada peso que cuidas hoy es ganancia de todos mañana.',
+  '✨ El buen servicio no cuesta nada, pero vale un chingo.',
+  '💰 Recuerda: el dinero no crece en los tacos, pero el esfuerzo sí.',
+  '🌟 El que no trabaja en equipo se queda sin tortillas.',
+  // 😂 Albures mexicanos (modo tacos ON)
+  '🌮 ¿Cuántos tacos caben en tu corazón? — Depende qué tan bien trabajaste hoy.',
+  '😂 El que no registra sus ventas, ¡se queda con el pastor atravesado!',
+  '🌶️ Como la salsa: entre más picante la atención, más regresan los clientes.',
+  '😏 El taquero que no sonríe... ¡a ese no le regresan ni los huesos!',
+  '🌮 Le entras al pastor o al trompito — pero eso sí, con todo el sabor.',
+  '😂 Aquí el que no echa tortillas, ¡que eche ganas!',
+  '🐂 Al taco bien parado, ningún cliente le hace el feo.',
+  '🫘 Los frijoles y tú tienen algo en común: ¡los dos dan resultados cuando se les da fuego!',
+  '😂 No importa si eres de Washington o Chicago — el taco une todo.',
+  '🌮 Que tu sazón sea más intenso que tu sueño por las noches.',
+  '😏 El encargado que llena la app, ¡llena también la caja!',
+  '🌶️ Como el chile: pequeño pero con mucho carácter. ¡Así trabaja el equipo de La Cuadra!',
+  '😂 No le saques al trabajo — ¡que no eres tortilla sin cocer!',
+  '🏆 El que suda el doble, come doble. ¡Échale ganas!',
+  '🌮 La vida es corta y los tacos son infinitos. ¡Aprovecha el turno!',
+  // 🌶️ Albures nivel avanzado
+  '😏 El buen taquero sabe cuándo meterle más leña... al fogón, claro.',
+  '🌮 Aquí nadie se va con hambre — ni de tacos ni de resultados.',
+  '😂 El que no le entra a los datos, que le entre al molcajete.',
+  '🌶️ Un buen encargado siempre tiene algo duro... como el trabajo del día.',
+  '😏 Dicen que el pastor bien puesto no necesita anuncio — igual tú cuando llegas a tiempo.',
+  '🌮 Hay que darle vuelta al trompito con cariño, o no sale bien.',
+  '😂 El que madruga, taco agarra — y el que llega tarde, sólo encuentra la grasa.',
+  '🐓 Al pollo hay que agarrarlo caliente — igual que las oportunidades del turno.',
+  '🧅 La cebolla hace llorar a los débiles. Tú no eres débil, eres de La Cuadra.',
+  '😏 Entre más le aprietas a la tortilla, mejor agarra el relleno. Así con la meta.',
+  '🌮 Lo que se mete en la app, no se pierde. Lo que no se mete... ya se perdió.',
+  '😂 Hay tacos que te llenan y hay encargados que llenan la caja — sé de los dos.',
+  '🌶️ La salsa siempre pica más en el segundo mordisco, como la multa por no registrar.',
+  '😏 El que cuida su puesto con amor, siempre tiene algo que presumir al jefe.',
+  '🌮 Un taco sin registro es como tortilla sin masa — no existe.',
 ];
 let TIPS=LL('TIPS',[...DEFAULT_TIPS]);
 let empPosFilter='todos';
@@ -1976,8 +2499,8 @@ function showApp(){
     if(lbl==='Nómina')   btn.style.display=isA||can('nomina')?'':'none';
     if(lbl==='Reportes') btn.style.display='none';
     if(lbl==='Proveed.') btn.style.display=isA||can('reportes')?'':'none';
-    if(lbl==='Config')   btn.style.display=isA||can('config')?'':'none';
-    if(lbl==='Mi Cuenta') btn.style.display='flex'; // siempre visible
+    if(lbl==='Config')   { btn.style.display=isA||can('config')?'':'none'; if(isA||can('config')) setTimeout(filterCfgHome,0); }
+    if(lbl==='Mi Cuenta') btn.style.display='none'; // ahora vive dentro de Config
   });
 
   document.getElementById('ubName').textContent=CU.user;
@@ -2135,7 +2658,7 @@ function showV(id,btn){
   if(btn)btn.classList.add('active');
   const psel=document.getElementById('puestoSel');
   if(psel) psel.style.display=VIEWS_WITH_PSEL.includes(id)?'flex':'none';
-  if(id==='ventas') renderVentaMeta();
+  if(id==='ventas') { renderVentaMeta(); goVStep(0); }
 }
 function setTab(id,btn){
   document.querySelectorAll('#view-reportes .tabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
@@ -2149,6 +2672,13 @@ mp:'🧅 Materia Prima',metas:'🎯 Metas',
   reportes:'📊 Reportes',ajustes:'⚙️ Ajustes',historial:'📋 Historial'
 };
 function goCfg(id){
+  // Check sub-perm for encargados
+  if(CU?.rol==='encargado'){
+    const p=CU.perms||{};
+    if(!p[`cfg-${id}`]&&id!=='ajustes'){
+      showToast('⛔ Sin permiso para esta sección');return;
+    }
+  }
   document.getElementById('cfg-home').style.display='none';
   document.getElementById('cfg-section').style.display='block';
   const lbl=document.getElementById('cfg-back-lbl');
@@ -2162,16 +2692,53 @@ function goCfg(id){
   if(id==='mp')renderCfgMP();
   if(id==='metas')renderCfgMetas();
   if(id==='reportes'){renderReportes();mountReportesInConfig();}
-  if(id==='ajustes'){initPush();initPINStatus();checkFaltantes();initFaceIDStatus();renderTipsList();}
+  if(id==='ajustes'){initPush();initPINStatus();checkFaltantes();initFaceIDStatus();renderTipsList();renderCfgU();}
   if(id==='historial')renderHistorial();
 }
+
+// Filter cfg-home cards based on sub-perms
+function filterCfgHome(){
+  if(CU?.rol==='admin') return; // admin sees all
+  const p=CU?.perms||{};
+  const cardMap={puestos:'cfg-puestos',empleados:'cfg-empleados',mp:'cfg-mp',
+    metas:'cfg-metas',editar:'cfg-editar',historial:'cfg-historial',
+    reportes:'cfg-reportes',ajustes:'cfg-ajustes',
+    micuenta:'cfg-micuenta',manual:'cfg-manual'};
+  document.querySelectorAll('.cfg-card').forEach(btn=>{
+    const match=btn.getAttribute('onclick')?.match(/goCfg\('(\w+)'\)/);
+    const id=match?match[1]:btn.dataset.cfgId;
+    if(!id) return;
+    const permKey=cardMap[id];
+    if(permKey) btn.style.display=p[permKey]?'':'none';
+  });
+}
+
+
+
+
+
+
+
+
+
 function goCfgHome(){
   document.getElementById('cfg-home').style.display='block';
   document.getElementById('cfg-section').style.display='none';
 }
 function setCT(id,btn){goCfg(id);}
 function setNC(city,btn){NCity=city;nomPosFilter='todos';const s=document.getElementById('nom-search');if(s)s.value='';document.querySelectorAll('#view-nomina .cchip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderNomina();}
-function renderCfg(){goCfgHome();populateEditSel();}
+function renderCfg(){goCfgHome();populateEditSel();filterCfgHome();}
+
+function irMiCuentaDesdeConfig(){
+  const btn=document.querySelector('.nbtn[onclick*="config"]');
+  showV('mi-cuenta', btn);
+  irMiCuenta(btn);
+}
+function irAyudaDesdeConfig(){
+  const btn=document.querySelector('.nbtn[onclick*="config"]');
+  showV('manual', btn);
+  renderManual();
+}
 
 function setCEC(city,btn){
   CECity=city;empPosFilter='todos';
@@ -2192,16 +2759,84 @@ function setCEC(city,btn){
 }
 
 // VENTAS
+// ═══════════════════════════════════════════
+// 💰 VENTAS WIZARD
+// ═══════════════════════════════════════════
+let currentVStep=0;
+const VSTEP_COUNT=4;
+
+function goVStep(n){
+  // Validate step 0 before moving forward
+  if(n>currentVStep && currentVStep===0){
+    const ef=parseFloat(document.getElementById('ve-dia-ef')?.value||0);
+    const tj=parseFloat(document.getElementById('ve-dia-tj')?.value||0);
+    const ot=parseFloat(document.getElementById('ve-dia-ot')?.value||0);
+    // Allow empty (0) — just move forward
+  }
+  // Update panels
+  for(let i=0;i<VSTEP_COUNT;i++){
+    const panel=document.getElementById('vpanel-'+i);
+    if(panel) panel.classList.toggle('active',i===n);
+  }
+  // Update step indicators
+  for(let i=0;i<VSTEP_COUNT;i++){
+    const step=document.getElementById('vstep-'+i);
+    if(!step) continue;
+    step.classList.remove('active','done');
+    if(i===n) step.classList.add('active');
+    else if(i<n) step.classList.add('done');
+    const line=document.getElementById('vstep-line-'+i);
+    if(line) line.classList.toggle('done',i<n);
+  }
+  currentVStep=n;
+  // Update resumen on step 3
+  if(n===3) updateVentaResumen();
+  // Scroll to top of ventas view
+  document.getElementById('view-ventas')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function updateVentaResumen(){
+  const ef=parseFloat(document.getElementById('ve-dia-ef')?.value||0);
+  const tj=parseFloat(document.getElementById('ve-dia-tj')?.value||0);
+  const ot=parseFloat(document.getElementById('ve-dia-ot')?.value||0);
+  const g=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+parseFloat(document.getElementById(`g-${k}`)?.value||0),0);
+  const bruto=ef+tj+ot;
+  const util=bruto-g;
+  const s=id=>document.getElementById(id);
+  if(s('res-ef')) s('res-ef').textContent='$'+fmt(ef);
+  if(s('res-tj')) s('res-tj').textContent='$'+fmt(tj+ot);
+  if(s('res-gas')) s('res-gas').textContent='$'+fmt(g);
+  if(s('res-util')){ s('res-util').textContent='$'+fmt(util); s('res-util').style.color=util>=0?'var(--v)':'var(--r)';}
+  if(s('res-bruto')) s('res-bruto').textContent='$'+fmt(bruto);
+}
+
+let mpSectionOpen=false;
+function toggleMPSection(){
+  mpSectionOpen=!mpSectionOpen;
+  const body=document.getElementById('mp-section-body');
+  const icon=document.getElementById('mp-toggle-icon');
+  if(body) body.style.display=mpSectionOpen?'block':'none';
+  if(icon) icon.style.transform=mpSectionOpen?'rotate(180deg)':'rotate(0deg)';
+  if(mpSectionOpen) renderMPRows();
+}
+
 function calcV(){
   const ef=parseFloat(document.getElementById('ve-dia-ef')?.value||0);
   const tj=parseFloat(document.getElementById('ve-dia-tj')?.value||0);
   const ot=parseFloat(document.getElementById('ve-dia-ot')?.value||0);
-  document.getElementById('tef').textContent='$'+fmt(ef);
-  document.getElementById('ttj').textContent='$'+fmt(tj+ot);
-  document.getElementById('tbruto').textContent='$'+fmt(ef+tj+ot);
+  // Legacy IDs (still needed by guardarVentas)
+  const tef=document.getElementById('tef');if(tef)tef.textContent='$'+fmt(ef);
+  const ttj=document.getElementById('ttj');if(ttj)ttj.textContent='$'+fmt(tj+ot);
+  // New inline IDs
+  const ti=document.getElementById('tef-inline');if(ti)ti.textContent='$'+fmt(ef);
+  const tj2=document.getElementById('ttj-inline');if(tj2)tj2.textContent='$'+fmt(tj+ot);
+  const tot=document.getElementById('tot-inline');if(tot)tot.textContent='$'+fmt(ot);
+  const bruto=document.getElementById('tbruto');if(bruto)bruto.textContent='$'+fmt(ef+tj+ot);
   const g=['gas','hie','rep','cas','otr'].reduce((a,k)=>a+parseFloat(document.getElementById(`g-${k}`)?.value||0),0);
-  document.getElementById('gtot').textContent='$'+fmt(g);
+  const gt=document.getElementById('gtot');if(gt)gt.textContent='$'+fmt(g);
 }
+
+
 
 function calcCaja(){
   const inicio=parseFloat(document.getElementById('caja-inicio')?.value||0);
@@ -3785,14 +4420,23 @@ function renderCfgE(){
         </div>
       </div>`;
 
-    // Toggle sueldo row on card click
-    card.onclick=()=>{
+    // Toggle sueldo row — ignorar clicks dentro del input
+    card.onclick=(e)=>{
+      if(e.target.closest('.emp-sueldo-row')) return;
       const sRow=card.querySelector('.emp-sueldo-row');
       const isOpen=sRow.style.display!=='none';
       sRow.style.display=isOpen?'none':'block';
       card.style.background=isOpen?'white':'var(--g2)';
+      if(!isOpen) setTimeout(()=>sRow.querySelector('input')?.focus(),80);
       toggleEmpSel(i,card);
     };
+    // Bloquear bubbling desde el input
+    const sueldoInp=card.querySelector('.emp-sueldo-inp');
+    if(sueldoInp){
+      sueldoInp.addEventListener('click',e=>e.stopPropagation());
+      sueldoInp.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true});
+      sueldoInp.addEventListener('touchend',e=>e.stopPropagation(),{passive:true});
+    }
     return card;
   };
 
@@ -4099,7 +4743,7 @@ function renderCfgU(){
           ${p.asist?badge('✅Asist.','var(--vs)','var(--v)'):''}
           ${p.nomina?badge('👷Nómina','var(--ams)','#92400E'):''}
           ${p.reportes?badge('📊Rep.','var(--azs)','var(--az)'):''}
-          ${p.config?badge('⚙️Config','var(--g3)','var(--t2)'):''}
+          ${p.config?(()=>{const subs=ALL_CFG_SUBS.filter(k=>p['cfg-'+k]);const subTxt=subs.length?` (${subs.length})`:' (ninguno)';return badge('⚙️Config'+subTxt,'var(--g3)','var(--t2)');})():''}
           ${p.dashboard?badge('🏠Inicio','var(--vs)','var(--v)'):''}
         </div>
       </div>
@@ -4150,6 +4794,7 @@ function openM(id,data){
     document.getElementById('prov-modal-title').textContent='🏪 Agregar Proveedor';
     document.getElementById('prov-edit-idx').value='-1';
     ['prov-nombre','prov-producto','prov-tel','prov-precio','prov-notas'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+  const pc=document.getElementById('prov-ciudad');if(pc)pc.value='wash';
     document.getElementById('prov-savebtn').innerHTML='✅ GUARDAR';
   }
   if(id==='foto'){
@@ -4243,7 +4888,21 @@ function updatePuestoVisibility(){
 }
 
 const ALL_PERMS=['ventas','asist','nomina','reportes','config','dashboard'];
+const ALL_CFG_SUBS=['puestos','empleados','mp','metas','editar','historial','reportes','ajustes','micuenta','manual'];
 const ALL_CIUDADES=['wash','chi'];
+
+// ── Mostrar/ocultar sub-permisos de Config en el modal ──
+function toggleCfgSubPerms(){
+  const chk=document.getElementById('perm-config');
+  const wrap=document.getElementById('cfg-sub-perms-wrap');
+  if(wrap) wrap.style.display=chk?.checked?'block':'none';
+}
+function toggleAllCfgSubs(val){
+  ALL_CFG_SUBS.forEach(k=>{
+    const el=document.getElementById('perm-cfg-'+k);
+    if(el) el.checked=val;
+  });
+}
 
 function onCiudadPermChange(){
   ['wash','chi'].forEach(c=>{
@@ -4258,6 +4917,8 @@ function getPermsFromForm(){
   const p={};
   ALL_PERMS.forEach(k=>p[k]=document.getElementById(`perm-${k}`)?.checked||false);
   ALL_CIUDADES.forEach(c=>p[`ciudad-${c}`]=document.getElementById(`perm-ciudad-${c}`)?.checked||false);
+  // Config sub-perms
+  ALL_CFG_SUBS.forEach(k=>p[`cfg-${k}`]=document.getElementById(`perm-cfg-${k}`)?.checked||false);
   return p;
 }
 
@@ -4270,9 +4931,15 @@ function setPermsToForm(perms, dashTipo='completo'){
     const el=document.getElementById(`perm-ciudad-${c}`);
     if(el) el.checked=perms?.[`ciudad-${c}`]===true;
   });
+  // Config sub-perms
+  ALL_CFG_SUBS.forEach(k=>{
+    const el=document.getElementById(`perm-cfg-${k}`);
+    if(el) el.checked=perms?.[`cfg-${k}`]===true;
+  });
   // Dashboard tipo
   setDashTipo(dashTipo||'completo');
   toggleDashTipoSelect();
+  toggleCfgSubPerms();
   onCiudadPermChange();
 }
 
@@ -4387,8 +5054,100 @@ async function eliminarTodosUsuarios(){
   EW.forEach(e=>{delete e.pass;delete e.rol;delete e.perms;});
   EC.forEach(e=>{delete e.pass;delete e.rol;delete e.perms;});
   await SD('EW',EW);await SD('EC',EC);
-  refreshUS();renderCfgE();
+  refreshUS();renderCfgE();renderCfgU();
   showToast('🗑️ Accesos eliminados');
+}
+
+// ═══════════════════════════════════════════
+// 👥 PERMISOS EN MASA
+// ═══════════════════════════════════════════
+function openBulkPerms(){
+  // Build employee list with checkboxes
+  const c=document.getElementById('bulk-emp-list');
+  if(!c) return;
+  c.innerHTML='';
+  const allEmps=[...EW.map(e=>({...e,ciudad:'wash'})),...EC.map(e=>({...e,ciudad:'chi'}))];
+  const conAcceso=allEmps.filter(e=>e.pass&&e.rol==='encargado');
+  if(!conAcceso.length){
+    c.innerHTML='<p style="color:var(--t3);font-size:.8rem;text-align:center;padding:12px">No hay empleados con acceso activo.</p>';
+  } else {
+    conAcceso.forEach((emp,i)=>{
+      const ini=emp.n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const row=document.createElement('label');
+      row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;user-select:none;background:white;margin-bottom:5px;border:1.5px solid var(--g3)';
+      row.innerHTML=`
+        <input type="checkbox" class="bulk-emp-chk" data-ciudad="${emp.ciudad}" data-nombre="${emp.n}" style="width:16px;height:16px;accent-color:var(--n);flex-shrink:0">
+        <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--az),#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:white;flex-shrink:0">${ini}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.82rem;font-weight:800;color:var(--t)">${emp.n}</div>
+          <div style="font-size:.65rem;color:var(--t3);font-weight:700">${emp.ciudad==='wash'?'🌲 Washington':'🌆 Chicago'} · ${emp.p||'—'}</div>
+        </div>`;
+      c.appendChild(row);
+    });
+  }
+  // Reset perm checkboxes
+  ['ventas','asist','nomina','reportes','config','dashboard'].forEach(k=>{
+    const el=document.getElementById('bulk-perm-'+k);
+    if(el) el.checked=false;
+  });
+  ALL_CFG_SUBS.forEach(k=>{
+    const el=document.getElementById('bulk-cfg-'+k);
+    if(el) el.checked=false;
+  });
+  document.getElementById('bulk-cfg-sub-wrap').style.display='none';
+  document.getElementById('bulk-mode-replace').checked=true;
+  document.getElementById('m-bulkPerms').classList.add('open');
+}
+
+function bulkSelectAll(val){
+  document.querySelectorAll('.bulk-emp-chk').forEach(chk=>chk.checked=val);
+}
+
+function toggleBulkCfgSubs(){
+  const chk=document.getElementById('bulk-perm-config');
+  const wrap=document.getElementById('bulk-cfg-sub-wrap');
+  if(wrap) wrap.style.display=chk?.checked?'block':'none';
+}
+
+async function applyBulkPerms(){
+  const selected=[...document.querySelectorAll('.bulk-emp-chk:checked')];
+  if(!selected.length){showToast('⚠️ Selecciona al menos un empleado');return;}
+
+  const mode=document.querySelector('input[name="bulk-mode"]:checked')?.value||'replace';
+
+  // Build perms object from bulk form
+  const newPerms={};
+  ['ventas','asist','nomina','reportes','config','dashboard'].forEach(k=>{
+    newPerms[k]=document.getElementById('bulk-perm-'+k)?.checked||false;
+  });
+  ALL_CFG_SUBS.forEach(k=>{
+    newPerms['cfg-'+k]=document.getElementById('bulk-cfg-'+k)?.checked||false;
+  });
+
+  let count=0;
+  selected.forEach(chk=>{
+    const ciudad=chk.dataset.ciudad;
+    const nombre=chk.dataset.nombre;
+    const emps=ciudad==='wash'?EW:EC;
+    const emp=emps.find(e=>e.n===nombre);
+    if(!emp) return;
+    if(mode==='replace'){
+      emp.perms={...(emp.perms||{}),...newPerms};
+    } else {
+      // add mode: only turn ON, never turn off
+      const cur=emp.perms||{};
+      Object.entries(newPerms).forEach(([k,v])=>{if(v) cur[k]=true;});
+      emp.perms=cur;
+    }
+    count++;
+  });
+
+  await SD('EW',EW);
+  await SD('EC',EC);
+  await logChange('Usuarios',`Permisos en masa aplicados a ${count} empleado${count!==1?'s':''}`,`Modo: ${mode}`,null);
+  renderCfgU();renderCfgE();
+  closeM('bulkPerms');
+  showToast(`✅ Permisos aplicados a ${count} empleado${count!==1?'s':''}`);
 }
 
 // CONFIRM DELETE
@@ -5318,18 +6077,65 @@ function renderAlertasBanner(faltantes){
 // ═══════════════════════════════════════════
 // 🏪 PROVEEDORES
 // ═══════════════════════════════════════════
-// Render proveedores in standalone view
+let provCity='wash'; // ciudad activa en vista prov
+
+function setProvCity(city,btn){
+  provCity=city;
+  ['wash','chi'].forEach(c=>{
+    const t=document.getElementById('prov-tab-'+c);if(!t)return;
+    if(c===city){t.style.background='rgba(255,255,255,.2)';t.style.color='white';}
+    else{t.style.background='rgba(255,255,255,.08)';t.style.color='rgba(255,255,255,.6)';}
+  });
+  renderProvView();
+}
+
 function renderProvView(){
   const c=document.getElementById('prov-view-list');if(!c)return;
-  renderCfgProv(); // reuse existing function for cfg-prov-list
-  // Copy content to prov-view-list
-  const src=document.getElementById('cfg-prov-list');
-  if(src) c.innerHTML=src.innerHTML;
-  // Re-bind buttons since innerHTML copy loses event listeners
-  c.querySelectorAll('[onclick]').forEach(el=>{
-    // buttons already have onclick as strings, they work fine
+  const search=(document.getElementById('prov-search')?.value||'').toLowerCase();
+  const filtrados=PROV.filter(p=>{
+    const ciudadOk=p.ciudad===provCity||p.ciudad==='ambas'||!p.ciudad;
+    const searchOk=!search||p.nombre.toLowerCase().includes(search)||
+      (p.producto||'').toLowerCase().includes(search);
+    return ciudadOk&&searchOk;
   });
-  if(!c.innerHTML.trim()) c.innerHTML='<p style="color:var(--t3);padding:16px;text-align:center">Sin proveedores. Agrega uno desde ⚙️ Config → Ajustes.</p>';
+  // count label
+  const total=PROV.filter(p=>p.ciudad===provCity||p.ciudad==='ambas'||!p.ciudad).length;
+  const lbl=document.getElementById('prov-count-lbl');
+  if(lbl) lbl.textContent=`${total} proveedor${total!==1?'es':''} · ${provCity==='wash'?'Washington':'Chicago'}`;
+  if(!filtrados.length){
+    c.innerHTML=`<div style="text-align:center;padding:40px 16px;color:var(--t3)">
+      <div style="font-size:2.5rem;margin-bottom:12px">🏪</div>
+      <div style="font-weight:800;font-size:.9rem">Sin proveedores${search?' encontrados':''}</div>
+      <div style="font-size:.78rem;margin-top:6px">${search?'Intenta con otra búsqueda':'Toca + Agregar para añadir uno'}</div>
+    </div>`;
+    return;
+  }
+  c.innerHTML='';
+  filtrados.forEach((p,_i)=>{
+    const i=PROV.indexOf(p);
+    const ciudadBadge=p.ciudad==='ambas'?'<span style="background:#e0f2fe;color:#0369a1;border-radius:6px;padding:2px 7px;font-size:.65rem;font-weight:800">🌐 Ambas</span>':
+      p.ciudad==='chi'?'<span style="background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 7px;font-size:.65rem;font-weight:800">🌆 Chicago</span>':
+      '<span style="background:#d1fae5;color:#065f46;border-radius:6px;padding:2px 7px;font-size:.65rem;font-weight:800">🌲 Wash</span>';
+    const div=document.createElement('div');div.className='prov-card';
+    div.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+            <div style="font-size:.92rem;font-weight:900;color:var(--t)">${p.nombre}</div>
+            ${ciudadBadge}
+          </div>
+          <div style="font-size:.76rem;color:var(--v);font-weight:700">📦 ${p.producto||'—'}</div>
+          ${p.tel?`<div style="font-size:.75rem;color:var(--t3);margin-top:3px">📱 <a href="https://wa.me/${p.tel.replace(/\D/g,'')}" style="color:var(--az);font-weight:700">${p.tel}</a></div>`:''}
+          ${p.precio?`<div style="font-size:.75rem;color:var(--t2);margin-top:3px">💰 ${p.precio}</div>`:''}
+          ${p.notas?`<div style="font-size:.72rem;color:var(--t3);margin-top:4px;font-style:italic;border-top:1px solid var(--g3);padding-top:4px">${p.notas}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+          <button class="bedit" style="padding:6px 10px" onclick="editProv(${i})">✏️</button>
+          <button class="bdang" style="padding:6px 10px" onclick="delProv(${i})">🗑️</button>
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
 }
 
 // Mount reportes tabs content inside cfg-reportes
@@ -5369,23 +6175,32 @@ function setRepTab(id,btn){
 function renderCfgProv(){
   const c=document.getElementById('cfg-prov-list');if(!c)return;c.innerHTML='';
   if(!PROV.length){c.innerHTML='<p style="color:var(--t3);padding:16px;text-align:center">Sin proveedores. Toca + Agregar</p>';return;}
-  PROV.forEach((p,i)=>{
-    const div=document.createElement('div');div.className='prov-card';
-    div.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:flex-start">
-        <div style="flex:1">
-          <div style="font-size:.9rem;font-weight:900;color:var(--t)">${p.nombre}</div>
-          <div style="font-size:.75rem;color:var(--v);font-weight:700;margin-top:2px">📦 ${p.producto}</div>
-          ${p.tel?`<div style="font-size:.75rem;color:var(--t3);margin-top:2px">📱 <a href="https://wa.me/${p.tel.replace(/\D/g,'')}" style="color:var(--az)">${p.tel}</a></div>`:''}
-          ${p.precio?`<div style="font-size:.75rem;color:var(--t2);margin-top:2px">💰 ${p.precio}</div>`:''}
-          ${p.notas?`<div style="font-size:.72rem;color:var(--t3);margin-top:4px;font-style:italic">${p.notas}</div>`:''}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <button class="bedit" style="padding:4px 8px" onclick="editProv(${i})">✏️</button>
-          <button class="bdang" style="padding:4px 8px" onclick="delProv(${i})">🗑️</button>
-        </div>
-      </div>`;
-    c.appendChild(div);
+  // Group by city
+  const groups=[{key:'wash',lbl:'🌲 Washington'},{key:'chi',lbl:'🌆 Chicago'},{key:'ambas',lbl:'🌐 Ambas ciudades'}];
+  groups.forEach(g=>{
+    const items=PROV.map((p,i)=>({p,i})).filter(({p})=>(p.ciudad||'wash')===g.key);
+    if(!items.length)return;
+    const hdr=document.createElement('div');
+    hdr.style.cssText='font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--t3);padding:10px 4px 6px;margin-top:4px';
+    hdr.textContent=g.lbl;c.appendChild(hdr);
+    items.forEach(({p,i})=>{
+      const div=document.createElement('div');div.className='prov-card';
+      div.innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:.9rem;font-weight:900;color:var(--t)">${p.nombre}</div>
+            <div style="font-size:.75rem;color:var(--v);font-weight:700;margin-top:2px">📦 ${p.producto||'—'}</div>
+            ${p.tel?`<div style="font-size:.75rem;color:var(--t3);margin-top:2px">📱 <a href="https://wa.me/${p.tel.replace(/\D/g,'')}" style="color:var(--az)">${p.tel}</a></div>`:''}
+            ${p.precio?`<div style="font-size:.75rem;color:var(--t2);margin-top:2px">💰 ${p.precio}</div>`:''}
+            ${p.notas?`<div style="font-size:.72rem;color:var(--t3);margin-top:4px;font-style:italic">${p.notas}</div>`:''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+            <button class="bedit" style="padding:4px 8px" onclick="editProv(${i})">✏️</button>
+            <button class="bdang" style="padding:4px 8px" onclick="delProv(${i})">🗑️</button>
+          </div>
+        </div>`;
+      c.appendChild(div);
+    });
   });
 }
 
@@ -5393,8 +6208,9 @@ function editProv(idx){
   const p=PROV[idx];if(!p)return;
   document.getElementById('prov-modal-title').textContent='✏️ Editar Proveedor';
   document.getElementById('prov-edit-idx').value=idx;
+  document.getElementById('prov-ciudad').value=p.ciudad||'wash';
   document.getElementById('prov-nombre').value=p.nombre;
-  document.getElementById('prov-producto').value=p.producto;
+  document.getElementById('prov-producto').value=p.producto||''
   document.getElementById('prov-tel').value=p.tel||'';
   document.getElementById('prov-precio').value=p.precio||'';
   document.getElementById('prov-notas').value=p.notas||'';
@@ -5406,21 +6222,23 @@ async function saveProv(){
   const idx=parseInt(document.getElementById('prov-edit-idx').value);
   const nombre=document.getElementById('prov-nombre').value.trim();
   if(!nombre){showToast('⚠️ Escribe el nombre del proveedor');return;}
-  const obj={nombre,producto:document.getElementById('prov-producto').value.trim(),
+  const obj={nombre,
+    ciudad:document.getElementById('prov-ciudad').value,
+    producto:document.getElementById('prov-producto').value.trim(),
     tel:document.getElementById('prov-tel').value.trim(),
     precio:document.getElementById('prov-precio').value.trim(),
     notas:document.getElementById('prov-notas').value.trim()};
   if(idx===-1) PROV.push(obj); else PROV[idx]=obj;
   await SD('PROV',PROV);
   await logChange('Proveedores',idx===-1?`Nuevo: ${nombre}`:`Editado: ${nombre}`,null,`Producto: ${obj.producto}`);
-  renderCfgProv();closeM('addProv');
+  renderCfgProv();renderProvView();closeM('addProv');
   showToast(idx===-1?`✅ "${nombre}" agregado`:`✅ "${nombre}" actualizado`);
 }
 
 async function delProv(idx){
   const nom=PROV[idx]?.nombre;
   if(!confirm(`¿Eliminar "${nom}"?`))return;
-  PROV.splice(idx,1);await SD('PROV',PROV);renderCfgProv();showToast(`🗑️ "${nom}" eliminado`);
+  PROV.splice(idx,1);await SD('PROV',PROV);renderCfgProv();renderProvView();showToast(`🗑️ "${nom}" eliminado`);
 }
 
 // ═══════════════════════════════════════════
@@ -5635,6 +6453,209 @@ if('serviceWorker' in navigator){
     });
   });
 }
+
+// ═══════════════════════════════════════════
+// 📖 MANUAL DE USUARIO
+// ═══════════════════════════════════════════
+const MANUAL_SECTIONS=[
+  {
+    id:'login', icon:'🔐', title:'Cómo entrar a la app',
+    color:'#7c3aed', bg:'#f5f3ff',
+    steps:[
+      {emoji:'1️⃣', text:'Abre el link de la app en tu navegador (Safari en iPhone, Chrome en Android).'},
+      {emoji:'2️⃣', text:'Escribe tu usuario y contraseña. El administrador te los da.'},
+      {emoji:'3️⃣', text:'Toca <strong>ENTRAR</strong>. ¡Listo!'},
+      {emoji:'💡', text:'<em>Tip:</em> Guarda el link en tu pantalla de inicio para abrirla más rápido como si fuera una app normal.'},
+      {emoji:'🔑', text:'Desde <strong>⚙️ Config → 🔐 Mi Cuenta</strong> puedes activar un PIN de 4 dígitos o huella/Face ID para entrar más rápido.'},
+    ]
+  },
+  {
+    id:'ventas', icon:'💰', title:'Registrar ventas del día',
+    color:'#16a34a', bg:'#f0fdf4',
+    steps:[
+      {emoji:'1️⃣', text:'Toca <strong>💰 Ventas</strong> en el menú de abajo.'},
+      {emoji:'2️⃣', text:'Selecciona el <strong>puesto</strong> (North Gate, Sahara, Renton...) y la <strong>fecha</strong>.'},
+      {emoji:'3️⃣', text:'Llena <strong>Efectivo</strong>, <strong>Tarjeta</strong> y <strong>Otros</strong> con los montos del día.'},
+      {emoji:'4️⃣', text:'Llena los gastos: gasolina, hielo, reparaciones, casetas, otros.'},
+      {emoji:'5️⃣', text:'Escribe tu <strong>nombre</strong> en "Firma del Encargado" (obligatorio).'},
+      {emoji:'6️⃣', text:'Toca <strong>💾 GUARDAR VENTAS</strong>.'},
+      {emoji:'✅', text:'Verás un mensaje de confirmación. Los datos se sincronizan automáticamente con Google Sheets.'},
+      {emoji:'⚠️', text:'Si no hay internet, <strong>no te preocupes</strong> — los datos se guardan en tu teléfono y se mandan automáticamente cuando tengas señal.'},
+    ]
+  },
+  {
+    id:'asist', icon:'✅', title:'Tomar asistencia',
+    color:'#0891b2', bg:'#ecfeff',
+    steps:[
+      {emoji:'1️⃣', text:'Toca <strong>✅ Asist.</strong> en el menú.'},
+      {emoji:'2️⃣', text:'Selecciona la <strong>semana</strong> con las flechas ‹ ›.'},
+      {emoji:'3️⃣', text:'Elige la ciudad: <strong>🌲 Washington</strong> o <strong>🌆 Chicago</strong>.'},
+      {emoji:'4️⃣', text:'Para cada empleado toca los días:<br>🟢 <strong>P</strong> = Presente<br>🟡 <strong>MD</strong> = Medio día<br>⬜ <strong>A</strong> = Ausente'},
+      {emoji:'5️⃣', text:'Toca <strong>💾 GUARDAR ASISTENCIA</strong>.'},
+      {emoji:'💡', text:'La nómina se calcula automáticamente basada en la asistencia que registres aquí.'},
+    ]
+  },
+  {
+    id:'nomina', icon:'👷', title:'Calcular y guardar nómina',
+    color:'#d97706', bg:'#fffbeb',
+    steps:[
+      {emoji:'1️⃣', text:'Toca <strong>👷 Nómina</strong> en el menú.'},
+      {emoji:'2️⃣', text:'Selecciona la <strong>semana</strong> y la <strong>ciudad</strong>.'},
+      {emoji:'3️⃣', text:'El sistema ya trae los días trabajados de la asistencia. Verifica que estén bien.'},
+      {emoji:'4️⃣', text:'El <strong>pago calculado</strong> aparece automáticamente en verde.'},
+      {emoji:'5️⃣', text:'Toca <strong>💾 GUARDAR NÓMINA</strong>.'},
+      {emoji:'💡', text:'La fórmula es: <strong>Sueldo semanal ÷ 6 × días trabajados</strong>. El medio día cuenta como 0.5.'},
+    ]
+  },
+  {
+    id:'prov', icon:'🏪', title:'Ver y agregar proveedores',
+    color:'#0f766e', bg:'#f0fdfa',
+    steps:[
+      {emoji:'1️⃣', text:'Toca <strong>🏪 Proveed.</strong> en el menú.'},
+      {emoji:'2️⃣', text:'Selecciona la ciudad: <strong>🌲 Washington</strong> o <strong>🌆 Chicago</strong>.'},
+      {emoji:'3️⃣', text:'Usa el buscador 🔍 para encontrar un proveedor por nombre o producto.'},
+      {emoji:'4️⃣', text:'Toca <strong>📱 el teléfono</strong> de un proveedor para abrir WhatsApp directo.'},
+      {emoji:'➕', text:'Para agregar uno nuevo toca <strong>+ Agregar</strong>, llena el formulario y elige la ciudad.'},
+      {emoji:'✏️', text:'Para editar o eliminar toca los botones ✏️ o 🗑️ en la tarjeta del proveedor.'},
+    ]
+  },
+  {
+    id:'config', icon:'⚙️', title:'Configuración (solo admin)',
+    color:'#64748b', bg:'#f8fafc',
+    steps:[
+      {emoji:'⚙️', text:'Toca <strong>⚙️ Config</strong> en el menú de abajo para abrir el panel de configuración.'},
+      {emoji:'👷', text:'<strong>Empleados</strong>: agrega o edita empleados, asigna acceso a la app, cambia puestos y permisos.'},
+      {emoji:'🧅', text:'<strong>Materia Prima</strong>: administra el catálogo de ingredientes y sus precios.'},
+      {emoji:'🎯', text:'<strong>Metas</strong>: define cuánto debe vender cada puesto por semana.'},
+      {emoji:'📊', text:'<strong>Reportes</strong>: ve el resumen mensual, flujo de efectivo, gastos y exporta datos.'},
+      {emoji:'⚙️', text:'<strong>Ajustes</strong>: modo oscuro, notificaciones, mensajes motivacionales y zona de peligro.'},
+      {emoji:'🔐', text:'<strong>Mi Cuenta</strong>: accede desde Config → Mi Cuenta para configurar PIN o Face ID.'},
+      {emoji:'📖', text:'<strong>Ayuda</strong>: accede al manual completo desde Config → Ayuda.'},
+      {emoji:'📋', text:'<strong>Historial</strong>: ve quién guardó qué y cuándo. Útil para auditorías.'},
+    ]
+  },
+  {
+    id:'cfg-perms', icon:'🔑', title:'Permisos de Configuración',
+    color:'#374151', bg:'#f9fafb',
+    steps:[
+      {emoji:'💡', text:'El administrador puede controlar exactamente qué secciones de Config puede ver cada encargado.'},
+      {emoji:'1️⃣', text:'Ve a <strong>⚙️ Config → Ajustes → 🔐 Usuarios con Acceso</strong> y toca ✏️ en el empleado.'},
+      {emoji:'2️⃣', text:'En la sección <strong>⚙️ Config</strong> de sus permisos, activa el acceso y se desplegará un panel con 8 módulos: Puestos, Empleados, Materia Prima, Metas, Editar Ventas, Historial, Reportes y Ajustes.'},
+      {emoji:'3️⃣', text:'Marca solo los módulos que ese encargado necesita ver. El resto no aparecerá en su pantalla.'},
+      {emoji:'👥', text:'Para configurar varios empleados a la vez, usa el botón morado <strong>👥 Permisos en Masa</strong> en la parte superior de Usuarios. Selecciona quiénes, elige los permisos y aplica en un toque.'},
+      {emoji:'🔄', text:'Modo <strong>Reemplazar</strong>: sobreescribe todos sus permisos actuales. Modo <strong>Agregar</strong>: solo activa los nuevos sin quitar los que ya tenía.'},
+    ]
+  },
+  {
+    id:'sincronizacion', icon:'🔄', title:'Sincronización y conexión',
+    color:'#2563eb', bg:'#eff6ff',
+    steps:[
+      {emoji:'🟢', text:'Cuando ves <strong>✅ Sincronizado</strong> en la barra de arriba, todos los datos están guardados en Google Sheets.'},
+      {emoji:'🟡', text:'Cuando ves <strong>⏳ N pendientes</strong>, hay datos esperando enviarse (sin internet).'},
+      {emoji:'🔄', text:'Para descargar datos nuevos de otro teléfono, toca el botón <strong>🔄</strong> en la barra de arriba.'},
+      {emoji:'⚠️', text:'Si guardas algo sin internet, <strong>no cierres la app</strong> hasta que aparezca ✅ Sincronizado.'},
+      {emoji:'💡', text:'La app reintenta automáticamente cada 15 segundos si no hay conexión.'},
+    ]
+  },
+  {
+    id:'micuenta', icon:'🔐', title:'Mi Cuenta — PIN y biometría',
+    color:'#be123c', bg:'#fff1f2',
+    steps:[
+      {emoji:'1️⃣', text:'Ve a <strong>⚙️ Config</strong> en el menú y toca la tarjeta <strong>🔐 Mi Cuenta</strong>.'},
+      {emoji:'🔢', text:'<strong>PIN</strong>: configura 4 dígitos para entrar rápido sin escribir tu contraseña.'},
+      {emoji:'👁️', text:'<strong>Face ID / Huella</strong>: activa biometría para entrar con tu cara o huella digital.'},
+      {emoji:'📱', text:'Estos métodos son específicos de tu teléfono — no se comparten con otros.'},
+      {emoji:'🗑️', text:'Para desactivarlos toca el botón rojo de eliminar en la misma pantalla.'},
+    ]
+  },
+  {
+    id:'tips', icon:'🌮', title:'Tips y mensajes del día',
+    color:'#b45309', bg:'#fffbeb',
+    steps:[
+      {emoji:'💡', text:'Cada vez que abres la app, el inicio muestra un <strong>mensaje motivacional</strong> diferente.'},
+      {emoji:'🌶️', text:'Algunos mensajes son motivacionales. Otros son <strong>albures taqueros</strong> — el humor también forma parte del equipo.'},
+      {emoji:'⚙️', text:'El administrador puede <strong>agregar, editar o eliminar</strong> mensajes desde Config → Ajustes → Mensajes.'},
+      {emoji:'🔄', text:'Para ver un mensaje nuevo sin cerrar la app, toca el botón <strong>🔄</strong> en la barra de arriba.'},
+      {emoji:'🏷️', text:'Los mensajes los ve solo el encargado en su pantalla de inicio — no afectan ventas ni datos.'},
+      {emoji:'😂', text:'<em>Ejemplo de albur taquero:</em> "El que madruga, taco agarra — y el que llega tarde, solo encuentra la grasa."'},
+    ]
+  },
+  {
+    id:'faq', icon:'❓', title:'Preguntas frecuentes',
+    color:'#4f46e5', bg:'#eef2ff',
+    steps:[
+      {emoji:'❓', text:'<strong>¿Por qué no veo los datos de otra persona?</strong> — Toca el botón 🔄 (sincronizar) en la barra de arriba para descargar los cambios más recientes.'},
+      {emoji:'❓', text:'<strong>¿Puedo usar la app sin internet?</strong> — Sí. Los datos se guardan en tu teléfono y se envían automáticamente cuando tengas señal. No cierres la app hasta ver ✅.'},
+      {emoji:'❓', text:'<strong>¿Por qué se cerró mi sesión?</strong> — La app cierra sesión automáticamente por seguridad si llevas mucho tiempo sin usarla. Vuelve a entrar con tu usuario y contraseña.'},
+      {emoji:'❓', text:'<strong>¿Puedo registrar ventas de otro día?</strong> — Sí. Cambia la fecha en el selector de fecha antes de guardar.'},
+      {emoji:'❓', text:'<strong>¿Qué significa "Solo local"?</strong> — Tus datos están guardados en el teléfono pero aún no llegaron a Google Sheets. Revisa tu conexión y toca 🔄.'},
+      {emoji:'❓', text:'<strong>¿Puedo ver las ventas de otro puesto?</strong> — Depende de tus permisos. Si eres admin puedes ver todo. Si eres encargado, solo ves tu puesto o ciudad asignada.'},
+      {emoji:'❓', text:'<strong>¿Cómo cambio mi contraseña?</strong> — Solo el administrador puede cambiar contraseñas desde Config → Usuarios.'},
+    ]
+  },
+  {
+    id:'errores', icon:'🛠️', title:'Qué hacer si algo falla',
+    color:'#dc2626', bg:'#fef2f2',
+    steps:[
+      {emoji:'🔄', text:'<strong>La app se ve rara o no carga bien:</strong> Cierra el navegador completamente y vuelve a abrir el link. En iPhone: desliza la app hacia arriba para cerrarla.'},
+      {emoji:'📶', text:'<strong>Dice "Solo local" todo el tiempo:</strong> Revisa que tengas internet. Prueba abriendo otra página. Si hay señal y sigue fallando, avisa al administrador.'},
+      {emoji:'💾', text:'<strong>Guardé pero los datos no aparecen en otro teléfono:</strong> Toca 🔄 en el otro teléfono para sincronizar. Los datos no aparecen automáticamente al instante.'},
+      {emoji:'🔐', text:'<strong>No recuerdo mi contraseña:</strong> El administrador la puede resetear desde Config → Usuarios. No hay forma de recuperarla sola.'},
+      {emoji:'📱', text:'<strong>El PIN o Face ID no funciona:</strong> Ve a <strong>⚙️ Config → 🔐 Mi Cuenta</strong> y elimina el PIN/biometría. Luego vuelve a configurarlo desde cero.'},
+      {emoji:'⚠️', text:'<strong>Se perdieron datos:</strong> Avisa de inmediato al administrador. En Config → Ajustes → Backup puede haber una copia reciente para restaurar.'},
+      {emoji:'📞', text:'<strong>Cualquier otro problema:</strong> Manda captura de pantalla al administrador con el error que ves. Entre más detalle des, más rápido se resuelve.'},
+    ]
+  },
+];
+
+let manualOpenId=null;
+
+function renderManual(){
+  const cont=document.getElementById('manual-sections');if(!cont)return;
+  cont.innerHTML='';
+  MANUAL_SECTIONS.forEach(sec=>{
+    const isOpen=manualOpenId===sec.id;
+    const card=document.createElement('div');
+    card.style.cssText='border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.07)';
+    // Header
+    const hdr=document.createElement('div');
+    hdr.style.cssText=`display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:${sec.color};cursor:pointer;user-select:none`;
+    hdr.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.3rem">${sec.icon}</span>
+        <span style="font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;color:white">${sec.title}</span>
+      </div>
+      <span id="manual-arrow-${sec.id}" style="color:white;font-size:1.1rem;transition:transform .25s;transform:rotate(${isOpen?'90deg':'0deg'})"›</span>`;
+    hdr.onclick=()=>toggleManualSection(sec.id);
+    // Body
+    const body=document.createElement('div');
+    body.id='manual-body-'+sec.id;
+    body.style.cssText=`background:${sec.bg};padding:${isOpen?'14px 16px':'0 16px'};max-height:${isOpen?'600px':'0'};overflow:hidden;transition:all .3s ease`;
+    if(isOpen){
+      body.innerHTML=sec.steps.map(s=>`
+        <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start">
+          <span style="font-size:1.1rem;flex-shrink:0;margin-top:1px">${s.emoji}</span>
+          <div style="font-family:'Nunito',sans-serif;font-size:.83rem;font-weight:600;color:#374151;line-height:1.5">${s.text}</div>
+        </div>`).join('');
+    }
+    card.appendChild(hdr);card.appendChild(body);
+    cont.appendChild(card);
+  });
+}
+
+function toggleManualSection(id){
+  const wasOpen=manualOpenId===id;
+  manualOpenId=wasOpen?null:id;
+  renderManual();
+  if(!wasOpen){
+    // scroll to opened section
+    setTimeout(()=>{
+      const el=document.getElementById('manual-body-'+id);
+      if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },150);
+  }
+}
+
 </script>
 </body>
 </html>
