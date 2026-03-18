@@ -1979,26 +1979,110 @@ body.dark .dash-cstat{background:#111827;border-color:#374151} .alerta-item{disp
         <p style="font-size:.68rem;color:var(--t3);margin-bottom:8px">Si marcas una ciudad arriba, verá todos sus puestos. Si no, selecciona uno específico.</p>
       </div>
 
-      <!-- PERMISOS DE SECCIONES -->
+      <!-- PERMISOS DE SECCIONES CON CIUDAD -->
       <label class="mlbl" style="margin-bottom:10px;margin-top:4px">🔑 Permisos de Secciones</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
-          <input type="checkbox" id="perm-ventas" style="width:17px;height:17px;accent-color:var(--n)">
-          <span style="font-size:.82rem;font-weight:800">💰 Ventas</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
-          <input type="checkbox" id="perm-asist" style="width:17px;height:17px;accent-color:var(--n)">
-          <span style="font-size:.82rem;font-weight:800">✅ Asistencia</span>
-        </label>
-
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
-          <input type="checkbox" id="perm-nomina" style="width:17px;height:17px;accent-color:var(--n)">
-          <span style="font-size:.82rem;font-weight:800">👷 Nómina</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
-          <input type="checkbox" id="perm-reportes" style="width:17px;height:17px;accent-color:var(--n)">
-          <span style="font-size:.82rem;font-weight:800">📊 Reportes</span>
-        </label>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="perm-section-row" id="perm-row-ventas">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--g);padding:10px 12px;border-radius:10px;border:1.5px solid var(--g3);transition:border-color .15s" id="perm-ventas-label">
+            <input type="checkbox" id="perm-ventas" style="width:17px;height:17px;accent-color:var(--n);flex-shrink:0" onchange="toggleSeccionCiudad('ventas')">
+            <span style="font-size:.82rem;font-weight:800;flex:1">💰 Ventas</span>
+            <span id="perm-ventas-ciudad-badge" style="font-size:.6rem;font-weight:900;color:var(--n);display:none"></span>
+          </label>
+          <div id="perm-ventas-ciudad-wrap" style="display:none;margin-top:4px;padding:8px 12px;background:#f8fafc;border:1.5px solid var(--g3);border-radius:8px;border-top:none;border-radius:0 0 10px 10px;margin-top:-4px">
+            <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Ciudad</div>
+            <div style="display:flex;gap:6px">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-ventas-wash" style="width:13px;height:13px;accent-color:var(--n)">
+                <span style="font-size:.72rem;font-weight:800">🌲 Wash</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-ventas-chi" style="width:13px;height:13px;accent-color:var(--az)">
+                <span style="font-size:.72rem;font-weight:800">🌆 Chicago</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="perm-section-row" id="perm-row-asist">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--g);padding:10px 12px;border-radius:10px;border:1.5px solid var(--g3);transition:border-color .15s" id="perm-asist-label">
+            <input type="checkbox" id="perm-asist" style="width:17px;height:17px;accent-color:var(--v);flex-shrink:0" onchange="toggleSeccionCiudad('asist')">
+            <span style="font-size:.82rem;font-weight:800;flex:1">✅ Asistencia</span>
+            <span id="perm-asist-ciudad-badge" style="font-size:.6rem;font-weight:900;color:var(--v);display:none"></span>
+          </label>
+          <div id="perm-asist-ciudad-wrap" style="display:none;margin-top:4px;padding:8px 12px;background:#f8fafc;border:1.5px solid var(--g3);border-radius:8px;border-top:none;border-radius:0 0 10px 10px;margin-top:-4px">
+            <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Ciudad</div>
+            <div style="display:flex;gap:6px">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-asist-wash" style="width:13px;height:13px;accent-color:var(--n)">
+                <span style="font-size:.72rem;font-weight:800">🌲 Wash</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-asist-chi" style="width:13px;height:13px;accent-color:var(--az)">
+                <span style="font-size:.72rem;font-weight:800">🌆 Chicago</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="perm-section-row" id="perm-row-nomina">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--g);padding:10px 12px;border-radius:10px;border:1.5px solid var(--g3);transition:border-color .15s" id="perm-nomina-label">
+            <input type="checkbox" id="perm-nomina" style="width:17px;height:17px;accent-color:var(--am);flex-shrink:0" onchange="toggleSeccionCiudad('nomina')">
+            <span style="font-size:.82rem;font-weight:800;flex:1">👷 Nómina</span>
+            <span id="perm-nomina-ciudad-badge" style="font-size:.6rem;font-weight:900;color:var(--am);display:none"></span>
+          </label>
+          <div id="perm-nomina-ciudad-wrap" style="display:none;margin-top:4px;padding:8px 12px;background:#f8fafc;border:1.5px solid var(--g3);border-radius:8px;border-top:none;border-radius:0 0 10px 10px;margin-top:-4px">
+            <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Ciudad</div>
+            <div style="display:flex;gap:6px">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-nomina-wash" style="width:13px;height:13px;accent-color:var(--n)">
+                <span style="font-size:.72rem;font-weight:800">🌲 Wash</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-nomina-chi" style="width:13px;height:13px;accent-color:var(--az)">
+                <span style="font-size:.72rem;font-weight:800">🌆 Chicago</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="perm-section-row" id="perm-row-reportes">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--g);padding:10px 12px;border-radius:10px;border:1.5px solid var(--g3);transition:border-color .15s" id="perm-reportes-label">
+            <input type="checkbox" id="perm-reportes" style="width:17px;height:17px;accent-color:var(--az);flex-shrink:0" onchange="toggleSeccionCiudad('reportes')">
+            <span style="font-size:.82rem;font-weight:800;flex:1">📊 Reportes</span>
+            <span id="perm-reportes-ciudad-badge" style="font-size:.6rem;font-weight:900;color:var(--az);display:none"></span>
+          </label>
+          <div id="perm-reportes-ciudad-wrap" style="display:none;margin-top:4px;padding:8px 12px;background:#f8fafc;border:1.5px solid var(--g3);border-radius:8px;border-top:none;border-radius:0 0 10px 10px;margin-top:-4px">
+            <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Ciudad</div>
+            <div style="display:flex;gap:6px">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-reportes-wash" style="width:13px;height:13px;accent-color:var(--n)">
+                <span style="font-size:.72rem;font-weight:800">🌲 Wash</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-reportes-chi" style="width:13px;height:13px;accent-color:var(--az)">
+                <span style="font-size:.72rem;font-weight:800">🌆 Chicago</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="perm-section-row" id="perm-row-egresos">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--g);padding:10px 12px;border-radius:10px;border:1.5px solid var(--g3);transition:border-color .15s" id="perm-egresos-label">
+            <input type="checkbox" id="perm-egresos" style="width:17px;height:17px;accent-color:#4338ca;flex-shrink:0" onchange="toggleSeccionCiudad('egresos')">
+            <span style="font-size:.82rem;font-weight:800;flex:1">💼 Egresos</span>
+            <span id="perm-egresos-ciudad-badge" style="font-size:.6rem;font-weight:900;color:#4338ca;display:none"></span>
+          </label>
+          <div id="perm-egresos-ciudad-wrap" style="display:none;margin-top:4px;padding:8px 12px;background:#f8fafc;border:1.5px solid var(--g3);border-radius:8px;border-top:none;border-radius:0 0 10px 10px;margin-top:-4px">
+            <div style="font-size:.6rem;font-weight:900;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Ciudad</div>
+            <div style="display:flex;gap:6px">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-egresos-wash" style="width:13px;height:13px;accent-color:var(--n)">
+                <span style="font-size:.72rem;font-weight:800">🌲 Wash</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:6px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-egresos-chi" style="width:13px;height:13px;accent-color:var(--az)">
+                <span style="font-size:.72rem;font-weight:800">🌆 Chicago</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3);grid-column:span 2" id="perm-config-label">
           <input type="checkbox" id="perm-config" style="width:17px;height:17px;accent-color:var(--n)" onchange="toggleCfgSubPerms()">
           <div style="flex:1">
@@ -2007,52 +2091,72 @@ body.dark .dash-cstat{background:#111827;border-color:#374151} .alerta-item{disp
           </div>
         </label>
         <!-- SUB-PERMISOS DE CONFIG (se muestran solo si config está marcado) -->
-        <div id="cfg-sub-perms-wrap" style="display:none;grid-column:span 2;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 12px">
-          <div style="font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px">📂 Módulos visibles en Config</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-puestos" style="width:15px;height:15px;accent-color:var(--n)">
-              <span style="font-size:.78rem;font-weight:800">📍 Puestos</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-empleados" style="width:15px;height:15px;accent-color:var(--az)">
-              <span style="font-size:.78rem;font-weight:800">👷 Empleados</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-mp" style="width:15px;height:15px;accent-color:var(--v)">
-              <span style="font-size:.78rem;font-weight:800">📦 Productos</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-metas" style="width:15px;height:15px;accent-color:var(--am)">
-              <span style="font-size:.78rem;font-weight:800">🎯 Metas</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-editar" style="width:15px;height:15px;accent-color:#7c3aed">
-              <span style="font-size:.78rem;font-weight:800">✏️ Editar Ventas</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-historial" style="width:15px;height:15px;accent-color:#0891b2">
-              <span style="font-size:.78rem;font-weight:800">📋 Historial</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-reportes" style="width:15px;height:15px;accent-color:#db2777">
-              <span style="font-size:.78rem;font-weight:800">📊 Reportes</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-ajustes" style="width:15px;height:15px;accent-color:#374151">
-              <span style="font-size:.78rem;font-weight:800">⚙️ Ajustes</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-micuenta" style="width:15px;height:15px;accent-color:#be123c">
-              <span style="font-size:.78rem;font-weight:800">🔐 Mi Cuenta</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
-              <input type="checkbox" id="perm-cfg-manual" style="width:15px;height:15px;accent-color:#0369a1">
-              <span style="font-size:.78rem;font-weight:800">📖 Ayuda</span>
-            </label>
+        <div id="cfg-sub-perms-wrap" style="display:none;grid-column:span 2;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px">
+          <!-- Ciudad para Config -->
+          <div style="margin-bottom:10px">
+            <div style="font-size:.62rem;font-weight:900;text-transform:uppercase;color:#374151;margin-bottom:6px">🌎 Ciudad para Config</div>
+            <div style="display:flex;gap:6px">
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:7px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-config-wash" style="width:13px;height:13px;accent-color:var(--n)" checked>
+                <span style="font-size:.72rem;font-weight:800">🌲 Washington</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:5px;cursor:pointer;background:white;padding:7px 10px;border-radius:8px;border:1.5px solid var(--g3);flex:1">
+                <input type="checkbox" id="perm-config-chi" style="width:13px;height:13px;accent-color:var(--az)" checked>
+                <span style="font-size:.72rem;font-weight:800">🌆 Chicago</span>
+              </label>
+            </div>
+            <div style="font-size:.6rem;color:var(--t3);margin-top:5px">Solo ve empleados, puestos y datos de esa ciudad en Config</div>
           </div>
-          <button onclick="toggleAllCfgSubs(true)" style="margin-top:8px;margin-right:6px;background:var(--ns);border:none;border-radius:7px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--n);cursor:pointer">✅ Todos</button>
-          <button onclick="toggleAllCfgSubs(false)" style="margin-top:8px;background:var(--g3);border:none;border-radius:7px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t2);cursor:pointer">❌ Ninguno</button>
+          <div style="border-top:1px solid #e2e8f0;padding-top:10px">
+            <div style="font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px">📂 Módulos visibles</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-puestos" style="width:15px;height:15px;accent-color:var(--n)">
+                <span style="font-size:.78rem;font-weight:800">📍 Puestos</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-empleados" style="width:15px;height:15px;accent-color:var(--az)">
+                <span style="font-size:.78rem;font-weight:800">👷 Empleados</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-mp" style="width:15px;height:15px;accent-color:var(--v)">
+                <span style="font-size:.78rem;font-weight:800">📦 Productos</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-metas" style="width:15px;height:15px;accent-color:var(--am)">
+                <span style="font-size:.78rem;font-weight:800">🎯 Metas</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-historial" style="width:15px;height:15px;accent-color:#0891b2">
+                <span style="font-size:.78rem;font-weight:800">📋 Historial</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-ajustes" style="width:15px;height:15px;accent-color:#374151">
+                <span style="font-size:.78rem;font-weight:800">⚙️ Ajustes</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-micuenta" style="width:15px;height:15px;accent-color:#be123c">
+                <span style="font-size:.78rem;font-weight:800">🔐 Mi Cuenta</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-manual" style="width:15px;height:15px;accent-color:#0369a1">
+                <span style="font-size:.78rem;font-weight:800">📖 Ayuda</span>
+              </label>
+              <!-- Estos antes se repetían — ahora son exclusivos de Config -->
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-editar" style="width:15px;height:15px;accent-color:#7c3aed">
+                <span style="font-size:.78rem;font-weight:800">✏️ Editar Ventas</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;cursor:pointer;background:white;padding:8px 10px;border-radius:8px;border:1.5px solid var(--g3)">
+                <input type="checkbox" id="perm-cfg-reportes" style="width:15px;height:15px;accent-color:#db2777">
+                <span style="font-size:.78rem;font-weight:800">📊 Rep. en Config</span>
+              </label>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:8px">
+              <button onclick="toggleAllCfgSubs(true)" style="flex:1;background:var(--ns);border:none;border-radius:7px;padding:6px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--n);cursor:pointer">✅ Todos</button>
+              <button onclick="toggleAllCfgSubs(false)" style="flex:1;background:var(--g3);border:none;border-radius:7px;padding:6px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t2);cursor:pointer">❌ Ninguno</button>
+            </div>
+          </div>
         </div>
         <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;background:white;padding:10px;border-radius:10px;border:1.5px solid var(--g3)">
           <input type="checkbox" id="perm-dashboard" style="width:17px;height:17px;accent-color:var(--n);margin-top:2px;flex-shrink:0" onchange="toggleDashTipoSelect()">
@@ -2938,7 +3042,7 @@ if(lbl==='Ventas')   btn.style.display=can('ventas')?'':'none';
 if(lbl==='Asist.')   btn.style.display=can('asist')?'':'none';
 if(lbl==='Nómina')   btn.style.display=isA||can('nomina')?'':'none';
 if(lbl==='Reportes') btn.style.display='none';
-if(lbl==='Egresos') btn.style.display=isA||can('reportes')?'':'none';
+if(lbl==='Egresos') btn.style.display=isA||can('reportes')||can('egresos')?'':'none';
 if(lbl==='Config')   { btn.style.display=isA||can('config')?'':'none'; if(isA||can('config')) setTimeout(filterCfgHome,0); }
 if(lbl==='Mi Cuenta') btn.style.display='none';
 });
@@ -2974,7 +3078,7 @@ showV(firstView, firstBtn);
 }
 if(can('asist')){currentAsistFecha=todayStr();updateAsistSemanaUI();renderAsist();}
 if(isA||can('nomina')){updateNomSemanaLabel();renderNomina();}
-if(isA||can('reportes')){renderReportes();renderEgresosView();}
+if(isA||can('reportes')){renderReportes();renderEgresosView();}else if(can('egresos')){renderEgresosView();}
 populateEditSel();updateTip();
 renderMPRows();
 document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'});
@@ -3046,7 +3150,7 @@ showToast('🌙 Turno nocturno ('+h+') — fecha del reporte: '+fmtFecha(current
 const fn=document.getElementById('fechaNomina');if(fn){fn.value=currentFechaNomina;updateNomSemanaLabel();}
 loadVF(CP);
 renderVentaMeta();
-const ciudadesUser=getUserCiudades();
+const ciudadesUser=getUserCiudades('asist');
 }
 document.addEventListener('DOMContentLoaded',()=>{
 const safetyTimer=setTimeout(()=>{
@@ -3182,17 +3286,32 @@ _renderTip(_getTip(0));
 _startTipTimer();
 }
 function rotarTipAdmin(){tipSiguiente();}
-function getUserCiudades(){
+function getUserCiudades(seccion){
 if(!CU||CU.rol==='admin') return ['wash','chi'];
 const p=CU.perms||{};
+// Config uses config-wash/chi
+if(seccion==='config'){
+const ciudades=[];
+if(p['config-wash']!==false) ciudades.push('wash');
+if(p['config-chi']!==false) ciudades.push('chi');
+return ciudades.length?ciudades:['wash','chi'];
+}
+// Section-specific cities
+if(seccion&&(p[seccion+'-wash']||p[seccion+'-chi'])){
+const ciudades=[];
+if(p[seccion+'-wash']) ciudades.push('wash');
+if(p[seccion+'-chi']) ciudades.push('chi');
+return ciudades;
+}
+// Fallback to general ciudad perms
 const ciudades=[];
 if(p['ciudad-wash']) ciudades.push('wash');
 if(p['ciudad-chi']) ciudades.push('chi');
 return ciudades;
 }
-function getUserPuestos(){
+function getUserPuestos(seccion){
 if(!CU||CU.rol==='admin') return allP();
-const ciudades=getUserCiudades();
+const ciudades=getUserCiudades(seccion);
 let lista=[];
 if(ciudades.includes('wash')) lista=[...lista,...PW];
 if(ciudades.includes('chi')) lista=[...lista,...PC];
@@ -5242,6 +5361,7 @@ ${p.ventas?badge('💰Ventas','var(--ns)','var(--n2)'):''}
 ${p.asist?badge('✅Asist.','var(--vs)','var(--v)'):''}
 ${p.nomina?badge('👷Nómina','var(--ams)','#92400E'):''}
 ${p.reportes?badge('📊Rep.','var(--azs)','var(--az)'):''}
+${p.egresos?badge('💼Egr.'+(p['egresos-wash']&&p['egresos-chi']?'':'→'+(p['egresos-wash']?'W':'C')),'#eef2ff','#4338ca'):''}
 ${p.config?(()=>{const subs=ALL_CFG_SUBS.filter(k=>p['cfg-'+k]);const subTxt=subs.length?` (${subs.length})`:' (ninguno)';return badge('⚙️Config'+subTxt,'var(--g3)','var(--t2)');})():''}
 ${p.dashboard?badge('🏠Inicio','var(--vs)','var(--v)'):''}
 </div>
@@ -5371,13 +5491,49 @@ if(hint) hint.textContent='Puesto Asignado';
 }
 }
 }
-const ALL_PERMS=['ventas','asist','nomina','reportes','config','dashboard'];
+const ALL_PERMS=['ventas','asist','nomina','reportes','egresos','config','dashboard'];
 const ALL_CFG_SUBS=['puestos','empleados','mp','metas','editar','historial','reportes','ajustes','micuenta','manual'];
 const ALL_CIUDADES=['wash','chi'];
+function toggleEgresosCiudad(){ toggleSeccionCiudad('egresos'); }
+function toggleSeccionCiudad(key){
+const chk=document.getElementById('perm-'+key);
+const wrap=document.getElementById('perm-'+key+'-ciudad-wrap');
+const label=document.getElementById('perm-'+key+'-label');
+const badge=document.getElementById('perm-'+key+'-ciudad-badge');
+if(!wrap) return;
+const isOn=chk?.checked;
+wrap.style.display=isOn?'block':'none';
+if(label) label.style.borderColor=isOn?'var(--n)':'var(--g3)';
+// If turning on and no city selected, auto-check both
+if(isOn){
+const w=document.getElementById('perm-'+key+'-wash');
+const c=document.getElementById('perm-'+key+'-chi');
+if(w&&c&&!w.checked&&!c.checked){w.checked=true;c.checked=true;}
+}
+updateCiudadBadge(key);
+}
+function updateCiudadBadge(key){
+const badge=document.getElementById('perm-'+key+'-ciudad-badge');
+if(!badge) return;
+const w=document.getElementById('perm-'+key+'-wash')?.checked;
+const c=document.getElementById('perm-'+key+'-chi')?.checked;
+if(w&&c){badge.textContent='🌎 Ambas';badge.style.display='inline';}
+else if(w){badge.textContent='🌲 Wash';badge.style.display='inline';}
+else if(c){badge.textContent='🌆 Chi';badge.style.display='inline';}
+else{badge.style.display='none';}
+}
 function toggleCfgSubPerms(){
 const chk=document.getElementById('perm-config');
 const wrap=document.getElementById('cfg-sub-perms-wrap');
-if(wrap) wrap.style.display=chk?.checked?'block':'none';
+if(!wrap) return;
+const isOn=chk?.checked;
+wrap.style.display=isOn?'block':'none';
+if(isOn){
+// Auto-check both cities if none selected
+const w=document.getElementById('perm-config-wash');
+const c=document.getElementById('perm-config-chi');
+if(w&&c&&!w.checked&&!c.checked){w.checked=true;c.checked=true;}
+}
 }
 function toggleAllCfgSubs(val){
 ALL_CFG_SUBS.forEach(k=>{
@@ -5398,12 +5554,28 @@ const p={};
 ALL_PERMS.forEach(k=>p[k]=document.getElementById(`perm-${k}`)?.checked||false);
 ALL_CIUDADES.forEach(c=>p[`ciudad-${c}`]=document.getElementById(`perm-ciudad-${c}`)?.checked||false);
 ALL_CFG_SUBS.forEach(k=>p[`cfg-${k}`]=document.getElementById(`perm-cfg-${k}`)?.checked||false);
+p['config-wash']=document.getElementById('perm-config-wash')?.checked!==false;
+p['config-chi']=document.getElementById('perm-config-chi')?.checked!==false;
+['ventas','asist','nomina','reportes','egresos'].forEach(k=>{
+p[k+'-wash']=document.getElementById('perm-'+k+'-wash')?.checked||false;
+p[k+'-chi']=document.getElementById('perm-'+k+'-chi')?.checked||false;
+});
 return p;
 }
 function setPermsToForm(perms, dashTipo='completo'){
 ALL_PERMS.forEach(k=>{
 const el=document.getElementById(`perm-${k}`);
 if(el) el.checked=perms?.[k]===true;
+});
+// Restore city per section
+['ventas','asist','nomina','reportes','egresos'].forEach(k=>{
+const w=document.getElementById('perm-'+k+'-wash');
+const c=document.getElementById('perm-'+k+'-chi');
+if(w) w.checked=perms?.[k+'-wash']===true;
+if(c) c.checked=perms?.[k+'-chi']===true;
+// Show/hide city wrap based on main checkbox
+toggleSeccionCiudad(k);
+updateCiudadBadge(k);
 });
 ALL_CIUDADES.forEach(c=>{
 const el=document.getElementById(`perm-ciudad-${c}`);
@@ -5413,6 +5585,10 @@ ALL_CFG_SUBS.forEach(k=>{
 const el=document.getElementById(`perm-cfg-${k}`);
 if(el) el.checked=perms?.[`cfg-${k}`]===true;
 });
+const cwEl=document.getElementById('perm-config-wash');
+const ccEl=document.getElementById('perm-config-chi');
+if(cwEl) cwEl.checked=perms?.['config-wash']!==false;
+if(ccEl) ccEl.checked=perms?.['config-chi']!==false;
 setDashTipo(dashTipo||'completo');
 toggleDashTipoSelect();
 toggleCfgSubPerms();
@@ -6656,7 +6832,48 @@ updateEgrKPIs();
 updateEgrBadges();
 }
 let _egrTab='prov';
+function _getSeccionCiudades(seccion){
+const isA=CU?.rol==='admin';
+if(isA) return null;
+const p=CU?.perms||{};
+if(p['ciudad-wash']&&p['ciudad-chi']) return null;
+const ciudades=[];
+if(p[seccion+'-wash']) ciudades.push('wash');
+if(p[seccion+'-chi']) ciudades.push('chi');
+if(!ciudades.length){
+if(p['ciudad-wash']) ciudades.push('wash');
+if(p['ciudad-chi']) ciudades.push('chi');
+}
+if(!ciudades.length){
+const emp=[...EW,...EC].find(e=>e.n===CU?.user||e.user===CU?.user);
+if(emp?.ciudad) ciudades.push(emp.ciudad);
+}
+return ciudades.length?ciudades:null;
+}
+function _getEgrCiudades(){ return _getSeccionCiudades('egresos'); }
+
 function renderEgresosView(){
+// Restringir tabs de ciudad según permiso
+const ciudades=_getEgrCiudades();
+if(ciudades&&ciudades.length===1){
+// Solo una ciudad — ocultar tabs de ciudad
+const washTab=document.getElementById('prov-tab-wash');
+const chiTab=document.getElementById('prov-tab-chi');
+if(ciudades[0]==='wash'){
+if(washTab) washTab.style.display='';
+if(chiTab) chiTab.style.display='none';
+setProvCity('wash',washTab);
+} else {
+if(washTab) washTab.style.display='none';
+if(chiTab) chiTab.style.display='';
+setProvCity('chi',chiTab);
+}
+} else {
+const washTab=document.getElementById('prov-tab-wash');
+const chiTab=document.getElementById('prov-tab-chi');
+if(washTab) washTab.style.display='';
+if(chiTab) chiTab.style.display='';
+}
 renderProvView();
 renderGastosGen();
 renderGastosFijos();
