@@ -27,12 +27,12 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 @keyframes ripple{from{transform:scale(0);opacity:.6}to{transform:scale(4);opacity:0}}
 
 /* SPLASH */
-#splash{position:fixed;inset:0;background:var(--cb);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .2s}
+#splash{position:fixed;inset:0;background:var(--cb);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
 .sl{font-size:80px;animation:bounceIn .6s ease;margin-bottom:12px}
 .sh1{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--n);letter-spacing:3px;animation:slideUp .6s ease .2s both}
 .sp{color:#a16207;font-size:.9rem;animation:slideUp .6s ease .4s both}
 .sb{width:200px;height:4px;background:#3D1500;border-radius:4px;margin-top:32px;overflow:hidden;animation:slideUp .6s ease .5s both}
-.sbf{height:100%;background:var(--n);border-radius:4px;animation:loadBar 2.4s ease .6s both}
+.sbf{height:100%;background:var(--n);border-radius:4px;animation:loadBar 1.8s ease .6s both}
 
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;background:var(--cb);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500;padding:24px;overflow-y:auto}
@@ -331,7 +331,7 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .venta-inp-row:focus-within{border-color:var(--n);background:white}
 .venta-inp-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
 .venta-big-inp{background:none;border:none;outline:none;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--t);width:100%;letter-spacing:.5px}
-.venta-big-inp::placeholder{color:var(--g3)}
+.venta-big-inp::placeholder{color:var(--t3);font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:0;line-height:1.4}
 .gasto-row{display:flex;align-items:center;gap:10px;background:var(--g2);border-radius:12px;padding:10px 14px}
 .gasto-icon{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0}
 .gasto-lbl{font-size:.85rem;font-weight:700;color:var(--t2);flex:1}
@@ -753,12 +753,12 @@ body.dark #syncBar{background:#374151}
     <div class="vstep-line" id="vstep-line-0"></div>
     <div class="vstep" id="vstep-1" onclick="goVStep(1)">
       <div class="vstep-num">2</div>
-      <div class="vstep-lbl">Gastos</div>
+      <div class="vstep-lbl">Extra</div>
     </div>
     <div class="vstep-line" id="vstep-line-1"></div>
     <div class="vstep" id="vstep-2" onclick="goVStep(2)">
       <div class="vstep-num">3</div>
-      <div class="vstep-lbl">Extra</div>
+      <div class="vstep-lbl">Gastos</div>
     </div>
     <div class="vstep-line" id="vstep-line-2"></div>
     <div class="vstep" id="vstep-3" onclick="goVStep(3)">
@@ -779,7 +779,7 @@ body.dark #syncBar{background:#374151}
           <div class="venta-inp-icon" style="background:linear-gradient(135deg,#16a34a,#15803d)">💵</div>
           <div style="flex:1">
             <div style="font-size:.7rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Efectivo</div>
-            <input class="venta-big-inp" type="number" min="0" id="ve-dia-ef" oninput="calcV()" placeholder="0.00" inputmode="decimal">
+            <input class="venta-big-inp" type="number" min="0" id="ve-dia-ef" oninput="calcV()" placeholder="Si no hay efectivo pon 0" inputmode="decimal">
           </div>
           <div style="font-size:.9rem;font-weight:900;color:var(--v)" id="tef-inline">$0</div>
         </div>
@@ -787,7 +787,7 @@ body.dark #syncBar{background:#374151}
           <div class="venta-inp-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8)">💳</div>
           <div style="flex:1">
             <div style="font-size:.7rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Tarjeta</div>
-            <input class="venta-big-inp" type="number" min="0" id="ve-dia-tj" oninput="calcV()" placeholder="0.00" inputmode="decimal">
+            <input class="venta-big-inp" type="number" min="0" id="ve-dia-tj" oninput="calcV()" placeholder="Si no hay tarjeta pon 0" inputmode="decimal">
           </div>
           <div style="font-size:.9rem;font-weight:900;color:var(--az)" id="ttj-inline">$0</div>
         </div>
@@ -795,7 +795,7 @@ body.dark #syncBar{background:#374151}
           <div class="venta-inp-icon" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">📱</div>
           <div style="flex:1">
             <div style="font-size:.7rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Otros pagos</div>
-            <input class="venta-big-inp" type="number" min="0" id="ve-dia-ot" oninput="calcV()" placeholder="0.00" inputmode="decimal">
+            <input class="venta-big-inp" type="number" min="0" id="ve-dia-ot" oninput="calcV()" placeholder="Si no hay otros pagos pon 0" inputmode="decimal">
           </div>
           <div style="font-size:.9rem;font-weight:900;color:#7c3aed" id="tot-inline">$0</div>
         </div>
@@ -808,63 +808,11 @@ body.dark #syncBar{background:#374151}
       </div>
     </div>
 
-    <button class="venta-next-btn" onclick="goVStep(1)">Siguiente: Gastos →</button>
+    <button class="venta-next-btn" onclick="goVStep(1)">Siguiente: Extra →</button>
   </div>
 
-  <!-- ══ STEP 2: GASTOS ══ -->
+  <!-- ══ STEP 2: EXTRAS (Caja + MP) ══ -->
   <div class="vstep-panel" id="vpanel-1">
-    <div class="card">
-      <div class="ctit">📤 Gastos del Puesto</div>
-      <p style="font-size:.75rem;color:var(--t3);margin-bottom:16px">Solo llena los que apliquen hoy</p>
-
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div class="gasto-row">
-          <span class="gasto-icon">⛽</span>
-          <span class="gasto-lbl">Gasolina</span>
-          <input class="gasto-inp" type="number" id="g-gas" oninput="calcV()" placeholder="$0" inputmode="decimal">
-        </div>
-        <div class="gasto-row">
-          <span class="gasto-icon">🧊</span>
-          <span class="gasto-lbl">Hielo</span>
-          <input class="gasto-inp" type="number" id="g-hie" oninput="calcV()" placeholder="$0" inputmode="decimal">
-        </div>
-        <div class="gasto-row">
-          <span class="gasto-icon">🔧</span>
-          <span class="gasto-lbl">Reparación</span>
-          <input class="gasto-inp" type="number" id="g-rep" oninput="calcV()" placeholder="$0" inputmode="decimal">
-        </div>
-        <div class="gasto-row">
-          <span class="gasto-icon">🛣️</span>
-          <span class="gasto-lbl">Casetas</span>
-          <input class="gasto-inp" type="number" id="g-cas" oninput="calcV()" placeholder="$0" inputmode="decimal">
-        </div>
-        <div class="gasto-row">
-          <span class="gasto-icon">📦</span>
-          <span class="gasto-lbl">Otros</span>
-          <input class="gasto-inp" type="number" id="g-otr" oninput="calcV()" placeholder="$0" inputmode="decimal">
-        </div>
-        <input type="text" id="g-otr-desc" placeholder="¿Qué compraron? ej: bolsas, servilletas..."
-          style="width:100%;padding:10px 14px;border:1.5px solid var(--g3);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:600;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box"
-          onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
-      </div>
-
-      <!-- Total gastos pill -->
-      <div style="background:linear-gradient(135deg,var(--r),#b91c1c);border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:14px">
-        <div style="font-size:.8rem;font-weight:900;color:white;opacity:.85">💸 TOTAL GASTOS</div>
-        <div id="gtot" style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:white;letter-spacing:1px">$0</div>
-      </div>
-
-      <button class="boutl" style="width:100%;margin-top:10px;font-size:.8rem" onclick="openM('foto')">📸 Adjuntar foto de comprobante</button>
-    </div>
-
-    <div style="display:flex;gap:8px">
-      <button class="venta-back-btn" onclick="goVStep(0)">← Volver</button>
-      <button class="venta-next-btn" style="flex:1" onclick="goVStep(2)">Siguiente: Extra →</button>
-    </div>
-  </div>
-
-  <!-- ══ STEP 3: EXTRAS (Caja + MP) ══ -->
-  <div class="vstep-panel" id="vpanel-2">
     <!-- Caja chica -->
     <div class="card" style="border-left:4px solid var(--am)">
       <div class="ctit">💵 Fondo de Caja</div>
@@ -916,6 +864,58 @@ body.dark #syncBar{background:#374151}
         </div>
         <button class="shbtn" style="margin-top:10px" onclick="openM('addMP')">+ Producto</button>
       </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="venta-back-btn" onclick="goVStep(0)">← Volver</button>
+      <button class="venta-next-btn" style="flex:1" onclick="goVStep(2)">Siguiente: Gastos →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: GASTOS ══ -->
+  <div class="vstep-panel" id="vpanel-2">
+    <div class="card">
+      <div class="ctit">📤 Gastos del Puesto</div>
+      <p style="font-size:.75rem;color:var(--t3);margin-bottom:16px">Solo llena los que apliquen hoy</p>
+
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="gasto-row">
+          <span class="gasto-icon">⛽</span>
+          <span class="gasto-lbl">Gasolina</span>
+          <input class="gasto-inp" type="number" id="g-gas" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">🧊</span>
+          <span class="gasto-lbl">Hielo</span>
+          <input class="gasto-inp" type="number" id="g-hie" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">🔧</span>
+          <span class="gasto-lbl">Reparación</span>
+          <input class="gasto-inp" type="number" id="g-rep" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">🛣️</span>
+          <span class="gasto-lbl">Casetas</span>
+          <input class="gasto-inp" type="number" id="g-cas" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <div class="gasto-row">
+          <span class="gasto-icon">📦</span>
+          <span class="gasto-lbl">Otros</span>
+          <input class="gasto-inp" type="number" id="g-otr" oninput="calcV()" placeholder="$0" inputmode="decimal">
+        </div>
+        <input type="text" id="g-otr-desc" placeholder="¿Qué compraron? ej: bolsas, servilletas..."
+          style="width:100%;padding:10px 14px;border:1.5px solid var(--g3);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:600;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box"
+          onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
+      </div>
+
+      <!-- Total gastos pill -->
+      <div style="background:linear-gradient(135deg,var(--r),#b91c1c);border-radius:14px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+        <div style="font-size:.8rem;font-weight:900;color:white;opacity:.85">💸 TOTAL GASTOS</div>
+        <div id="gtot" style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:white;letter-spacing:1px">$0</div>
+      </div>
+
+      <button class="boutl" style="width:100%;margin-top:10px;font-size:.8rem" onclick="openM('foto')">📸 Adjuntar foto de comprobante</button>
     </div>
 
     <div style="display:flex;gap:8px">
@@ -1456,12 +1456,15 @@ body.dark #syncBar{background:#374151}
     <div class="card">
       <div class="ctit">🌙 Apariencia</div>
       <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0">
-        <div><div style="font-size:.88rem;font-weight:800">Modo Oscuro</div><div style="font-size:.7rem;color:var(--t3)">Cambia el tema de la app</div></div>
+        <div><div style="font-size:.88rem;font-weight:800">Modo Oscuro</div><div style="font-size:.7rem;color:var(--t3)" id="dark-mode-sub">Sigue el modo del sistema</div></div>
         <label style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer">
           <input type="checkbox" id="toggle-dark" onchange="toggleDarkMode()" style="opacity:0;width:0;height:0">
           <span id="dark-slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--g3);transition:.3s;border-radius:26px"></span>
           <span id="dark-knob" style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%"></span>
         </label>
+      </div>
+      <div id="dark-auto-row" style="display:none;margin-top:4px">
+        <button onclick="resetDarkMode()" style="font-size:.72rem;color:var(--az);font-weight:800;background:none;border:none;cursor:pointer;padding:2px 0">↩ Volver a automático (seguir el sistema)</button>
       </div>
     </div>
     <!-- Notificaciones Push -->
@@ -2497,31 +2500,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   try{initDarkMode();}catch(e){}
   try{initFaceIDStatus();}catch(e){}
 
-  // Función helper para ocultar el splash DESPUÉS de que la pantalla destino ya está visible
   function hideSplash(){
+    clearTimeout(safetyTimer);
     const s=document.getElementById('splash');
     if(!s)return;
     s.style.opacity='0';
-    setTimeout(()=>{ s.style.display='none'; },250);
+    setTimeout(()=>{s.style.display='none';},500);
   }
 
-  setTimeout(async ()=>{
-    clearTimeout(safetyTimer);
-
-    // ── Sincronizar empleados y admin desde Sheets antes del login ──
-    try{
-      const [ewData,ecData,adminData]=await Promise.all([
-        gsG('EW'), gsG('EC'), gsG('ADMIN')
-      ]);
-      if(ewData&&ewData['EW']!==undefined){EW=ewData['EW'];SL('EW',EW);}
-      if(ecData&&ecData['EC']!==undefined){EC=ecData['EC'];SL('EC',EC);}
-      if(adminData&&adminData['ADMIN']!==undefined){ADMIN=adminData['ADMIN'];SL('ADMIN',ADMIN);}
-      try{refreshUS();}catch(e2){}
-    }catch(e){
-      // Sin conexión — usa datos locales
-      try{refreshUS();}catch(e2){}
-    }
-
+  setTimeout(()=>{
+    // 1) Mostrar pantalla destino con datos locales (instantáneo)
     try{
       const saved=LL('session',null);
       if(saved&&saved.user){
@@ -2530,26 +2518,26 @@ document.addEventListener('DOMContentLoaded',()=>{
           CU=valid;
           const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
           if(checkPINLogin()){hideSplash();return;}
-          if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad){
-            showPuestoSelector();
-            hideSplash();
-          } else {
-            showApp();
-            hideSplash();
-          }
-        } else {
-          document.getElementById('loginScreen').classList.add('show');
-          hideSplash();
-        }
-      } else {
-        document.getElementById('loginScreen').classList.add('show');
-        hideSplash();
-      }
+          if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad) showPuestoSelector();
+          else showApp();
+        } else document.getElementById('loginScreen').classList.add('show');
+      } else document.getElementById('loginScreen').classList.add('show');
     }catch(e){
       document.getElementById('loginScreen').classList.add('show');
-      hideSplash();
     }
-  },3000);
+
+    // 2) Quitar el splash AHORA que ya está visible la pantalla destino
+    hideSplash();
+
+    // 3) Sincronizar con Sheets en background sin bloquear nada
+    Promise.all([gsG('EW'),gsG('EC'),gsG('ADMIN')]).then(([ewData,ecData,adminData])=>{
+      if(ewData?.['EW']!==undefined){EW=ewData['EW'];SL('EW',EW);}
+      if(ecData?.['EC']!==undefined){EC=ecData['EC'];SL('EC',EC);}
+      if(adminData?.['ADMIN']!==undefined){ADMIN=adminData['ADMIN'];SL('ADMIN',ADMIN);}
+      try{refreshUS();}catch(e){}
+    }).catch(()=>{ try{refreshUS();}catch(e){} });
+
+  },2400);
 });
 
 function updateTip(){
@@ -2614,7 +2602,7 @@ function showV(id,btn){
   if(btn)btn.classList.add('active');
   const psel=document.getElementById('puestoSel');
   if(psel) psel.style.display=VIEWS_WITH_PSEL.includes(id)?'flex':'none';
-  if(id==='ventas') { renderVentaMeta(); goVStep(0); }
+  if(id==='ventas') { renderVentaMeta(); mpSectionOpen=false; goVStep(0); }
 }
 function setTab(id,btn){
   document.querySelectorAll('#view-reportes .tabs .tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
@@ -2724,10 +2712,34 @@ const VSTEP_COUNT=4;
 function goVStep(n){
   // Validate step 0 before moving forward
   if(n>currentVStep && currentVStep===0){
-    const ef=parseFloat(document.getElementById('ve-dia-ef')?.value||0);
-    const tj=parseFloat(document.getElementById('ve-dia-tj')?.value||0);
-    const ot=parseFloat(document.getElementById('ve-dia-ot')?.value||0);
-    // Allow empty (0) — just move forward
+    const efEl=document.getElementById('ve-dia-ef');
+    const tjEl=document.getElementById('ve-dia-tj');
+    const otEl=document.getElementById('ve-dia-ot');
+    const efVal=efEl?.value?.trim();
+    const tjVal=tjEl?.value?.trim();
+    const otVal=otEl?.value?.trim();
+    // Bloquear si algún campo está vacío
+    if(efVal===''||efVal===null||efVal===undefined){
+      showToast('⚠️ Escribe el efectivo (si no hay, pon 0)');
+      efEl?.focus();efEl?.scrollIntoView({behavior:'smooth',block:'center'});
+      efEl?.style && (efEl.style.borderColor='var(--r)');
+      setTimeout(()=>{if(efEl?.style) efEl.style.borderColor='';},2000);
+      return;
+    }
+    if(tjVal===''||tjVal===null||tjVal===undefined){
+      showToast('⚠️ Escribe tarjeta (si no hay, pon 0)');
+      tjEl?.focus();tjEl?.scrollIntoView({behavior:'smooth',block:'center'});
+      tjEl?.style && (tjEl.style.borderColor='var(--r)');
+      setTimeout(()=>{if(tjEl?.style) tjEl.style.borderColor='';},2000);
+      return;
+    }
+    if(otVal===''||otVal===null||otVal===undefined){
+      showToast('⚠️ Escribe otros pagos (si no hay, pon 0)');
+      otEl?.focus();otEl?.scrollIntoView({behavior:'smooth',block:'center'});
+      otEl?.style && (otEl.style.borderColor='var(--r)');
+      setTimeout(()=>{if(otEl?.style) otEl.style.borderColor='';},2000);
+      return;
+    }
   }
   // Update panels
   for(let i=0;i<VSTEP_COUNT;i++){
@@ -2745,6 +2757,15 @@ function goVStep(n){
     if(line) line.classList.toggle('done',i<n);
   }
   currentVStep=n;
+  // Abrir MP automaticamente al entrar al step Extra
+  if(n===1 && !mpSectionOpen){
+    mpSectionOpen=true;
+    const body=document.getElementById('mp-section-body');
+    const icon=document.getElementById('mp-toggle-icon');
+    if(body) body.style.display='block';
+    if(icon) icon.style.transform='rotate(180deg)';
+    renderMPRows();
+  }
   // Update resumen on step 3
   if(n===3) updateVentaResumen();
   // Scroll to top of ventas view
@@ -5471,30 +5492,57 @@ function sendPushNotif(title,body){
 // ═══════════════════════════════════════════
 // 🌙 MODO OSCURO
 // ═══════════════════════════════════════════
-function initDarkMode(){
-  const isDark=LL('DARK_MODE',false);
+function applyDark(isDark){
   if(isDark){
     document.body.classList.add('dark');
     document.body.style.background='#111827';
     document.body.style.color='#f9fafb';
-    const meta=document.querySelector('meta[name="theme-color"]');
-    if(meta) meta.content='#111827';
+  } else {
+    document.body.classList.remove('dark');
+    document.body.style.background='';
+    document.body.style.color='';
   }
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.content=isDark?'#111827':'#EA580C';
   const chk=document.getElementById('toggle-dark');
   if(chk) chk.checked=isDark;
   updateDarkSlider(isDark);
+  // Mostrar boton de reset solo si el usuario eligio manualmente
+  const isManual=localStorage.getItem('DARK_MODE')!==null;
+  const row=document.getElementById('dark-auto-row');
+  const sub=document.getElementById('dark-mode-sub');
+  if(row) row.style.display=isManual?'block':'none';
+  if(sub) sub.textContent=isManual?(isDark?'Modo oscuro manual':'Modo claro manual'):'Sigue el modo del sistema';
+}
+
+function resetDarkMode(){
+  localStorage.removeItem('DARK_MODE');
+  const systemDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyDark(systemDark);
+  showToast('📱 Siguiendo el modo del sistema');
+}
+
+function initDarkMode(){
+  // Si el usuario eligio manualmente, respetar su eleccion
+  const saved=localStorage.getItem('DARK_MODE');
+  if(saved!==null){
+    applyDark(JSON.parse(saved));
+  } else {
+    // Si no eligio nada, seguir automaticamente el sistema (iPhone/Android)
+    const systemDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyDark(systemDark);
+  }
+  // Escuchar cambios del sistema en tiempo real
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{
+    if(localStorage.getItem('DARK_MODE')===null) applyDark(e.matches);
+  });
 }
 
 function toggleDarkMode(){
   const isDark=document.body.classList.toggle('dark');
+  // Guardar eleccion manual del usuario
   SL('DARK_MODE',isDark);
-  updateDarkSlider(isDark);
-  // Force background refresh
-  document.body.style.background=isDark?'#111827':'';
-  document.body.style.color=isDark?'#f9fafb':'';
-  // Update meta theme-color
-  const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.content=isDark?'#111827':'#EA580C';
+  applyDark(isDark);
   showToast(isDark?'🌙 Modo oscuro activado':'☀️ Modo claro activado');
 }
 
