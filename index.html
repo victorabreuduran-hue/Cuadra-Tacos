@@ -437,6 +437,7 @@ body.dark .boutl{background:#374151;color:#f9fafb;border-color:#4b5563}
 body.dark .bsave{background:var(--n)}
 body.dark #syncBar{background:#374151}
 #tipT,#dp-tip{transition:opacity .18s ease}
+#check-danos-wrap:has(input:checked){background:var(--vs);border-color:var(--v)!important}
 body.dark .dash-greeting{color:white}
 body.dark .dash-date-lbl{color:#fed7aa}
 body.dark .dash-kpi{background:#1f2937;border-color:#374151}
@@ -1056,6 +1057,27 @@ body.dark .dash-cstat{background:#111827;border-color:#374151}
       <div style="background:linear-gradient(135deg,var(--n),var(--n2));border-radius:14px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:.8rem;font-weight:900;color:white;opacity:.85">🏆 VENTAS BRUTAS</div>
         <div id="res-bruto" style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:white;letter-spacing:1px">$0</div>
+      </div>
+    </div>
+
+    <!-- Validación cruzada Productos vs Ventas -->
+    <div id="vx-panel" class="card" style="display:none"></div>
+
+    <!-- Checklist de productos dañados -->
+    <div class="card" style="border-left:4px solid var(--am)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:1.1rem">📋</span>
+        <div style="font-size:.78rem;font-weight:900;color:var(--t2)">Checklist antes de guardar</div>
+      </div>
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--g2);border-radius:10px;cursor:pointer;border:1.5px solid var(--g3);transition:all .2s" id="check-danos-wrap">
+        <input type="checkbox" id="check-danos" style="width:18px;height:18px;accent-color:var(--n);flex-shrink:0">
+        <div>
+          <div style="font-size:.8rem;font-weight:800;color:var(--t)">✅ Registré todos los productos dañados</div>
+          <div style="font-size:.65rem;color:var(--t3);margin-top:2px">Confirma que llenaste la columna 🗑️ Daño en Productos</div>
+        </div>
+      </label>
+      <div id="check-danos-warn" style="display:none;font-size:.7rem;color:var(--r);font-weight:800;margin-top:6px;padding:0 4px">
+        ⚠️ Debes confirmar que revisaste los productos dañados antes de guardar
       </div>
     </div>
 
@@ -3653,6 +3675,88 @@ function updateVentaResumen(){
   if(s('res-gas')) s('res-gas').textContent='$'+fmt(g);
   if(s('res-util')){ s('res-util').textContent='$'+fmt(util); s('res-util').style.color=util>=0?'var(--v)':'var(--r)';}
   if(s('res-bruto')) s('res-bruto').textContent='$'+fmt(bruto);
+  // Calcular validación cruzada con productos
+  renderVxPanel(bruto);
+}
+
+function renderVxPanel(ventasReportadas){
+  const panel=document.getElementById('vx-panel');
+  if(!panel) return;
+  // Calcular total esperado desde productos
+  let totalEsperado=0;
+  const detalles=[];
+  MP.forEach((item,i)=>{
+    const salEl=document.getElementById(`mp-sal-${i}`);
+    const sal=parseFloat(salEl?.value||0);
+    if(sal>0){
+      const subtotal=sal*item.precio;
+      totalEsperado+=subtotal;
+      detalles.push({nombre:item.nombre,qty:sal,precio:item.precio,subtotal});
+    }
+  });
+  // Si no hay productos registrados, ocultar panel
+  if(!detalles.length){panel.style.display='none';return;}
+  panel.style.display='block';
+  const diferencia=ventasReportadas-totalEsperado;
+  const absDif=Math.abs(diferencia);
+  // Definir nivel de alerta
+  let nivel='ok'; // verde
+  if(absDif>10&&absDif<=50) nivel='warn'; // amarillo
+  if(absDif>50) nivel='danger'; // rojo
+  const colores={ok:{bg:'#f0fdf4',border:'#22c55e',txt:'#15803d',icon:'✅'},
+    warn:{bg:'#fefce8',border:'#f59e0b',txt:'#b45309',icon:'⚠️'},
+    danger:{bg:'#fef2f2',border:'#ef4444',txt:'#dc2626',icon:'🚨'}};
+  const c=colores[nivel];
+  // Filas de productos
+  const filas=detalles.map(d=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.05)">
+      <span style="font-size:.72rem;color:var(--t2)">${d.qty} × ${d.nombre}</span>
+      <span style="font-size:.72rem;font-weight:800;color:var(--t)">$${fmt(d.subtotal)}</span>
+    </div>`).join('');
+  panel.innerHTML=`
+    <div style="border-radius:12px;overflow:hidden;border:1.5px solid ${c.border}">
+      <!-- Header -->
+      <div style="background:${c.border};padding:8px 12px;display:flex;align-items:center;gap:6px">
+        <span style="font-size:1rem">${c.icon}</span>
+        <span style="font-size:.78rem;font-weight:900;color:white">Validación de Productos</span>
+      </div>
+      <!-- Desglose productos -->
+      <div style="background:var(--g2);padding:10px 12px">
+        ${filas}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-top:2px">
+          <span style="font-size:.72rem;font-weight:900;color:var(--t3);text-transform:uppercase">📦 Total esperado</span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--t)">$${fmt(totalEsperado)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+          <span style="font-size:.72rem;font-weight:900;color:var(--t3);text-transform:uppercase">💰 Ventas reportadas</span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--n)">$${fmt(ventasReportadas)}</span>
+        </div>
+        <!-- Diferencia -->
+        <div style="background:${c.bg};border-radius:8px;padding:8px 10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.75rem;font-weight:900;color:${c.txt}">
+            ${diferencia>0?'📈 Sobrante':diferencia<0?'📉 Faltante':'✅ Exacto'}
+          </span>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:${c.txt}">
+            ${diferencia!==0?(diferencia>0?'+':'')+'$'+fmt(Math.abs(diferencia)):'$0'}
+          </span>
+        </div>
+        ${nivel!=='ok'?`
+        <!-- Campo de justificación -->
+        <div style="margin-top:10px">
+          <div style="font-size:.7rem;font-weight:900;color:${c.txt};margin-bottom:5px">
+            ${nivel==='danger'?'🚨 Obligatorio — explica la diferencia:':'💬 ¿Por qué hay diferencia?'}
+          </div>
+          <textarea id="vx-justificacion"
+            placeholder="Ej: Se rompieron 3 tortillas, se dio descuento a cliente, error de cobro..."
+            style="width:100%;padding:10px;border:1.5px solid ${c.border};border-radius:8px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:600;color:var(--t);background:var(--bg);outline:none;resize:vertical;min-height:60px;box-sizing:border-box;-webkit-user-select:text;user-select:text"
+            oninput="this.style.borderColor='var(--n)'"
+            onblur="this.style.borderColor='${c.border}'"></textarea>
+        </div>`:''}
+      </div>
+    </div>`;
+  // Guardar nivel para validación al guardar
+  panel.dataset.nivel=nivel;
+  panel.dataset.esperado=totalEsperado;
 }
 
 let mpSectionOpen=false;
@@ -3762,7 +3866,6 @@ function limpiarV(){
   ['ve-dia-ef','ve-dia-tj','ve-dia-ot'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['gas','hie','rep','otr'].forEach(k=>{const el=document.getElementById(`g-${k}`);if(el)el.value='';});
   const desc=document.getElementById('g-otr-desc');if(desc)desc.value='';
-  // Clear caja
   ['caja-inicio','caja-cierre'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const cn=document.getElementById('caja-notas');if(cn)cn.value='';
   const encEl=document.getElementById('ve-encargado');
@@ -3775,6 +3878,12 @@ function limpiarV(){
     const con=document.getElementById(`mp-con-${i}`);if(con){con.textContent='—';con.className='mp-consumido zero';}
   });
   const wrap=document.getElementById('mp-totales');if(wrap)wrap.style.display='none';
+  // Reset validación cruzada y checklist
+  const vxPanel=document.getElementById('vx-panel');
+  if(vxPanel) vxPanel.style.display='none';
+  const chk=document.getElementById('check-danos');if(chk) chk.checked=false;
+  const chkWrap=document.getElementById('check-danos-wrap');if(chkWrap) chkWrap.style.borderColor='var(--g3)';
+  const chkWarn=document.getElementById('check-danos-warn');if(chkWarn) chkWarn.style.display='none';
   calcV();showToast('🗑️ Formulario limpiado');
 }
 
@@ -3783,6 +3892,25 @@ async function guardarVentas(){
   if(PI.includes(CP)){
     showToast('⛔ Este puesto está pausado — no se pueden registrar ventas');
     return;
+  }
+  // Verificar checklist de danos
+  const checkDanos=document.getElementById('check-danos');
+  if(!checkDanos?.checked){
+    document.getElementById('check-danos-warn').style.display='block';
+    document.getElementById('check-danos-wrap').style.borderColor='var(--r)';
+    checkDanos?.scrollIntoView({behavior:'smooth',block:'center'});
+    showToast('⚠️ Confirma que revisaste los productos dañados');
+    return;
+  }
+  // Verificar justificación si hay diferencia grande (nivel danger)
+  const vxPanel=document.getElementById('vx-panel');
+  if(vxPanel?.dataset?.nivel==='danger'){
+    const just=document.getElementById('vx-justificacion')?.value?.trim();
+    if(!just){
+      document.getElementById('vx-justificacion')?.focus();
+      showToast('🚨 Explica la diferencia entre productos y ventas antes de guardar');
+      return;
+    }
   }
   const d={};
   const MAX_VENTA=999999; // límite razonable por día
@@ -3826,10 +3954,19 @@ async function guardarVentas(){
   d.fechaGuardado=new Date().toLocaleString('es');
   d.fechaRegistro=currentFecha;
   d.guardadoPor=encargadoNombre; // nombre del encargado que registra
+  // Guardar datos de validación cruzada
+  const vxPanelEl=document.getElementById('vx-panel');
+  if(vxPanelEl&&vxPanelEl.style.display!=='none'){
+    d.vx_esperado=parseFloat(vxPanelEl.dataset.esperado||0);
+    d.vx_nivel=vxPanelEl.dataset.nivel||'ok';
+    const just=document.getElementById('vx-justificacion')?.value?.trim();
+    if(just) d.vx_justificacion=just;
+  }
+  d.check_danos=document.getElementById('check-danos')?.checked||false;
   const key=dpKey(CP,currentFecha);
   const antes=DP[key];
   DP[key]=d;
-  await SD('DP',DP);
+  await SDp(key,d);
   _crearBackupLocal('Ventas guardadas');
   const mpResumen=MP.map((item,i)=>{
     const sal=d[`mp-sal-${i}`]||0;const reg=d[`mp-reg-${i}`]||0;
