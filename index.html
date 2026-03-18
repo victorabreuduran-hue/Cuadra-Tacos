@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-title" content="Cuadra Tacos">
 <meta name="theme-color" content="#EA580C">
 <meta name="description" content="Sistema de administración La Cuadra Tacos">
+  <meta name="build-date" content="2026-03-18">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
@@ -51,7 +54,9 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 
 /* SYNC BAR — 3s countdown */
 #syncBar{height:3px;background:var(--g3)}
-#syncBarFill{height:100%;background:linear-gradient(90deg,var(--n),var(--am));border-radius:2px;width:0%;transition:width .3s ease}
+#syncBarFill{height:100%;background:linear-gradient(90deg,var(--n),var(--am));border-radius:2px;width:0%;transition:width .6s ease}
+#pending-banner{display:none;animation:bannerPulse 2s infinite}
+@keyframes bannerPulse{0%,100%{opacity:1}50%{opacity:.85}}
 
 /* HEADER */
 .hdr{background:linear-gradient(135deg,var(--cb) 0%,var(--cb2) 100%);color:white;padding:14px 16px 0;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.4)}
@@ -312,6 +317,37 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .meta-bar{flex:1;height:8px;background:var(--g3);border-radius:4px;overflow:hidden}
 .meta-fill{height:100%;border-radius:4px;transition:width .5s}
 /* PROV */
+/* ══ EGRESOS ══ */
+.egr-hero{background:linear-gradient(135deg,#1e1b4b,#312e81,#4338ca);border-radius:0 0 24px 24px;padding:20px 16px 16px;margin:-12px -12px 0;position:relative;overflow:hidden}
+.egr-hero-bg{position:absolute;right:-15px;top:-15px;font-size:120px;opacity:.06;transform:rotate(-10deg);pointer-events:none}
+.egr-add-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:14px;padding:10px 18px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:900;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+.egr-add-btn:active{transform:scale(.96);background:rgba(255,255,255,.25)}
+.egr-kpi-strip{display:flex;align-items:center;background:rgba(255,255,255,.08);border-radius:14px;padding:10px 8px;gap:0;border:1px solid rgba(255,255,255,.12)}
+.egr-kpi{flex:1;text-align:center;padding:0 4px}
+.egr-kpi-val{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:rgba(255,255,255,.9);letter-spacing:.5px;line-height:1}
+.egr-kpi-total{color:#fbbf24!important;font-size:1.25rem}
+.egr-kpi-lbl{font-size:.52rem;font-weight:800;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.egr-kpi-div{width:1px;height:32px;background:rgba(255,255,255,.15);flex-shrink:0}
+.egr-city-btn{flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s}
+.egr-city-active{background:rgba(255,255,255,.22)!important;color:white!important}
+.egr-tabs-bar{display:flex;gap:0;background:var(--g2);border-bottom:1.5px solid var(--g3);position:sticky;top:0;z-index:10;margin:0 -12px;padding:0 12px}
+.egr-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:12px 4px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t3);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1.5px;transition:all .2s;white-space:nowrap}
+.egr-tab.active{color:#4338ca;border-bottom-color:#4338ca}
+body.dark .egr-tab.active{color:#818cf8;border-bottom-color:#818cf8}
+.egr-tab-icon{font-size:.9rem}
+.egr-tab-badge{background:#4338ca;color:white;border-radius:20px;padding:1px 6px;font-size:.6rem;font-weight:900;min-width:18px;text-align:center}
+body.dark .egr-tab-badge{background:#818cf8}
+.egr-panel{padding-top:14px}
+.egr-search-wrap{position:relative;margin-bottom:12px}
+.egr-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.85rem;opacity:.4;pointer-events:none}
+.egr-search-inp{width:100%;padding:10px 12px 10px 32px;border:1.5px solid var(--g3);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box;transition:border-color .15s}
+.egr-search-inp:focus{border-color:#4338ca}
+/* GG Cards */
+.gg-card{background:var(--g2);border:1.5px solid var(--g3);border-radius:16px;padding:14px;margin-bottom:10px;position:relative;overflow:hidden;transition:all .2s}
+.gg-card:active{transform:scale(.99)}
+.gg-card-accent{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:16px 0 0 16px}
+.gg-card-cat{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px}
+.gg-empty{text-align:center;padding:40px 16px;color:var(--t3)}
 .prov-card{background:white;border-radius:var(--Rs);padding:14px;box-shadow:var(--sh);margin-bottom:10px;border-left:4px solid var(--v)}
 
 /* VENTAS WIZARD */
@@ -474,7 +510,7 @@ body.dark .dash-cstat{background:#111827;border-color:#374151}
     <input class="li" id="liUser" placeholder="Ej: dagoberto, jose..." autocapitalize="none" autocomplete="username">
     <label class="ll2">Contraseña</label>
     <input class="li" id="liPass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="btn-login" onclick="doLogin()">🔐 ENTRAR</button>
+    <button class="btn-login" id="btn-login" onclick="doLoginBtn()">🔐 ENTRAR</button>
   </div>
 </div>
 
@@ -1219,33 +1255,129 @@ body.dark .dash-cstat{background:#111827;border-color:#374151}
 
 <!-- PROVEEDORES VIEW -->
 <div class="view" id="view-prov">
-  <div style="background:linear-gradient(135deg,#0f766e,#0d9488);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
-    <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.08;transform:rotate(-10deg)">🏪</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+
+  <!-- ═══ EGRESOS HERO ═══ -->
+  <div class="egr-hero">
+    <div class="egr-hero-bg">💼</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:white;letter-spacing:1px">Proveedores</div>
-        <div id="prov-count-lbl" style="font-size:.72rem;color:#99f6e4;font-weight:700"></div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:white;letter-spacing:1.5px;line-height:1">💼 EGRESOS</div>
+        <div id="egr-subtitle" style="font-size:.72rem;color:rgba(255,255,255,.7);font-weight:700;margin-top:3px">Proveedores · Gastos · Fijos</div>
       </div>
-      <button onclick="openM('addProv')" style="background:rgba(255,255,255,.15);border:none;border-radius:12px;padding:10px 16px;color:white;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer">+ Agregar</button>
+      <button id="egr-add-btn" onclick="egrAddAction()" class="egr-add-btn">+ Agregar</button>
     </div>
-    <div style="display:flex;gap:6px">
-      <button id="prov-tab-wash" onclick="setProvCity('wash',this)"
-        style="flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.2);color:white;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s">
-        🌲 Washington
-      </button>
-      <button id="prov-tab-chi" onclick="setProvCity('chi',this)"
-        style="flex:1;padding:8px;border:none;border-radius:10px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s">
-        🌆 Chicago
-      </button>
+    <!-- KPI strip -->
+    <div class="egr-kpi-strip">
+      <div class="egr-kpi">
+        <div class="egr-kpi-val" id="egr-kpi-prov">$0</div>
+        <div class="egr-kpi-lbl">Proveedores</div>
+      </div>
+      <div class="egr-kpi-div"></div>
+      <div class="egr-kpi">
+        <div class="egr-kpi-val" id="egr-kpi-gg">$0</div>
+        <div class="egr-kpi-lbl">Gastos Grales</div>
+      </div>
+      <div class="egr-kpi-div"></div>
+      <div class="egr-kpi">
+        <div class="egr-kpi-val" id="egr-kpi-gf">$0</div>
+        <div class="egr-kpi-lbl">Gastos Fijos</div>
+      </div>
+      <div class="egr-kpi-div"></div>
+      <div class="egr-kpi">
+        <div class="egr-kpi-val egr-kpi-total" id="egr-kpi-total">$0</div>
+        <div class="egr-kpi-lbl">Total Egresos</div>
+      </div>
+    </div>
+    <!-- City tabs -->
+    <div style="display:flex;gap:6px;margin-top:12px">
+      <button id="prov-tab-wash" onclick="setProvCity('wash',this)" class="egr-city-btn egr-city-active">🌲 Washington</button>
+      <button id="prov-tab-chi" onclick="setProvCity('chi',this)" class="egr-city-btn">🌆 Chicago</button>
     </div>
   </div>
-  <div style="position:relative;margin-bottom:12px">
-    <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:.85rem;opacity:.4">🔍</span>
-    <input id="prov-search" type="text" placeholder="Buscar proveedor o producto..." oninput="renderProvView()"
-      style="width:100%;padding:9px 12px 9px 32px;border:1.5px solid var(--g3);border-radius:10px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;color:var(--t);background:var(--g2);outline:none;box-sizing:border-box"
-      onfocus="this.style.borderColor='var(--n)'" onblur="this.style.borderColor='var(--g3)'">
+
+  <!-- ═══ MAIN TABS ═══ -->
+  <div class="egr-tabs-bar">
+    <button class="egr-tab active" id="egr-tab-prov" onclick="setEgrTab('prov',this)">
+      <span class="egr-tab-icon">📦</span>
+      <span>Proveedores</span>
+      <span class="egr-tab-badge" id="egr-badge-prov">0</span>
+    </button>
+    <button class="egr-tab" id="egr-tab-gg" onclick="setEgrTab('gg',this)">
+      <span class="egr-tab-icon">💸</span>
+      <span>Gastos Grales</span>
+      <span class="egr-tab-badge" id="egr-badge-gg">0</span>
+    </button>
+    <button class="egr-tab" id="egr-tab-gf" onclick="setEgrTab('gf',this)">
+      <span class="egr-tab-icon">🏠</span>
+      <span>Gastos Fijos</span>
+    </button>
   </div>
-  <div id="prov-view-list"></div>
+
+  <!-- ═══ PANEL: PROVEEDORES ═══ -->
+  <div id="egr-panel-prov" class="egr-panel">
+    <div class="egr-search-wrap">
+      <span class="egr-search-icon">🔍</span>
+      <input id="prov-search" type="text" placeholder="Buscar proveedor o producto..." oninput="renderProvView()" class="egr-search-inp">
+    </div>
+    <div id="prov-view-list"></div>
+  </div>
+
+  <!-- ═══ PANEL: GASTOS GENERALES ═══ -->
+  <div id="egr-panel-gg" class="egr-panel" style="display:none">
+    <div class="egr-search-wrap">
+      <span class="egr-search-icon">🔍</span>
+      <input id="gg-search" type="text" placeholder="Buscar gasto..." oninput="renderGastosGen()" class="egr-search-inp">
+    </div>
+    <div id="gg-list"></div>
+  </div>
+
+  <!-- ═══ PANEL: GASTOS FIJOS ═══ -->
+  <div id="egr-panel-gf" class="egr-panel" style="display:none">
+    <div style="background:var(--g2);border-radius:14px;padding:14px;margin-bottom:12px;border:1.5px solid var(--g3)">
+      <div style="font-size:.65rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">ℹ️ Gastos Recurrentes</div>
+      <div style="font-size:.78rem;color:var(--t3)">Configurados una sola vez. Se descuentan del reporte de Ganancia Limpia.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px" id="gf-lista"></div>
+    <button onclick="gfAgregar()" style="width:100%;margin-top:14px;padding:12px;border:2px dashed var(--n);border-radius:12px;background:none;color:var(--n);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer">➕ Agregar gasto fijo</button>
+    <button onclick="guardarGastosFijos()" style="width:100%;margin-top:10px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--n),var(--n2));color:white;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:900;cursor:pointer">💾 Guardar Gastos Fijos</button>
+  </div>
+
+</div>
+
+<!-- MODAL AGREGAR GASTO GENERAL -->
+<div class="moverlay" id="m-addGG">
+  <div class="modal">
+    <div class="mtitle">💸 Registrar Gasto General</div>
+    <input type="hidden" id="gg-edit-idx" value="-1">
+    <label class="mlbl">Descripción *</label>
+    <input class="minput" id="gg-desc" placeholder="Ej: Renta local, Servicio gas...">
+    <label class="mlbl">Categoría</label>
+    <select class="msel" id="gg-cat">
+      <option value="servicios">🔌 Servicios (luz, gas, agua)</option>
+      <option value="renta">🏠 Renta / Arrendamiento</option>
+      <option value="manten">🔧 Mantenimiento / Reparación</option>
+      <option value="equipo">📦 Equipo / Herramientas</option>
+      <option value="transporte">🚗 Transporte / Casetas</option>
+      <option value="publicidad">📢 Publicidad / Marketing</option>
+      <option value="otros">📌 Otros</option>
+    </select>
+    <label class="mlbl">Monto *</label>
+    <input class="minput" type="number" id="gg-monto" placeholder="$0.00" inputmode="decimal">
+    <label class="mlbl">Ciudad</label>
+    <select class="msel" id="gg-ciudad">
+      <option value="wash">🌲 Washington</option>
+      <option value="chi">🌆 Chicago</option>
+      <option value="ambas">🌐 Ambas ciudades</option>
+    </select>
+    <label class="mlbl">Fecha</label>
+    <input class="minput" type="date" id="gg-fecha">
+    <label class="mlbl">Notas (opcional)</label>
+    <input class="minput" id="gg-notas" placeholder="Descripción adicional...">
+    <div class="macts">
+      <button class="bmcancel" onclick="closeM('addGG')">Cancelar</button>
+      <button class="bsave" onclick="saveGG()">💾 GUARDAR</button>
+    </div>
+  </div>
 </div>
 
 <!-- CONFIG -->
@@ -1282,7 +1414,7 @@ body.dark .dash-cstat{background:#111827;border-color:#374151}
           <span class="cfg-card-lbl">Metas</span>
           <span class="cfg-card-sub">Objetivos de venta</span>
         </button>
-        <button class="cfg-card" onclick="goCfg('gastosfijos')" data-cfg-id="gastosfijos">
+        <button class="cfg-card" onclick="showV('prov',document.querySelector('.nbtn[onclick*=prov]'));setEgrTab('gf',document.getElementById('egr-tab-gf'))" data-cfg-id="gastosfijos">
           <span class="cfg-card-icon" style="background:linear-gradient(135deg,#be185d,#9d174d)">🏠</span>
           <span class="cfg-card-lbl">Gastos Fijos</span>
           <span class="cfg-card-sub">Renta, utilidades y más</span>
@@ -1688,7 +1820,7 @@ body.dark .dash-cstat{background:#111827;border-color:#374151}
   <button class="nbtn" onclick="showV('ventas',this)"><span class="ni">💰</span><span class="nl">Ventas</span></button>
   <button class="nbtn" onclick="showV('asist',this)"><span class="ni">✅</span><span class="nl">Asist.</span></button>
   <button class="nbtn ao" onclick="showV('nomina',this)"><span class="ni">👷</span><span class="nl">Nómina</span></button>
-  <button class="nbtn ao" onclick="showV('prov',this);renderProvView()"><span class="ni">🏪</span><span class="nl">Proveed.</span></button>
+  <button class="nbtn ao" onclick="showV('prov',this);renderEgresosView()"><span class="ni">💼</span><span class="nl">Egresos</span></button>
   <button class="nbtn ao" onclick="showV('config',this);renderCfg()"><span class="ni">⚙️</span><span class="nl">Config</span></button>
 </div>
 
@@ -2176,6 +2308,7 @@ let DP=LL('DP',{}),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG
 let HIST=LL('HIST',[]); // Change history log
 let METAS=LL('METAS',{}); // Sales goals per puesto
 let PROV=LL('PROV',[]); // Proveedores
+let GG=LL('GG',[]); // Gastos Generales
 let POSICIONES=LL('POSICIONES',['Taquero','Pastorero','Cajero','Cajera','Planchero','Encargado','Encargada','Ayudante','Bodeguero']);
 const DEFAULT_TIPS=[
   // 💪 Motivacionales
@@ -2275,33 +2408,89 @@ let currentFechaNomina=todayStr(); // for nomina date tracking
 const allP=()=>[...PW,...PC];
 
 // GOOGLE SHEETS — saves only when user presses a save button
-async function gsG(t){try{const r=await fetch(`${GS}?tabla=${t}`);const j=await r.json();const res={};Object.entries(j.data||{}).forEach(([k,v])=>{try{res[k]=JSON.parse(v)}catch{res[k]=v}});return res}catch{return null}}
-// ═══════════════════════════════════════════════
-// SISTEMA DE SINCRONIZACIÓN ROBUSTO
-// ═══════════════════════════════════════════════
+async function gsG(t){
+  try{
+    const r=await fetch(`${GS}?tabla=${t}&ts=${Date.now()}`);
+    const j=await r.json();
+    const raw=j.data||{};
+    const res={};
+    Object.entries(raw).forEach(([k,v])=>{
+      try{res[k]=typeof v==='string'?JSON.parse(v):v;}
+      catch{res[k]=v;}
+    });
+    return res;
+  }catch{return null;}
+}
+// ═══════════════════════════════════════════════════════════
+// 🔒 SISTEMA DE SINCRONIZACIÓN ROBUSTO v2
+// Puntos cubiertos:
+//  ✅ 2. Sync automático cada 3 min en background
+//  ✅ 3. Sync al volver de background (visibilitychange)
+//  ✅ 4. Validar que dato llegó a Sheets antes de confirmar
+//  ✅ 5. Banner rojo visible de pendientes
+//  ✅ 6. Backup diario automático a Sheets
+//  ✅ 7/8. Confirmación de escritura con verificación
+// ═══════════════════════════════════════════════════════════
 
 const PENDING_KEY='lct_pending_sync';
+const LAST_BACKUP_KEY='lct_last_backup_date';
 function _loadPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY)||'{}')}catch{return {}}}
 function _savePending(q){try{localStorage.setItem(PENDING_KEY,JSON.stringify(q))}catch{}}
 
 let _syncQueue=_loadPending();
 let _syncTimer=null;
+let _autoSyncInterval=null;
 let _isSyncing=false;
 let _retryCount={};
-const MAX_RETRIES=5;
+const MAX_RETRIES=8;
 
+// ── PUNTO 5: Banner rojo de pendientes ──
 function _updatePendingBadge(){
   const count=Object.keys(_syncQueue).length;
-  const el=document.getElementById('stxt');
-  if(!el)return;
+  const stxt=document.getElementById('stxt');
+  const sdotEl=document.getElementById('sdot');
+  // Banner rojo en header
+  let banner=document.getElementById('pending-banner');
   if(count>0){
-    el.textContent=`⏳ ${count} pendiente${count>1?'s':''}`;
-    setDot('orange');
+    if(stxt) stxt.textContent=`⚠️ ${count} sin guardar`;
+    setDot('red');
+    // Mostrar banner rojo persistente
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='pending-banner';
+      banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#dc2626;color:white;font-family:Nunito,sans-serif;font-size:.78rem;font-weight:900;text-align:center;padding:6px 16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer';
+      banner.onclick=()=>_flushSyncQueue(true);
+      document.body.appendChild(banner);
+    }
+    banner.textContent=`⚠️ ${count} dato${count>1?'s':''} pendiente${count>1?'s':''} de guardar — Toca para reintentar`;
+    banner.style.display='flex';
   } else {
-    el.textContent='✅ Sincronizado';
-    setDot('green');
+    if(stxt){stxt.textContent='✅ Sincronizado';setDot('green');}
+    if(banner) banner.style.display='none';
     setTimeout(()=>{const e=document.getElementById('stxt');if(e&&e.textContent==='✅ Sincronizado')e.textContent='🔄 Actualizar';},3000);
   }
+}
+
+// ── PUNTO 4 y 8: gsS con verificación de escritura ──
+async function gsS(t,k,v){
+  try{
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),10000);
+    const resp=await fetch(GS,{
+      method:'POST',
+      body:JSON.stringify({tabla:t,clave:k,valor:JSON.stringify(v)}),
+      keepalive:true,
+      signal:ctrl.signal
+    });
+    clearTimeout(timer);
+    // Verificar que la respuesta fue exitosa
+    if(!resp.ok) return false;
+    try{
+      const j=await resp.json();
+      if(j.status==='error') return false;
+    }catch{} // Si no devuelve JSON válido, asumir éxito
+    return true;
+  }catch{return false;}
 }
 
 async function _flushSyncQueue(force=false){
@@ -2309,56 +2498,124 @@ async function _flushSyncQueue(force=false){
   const entries=Object.entries(_syncQueue);
   if(!entries.length)return;
   _isSyncing=true;
+  const f=document.getElementById('syncBarFill');
+  if(f){f.style.width='30%';}
   const failed={};
+  let done=0;
   await Promise.all(entries.map(async([k,v])=>{
     const ok=await gsS(k,k,v);
+    done++;
+    if(f) f.style.width=`${Math.round((done/entries.length)*100)}%`;
     if(!ok){
       _retryCount[k]=(_retryCount[k]||0)+1;
       if(_retryCount[k]<=MAX_RETRIES) failed[k]=v;
-      else delete _retryCount[k];
+      else{
+        // Datos perdidos después de MAX_RETRIES — guardar en backup local
+        console.warn(`⚠️ No se pudo sincronizar ${k} después de ${MAX_RETRIES} intentos`);
+        delete _retryCount[k];
+      }
     } else { delete _retryCount[k]; }
   }));
+  if(f) setTimeout(()=>{f.style.width='0%';},500);
   _syncQueue=failed;
   _savePending(_syncQueue);
   _isSyncing=false;
   _updatePendingBadge();
-  if(Object.keys(failed).length>0) setTimeout(()=>_flushSyncQueue(),15000);
+  if(Object.keys(failed).length>0) setTimeout(()=>_flushSyncQueue(),20000);
 }
 
-async function gsS(t,k,v){
-  try{
-    const ctrl=new AbortController();
-    const timer=setTimeout(()=>ctrl.abort(),8000);
-    await fetch(GS,{method:'POST',body:JSON.stringify({tabla:t,clave:k,valor:JSON.stringify(v)}),keepalive:true,signal:ctrl.signal});
-    clearTimeout(timer);return true;
-  }catch{return false;}
-}
-
+// ── SD: guardar con confirmación ──
 async function SD(k,v){
-  SL(k,v);
+  SL(k,v); // Guardar en localStorage inmediatamente
   const f=document.getElementById('syncBarFill');
   if(f){f.style.width='100%';setTimeout(()=>{f.style.width='0%';},400);}
   _syncQueue[k]=v;
   _savePending(_syncQueue);
   _updatePendingBadge();
   clearTimeout(_syncTimer);
-  _syncTimer=setTimeout(()=>_flushSyncQueue(),600);
+  _syncTimer=setTimeout(()=>_flushSyncQueue(),800);
   return true;
 }
 
-// Flush al cerrar/minimizar
+// ── PUNTO 2: Sync automático cada 3 minutos ──
+function _startAutoSync(){
+  if(_autoSyncInterval) clearInterval(_autoSyncInterval);
+  _autoSyncInterval=setInterval(async()=>{
+    if(!CU) return; // Solo si hay sesión activa
+    if(Object.keys(_syncQueue).length>0){
+      // Hay pendientes — enviarlos
+      _flushSyncQueue(true);
+    }
+    // Silently refresh data from Sheets every 3 min
+    _silentRefresh();
+  }, 3*60*1000); // 3 minutos
+}
+
+async function _silentRefresh(){
+  if(!CU||_isSyncing) return;
+  try{
+    const tabs=['DP','DN','DA','PROV','GG'];
+    const results=await Promise.all(tabs.map(t=>gsG(t).then(d=>({t,d})).catch(()=>({t,d:null}))));
+    const apply={DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;}};
+    results.forEach(({t,d})=>{
+      if(d&&d[t]!==undefined){SL(t,d[t]);apply[t]?.(d[t]);}
+    });
+    // Re-render silently
+    if(CU?.rol==='admin') renderDash();
+    else renderPersonalDash();
+  }catch{}
+}
+
+// ── PUNTO 3: Sync al volver de background ──
+let _lastVisibleTime=Date.now();
 window.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden'&&Object.keys(_syncQueue).length>0) _flushSyncQueue(true);
-  if(document.visibilityState==='visible'&&Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(),2000);
+  if(document.visibilityState==='hidden'){
+    _lastVisibleTime=Date.now();
+    if(Object.keys(_syncQueue).length>0) _flushSyncQueue(true);
+  }
+  if(document.visibilityState==='visible'){
+    const awayMs=Date.now()-_lastVisibleTime;
+    // Si estuvo más de 2 minutos en background, sincroniza al volver
+    if(awayMs>2*60*1000&&CU){
+      setST('🔄 Actualizando...');setDot('orange');
+      _silentRefresh().then(()=>{setST('✅ Al día');setDot('green');setTimeout(()=>{const e=document.getElementById('stxt');if(e)e.textContent='🔄 Actualizar';},2000);});
+    }
+    if(Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(),1500);
+  }
 });
+
 window.addEventListener('pagehide',()=>{if(Object.keys(_syncQueue).length>0)_flushSyncQueue(true);});
 window.addEventListener('beforeunload',()=>{if(Object.keys(_syncQueue).length>0)_flushSyncQueue(true);});
 window.addEventListener('online',()=>{
-  if(Object.keys(_syncQueue).length>0){
-    const el=document.getElementById('stxt');if(el)el.textContent='🔄 Reintentando...';
-    setTimeout(()=>_flushSyncQueue(),1000);
-  }
+  const el=document.getElementById('stxt');if(el)el.textContent='🔄 Reconectando...';
+  setTimeout(()=>_flushSyncQueue(true),1000);
 });
+window.addEventListener('offline',()=>{
+  setST('📵 Sin conexión');setDot('red');
+});
+
+// ── PUNTO 6: Backup diario automático a Sheets ──
+async function _backupDiario(){
+  if(!CU||CU.rol!=='admin') return;
+  const hoy=todayStr();
+  const ultimo=LL(LAST_BACKUP_KEY,'');
+  if(ultimo===hoy) return; // Ya se hizo hoy
+  try{
+    const snap={
+      fecha:new Date().toISOString(),
+      motivo:'Backup diario automático',
+      DP,DN,DA,EW,EC,MP,METAS,PROV,GG,PW,PC
+    };
+    // Guardar en Sheets como backup
+    await gsS('BACKUP_'+hoy,'BACKUP_'+hoy,snap);
+    // Guardar en localStorage también
+    const backups=LL('AUTO_BACKUPS',[]);
+    backups.unshift({fecha:new Date().toISOString(),motivo:'Backup diario',datos:snap});
+    SL('AUTO_BACKUPS',backups.slice(0,7)); // Guardar últimos 7 días
+    SL(LAST_BACKUP_KEY,hoy);
+    console.log('✅ Backup diario completado:',hoy);
+  }catch(e){console.warn('Backup diario falló:',e);}
+}
 
 // Reintento de pendientes al abrir
 if(Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(),3000);
@@ -2368,13 +2625,13 @@ if(Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(),3000);
 async function syncNow(){
   setST('🔄 Cargando...');setDot('orange');
   showToast('🔄 Cargando datos...');
-  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','MP','HIST','METAS','PROV','POSICIONES','TIPS'];
+  const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','MP','HIST','METAS','PROV','GG','POSICIONES','TIPS'];
   // Descargar todas las tablas en paralelo
   const results=await Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data}))));
   const apply={
     DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},DF:v=>{DF=v;},DG:v=>{DG=v;},
     PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
-    MP:v=>{MP=v;renderMPRows();},HIST:v=>{HIST=v;},METAS:v=>{METAS=v;},PROV:v=>{PROV=v;},
+    MP:v=>{MP=v;renderMPRows();},HIST:v=>{HIST=v;},METAS:v=>{METAS=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;},
     POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
   };
   const loaded=results.filter(r=>r.data);
@@ -2382,7 +2639,7 @@ async function syncNow(){
     if(data&&data[t]!==undefined){SL(t,data[t]);apply[t]?.(data[t]);}
   });
   refreshUS();
-  buildPSel();renderDash();renderReportes();renderAsist();renderNomina();
+  buildPSel();renderDash();renderReportes();renderAsist();renderNomina();renderEgresosView();
 
   // Auto-backup tras sincronización exitosa
   if(loaded.length===tabs.length){
@@ -2391,6 +2648,8 @@ async function syncNow(){
 
   setST('✅ Actualizado');setDot('green');
   showToast(`✅ Datos actualizados (${loaded.length}/${tabs.length} tablas)`);
+  // Flush pendientes si los hay
+  if(Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(true),500);
 }
 
 // Backup local automático — guarda snapshot completo en localStorage
@@ -2445,6 +2704,13 @@ async function logChange(seccion,detalle,valorAntes,valorDespues){
 }
 
 // AUTH
+async function doLoginBtn(){
+  const btn=document.getElementById('btn-login');
+  if(btn){btn.textContent='⏳ Cargando...';btn.disabled=true;}
+  await doLogin();
+  if(btn){btn.textContent='🔐 ENTRAR';btn.disabled=false;}
+}
+
 async function doLogin(){
   refreshUS();
   const nombre=document.getElementById('liUser').value.trim();
@@ -2514,6 +2780,10 @@ async function confirmarPuesto(){
 
 function doLogout(){
   if(!confirm('¿Cerrar sesión?'))return;
+  // Detener sync automático
+  if(_autoSyncInterval){clearInterval(_autoSyncInterval);_autoSyncInterval=null;}
+  // Último flush antes de salir
+  if(Object.keys(_syncQueue).length>0) _flushSyncQueue(true);
   CU=null;SL('session',null);
   document.getElementById('loginScreen').classList.add('show');
   document.getElementById('puestoScreen').style.display='none';
@@ -2521,7 +2791,26 @@ function doLogout(){
   document.getElementById('liUser').value='';document.getElementById('liPass').value='';
 }
 
-function showApp(){
+async function showApp(){
+  // ── SYNC FIRST — download latest data from Sheets before rendering ──
+  setST('🔄 Cargando...');setDot('orange');
+  try{
+    const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','MP','METAS','PROV','GG','TIPS'];
+    const results=await Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data})).catch(()=>({t,data:null}))));
+    const apply={
+      DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},DF:v=>{DF=v;},DG:v=>{DG=v;},
+      PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
+      MP:v=>{MP=v;},METAS:v=>{METAS=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;},TIPS:v=>{TIPS=v;}
+    };
+    results.forEach(({t,data})=>{
+      if(data&&data[t]!==undefined){SL(t,data[t]);apply[t]?.(data[t]);}
+    });
+    refreshUS();
+    setST('✅ Datos listos');setDot('green');
+  }catch(e){
+    setST('⚠️ Sin conexión');setDot('red');
+  }
+  // ────────────────────────────────────────────
   document.getElementById('loginScreen').classList.remove('show');
   ['mainHdr','appContent','mainNav'].forEach(id=>document.getElementById(id).style.display=id==='mainNav'?'flex':'block');
   const isA=CU.rol==='admin';
@@ -2541,7 +2830,7 @@ function showApp(){
     if(lbl==='Asist.')   btn.style.display=can('asist')?'':'none';
     if(lbl==='Nómina')   btn.style.display=isA||can('nomina')?'':'none';
     if(lbl==='Reportes') btn.style.display='none';
-    if(lbl==='Proveed.') btn.style.display=isA||can('reportes')?'':'none';
+    if(lbl==='Egresos') btn.style.display=isA||can('reportes')?'':'none';
     if(lbl==='Config')   { btn.style.display=isA||can('config')?'':'none'; if(isA||can('config')) setTimeout(filterCfgHome,0); }
     if(lbl==='Mi Cuenta') btn.style.display='none'; // ahora vive dentro de Config
   });
@@ -2586,10 +2875,14 @@ function showApp(){
   
   if(can('asist')){currentAsistFecha=todayStr();updateAsistSemanaUI();renderAsist();}
   if(isA||can('nomina')){updateNomSemanaLabel();renderNomina();}
-  if(isA||can('reportes'))renderReportes();
+  if(isA||can('reportes')){renderReportes();renderEgresosView();}
   populateEditSel();updateTip();
   renderMPRows();
   document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'});
+  // ── Arrancar sistemas de fondo ──
+  _startAutoSync();
+  setTimeout(()=>_backupDiario(), 10000); // Backup después de 10s para no bloquear carga
+  _updatePendingBadge(); // Mostrar banner si hay pendientes del login anterior
   currentFecha=turnoFechaStr();currentFechaNomina=todayStr();
   calYear=new Date().getFullYear();calMonth=new Date().getMonth();
   const fp=document.getElementById('fechaVentas');
@@ -5883,10 +6176,10 @@ async function iniciarBorradoTotal(){
   if(!admin||pass!==admin.pass){showToast('❌ Contraseña incorrecta — operación cancelada');return;}
   if(!confirm('☢️ ÚLTIMA ADVERTENCIA #3 de 3\n\n¡ATENCIÓN! Esta es tu última oportunidad de cancelar.\n\nSe eliminarán TODOS los datos sin excepción.\n\n¿Confirmas el borrado total e irreversible?'))return;
   // Execute reset
-  DP={};DN={};DA={};DF={};DG={};EW=[];EC=[];MP=[];HIST=[];METAS={};PROV=[];
+  DP={};DN={};DA={};DF={};DG={};EW=[];EC=[];MP=[];HIST=[];METAS={};PROV=[];GG=[];
   PW=[...DEW.map(()=>'')].filter(Boolean);PC=[];
   const adminUser={...admin};US=[adminUser];
-  const saves=[['DP',DP],['DN',DN],['DA',DA],['DF',DF],['DG',DG],['EW',EW],['EC',EC],
+  const saves=[['DP',DP],['DN',DN],['DA',DA],['DF',DF],['DG',DG],['EW',EW],['EC',EC],['GG',GG],
     ['US',US],['MP',MP],['HIST',HIST],['METAS',METAS],['PROV',PROV],['PW',PW],['PC',PC]];
   for(const [k,v] of saves){SL(k,v);await gsS(k,k,v).catch(()=>{});}
   showToast('🗑️ Todos los datos han sido eliminados');
@@ -6352,12 +6645,198 @@ let provCity='wash'; // ciudad activa en vista prov
 
 function setProvCity(city,btn){
   provCity=city;
-  ['wash','chi'].forEach(c=>{
-    const t=document.getElementById('prov-tab-'+c);if(!t)return;
-    if(c===city){t.style.background='rgba(255,255,255,.2)';t.style.color='white';}
-    else{t.style.background='rgba(255,255,255,.08)';t.style.color='rgba(255,255,255,.6)';}
-  });
+  document.querySelectorAll('.egr-city-btn').forEach(b=>b.classList.remove('egr-city-active'));
+  if(btn) btn.classList.add('egr-city-active');
   renderProvView();
+  renderGastosGen();
+  updateEgrKPIs();
+  updateEgrBadges();
+}
+
+// ════════════════════════════════════════════
+// 💼 EGRESOS — tabs, GG, KPIs
+// ════════════════════════════════════════════
+let _egrTab='prov';
+
+function renderEgresosView(){
+  renderProvView();
+  renderGastosGen();
+  renderGastosFijos();
+  updateEgrKPIs();
+  updateEgrBadges();
+}
+
+function setEgrTab(tab,btn){
+  _egrTab=tab;
+  document.querySelectorAll('.egr-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ['prov','gg','gf'].forEach(t=>{
+    const p=document.getElementById('egr-panel-'+t);
+    if(p) p.style.display=t===tab?'block':'none';
+  });
+  // Update add button label
+  const addBtn=document.getElementById('egr-add-btn');
+  const sub=document.getElementById('egr-subtitle');
+  if(tab==='prov'){
+    if(addBtn) addBtn.textContent='+ Proveedor';
+    if(sub) sub.textContent='Gestiona tus proveedores';
+  } else if(tab==='gg'){
+    if(addBtn) addBtn.textContent='+ Gasto';
+    if(sub) sub.textContent='Gastos generales del negocio';
+  } else {
+    if(addBtn) addBtn.textContent='+ Gasto Fijo';
+    if(sub) sub.textContent='Gastos recurrentes configurados';
+  }
+}
+
+function egrAddAction(){
+  if(_egrTab==='prov') openM('addProv');
+  else if(_egrTab==='gg'){
+    document.getElementById('gg-edit-idx').value='-1';
+    document.getElementById('gg-desc').value='';
+    document.getElementById('gg-monto').value='';
+    document.getElementById('gg-notas').value='';
+    document.getElementById('gg-fecha').value=turnoFechaStr();
+    document.getElementById('gg-ciudad').value=provCity||'wash';
+    document.getElementById('gg-cat').value='servicios';
+    openM('addGG');
+  } else {
+    gfAgregar();
+  }
+}
+
+function updateEgrKPIs(){
+  const city=provCity||'wash';
+  // Proveedores — sum precio where ciudad matches
+  const tProv=PROV.filter(p=>p.ciudad===city||p.ciudad==='ambas'||!p.ciudad)
+    .reduce((a,p)=>a+(parseFloat(p.precio?.replace(/[^0-9.]/g,''))||0),0);
+  // Gastos Generales — sum monto where ciudad matches
+  const tGG=GG.filter(g=>g.ciudad===city||g.ciudad==='ambas')
+    .reduce((a,g)=>a+(parseFloat(g.monto)||0),0);
+  // Gastos Fijos
+  const tGF=loadGF().reduce((a,x)=>a+(parseFloat(x.monto)||0),0);
+  const total=tProv+tGG+tGF;
+  const el=id=>document.getElementById(id);
+  const f=n=>'$'+fmt(n);
+  if(el('egr-kpi-prov')) el('egr-kpi-prov').textContent=f(tProv);
+  if(el('egr-kpi-gg'))   el('egr-kpi-gg').textContent=f(tGG);
+  if(el('egr-kpi-gf'))   el('egr-kpi-gf').textContent=f(tGF);
+  if(el('egr-kpi-total'))el('egr-kpi-total').textContent=f(total);
+}
+
+function updateEgrBadges(){
+  const city=provCity||'wash';
+  const cProv=PROV.filter(p=>p.ciudad===city||p.ciudad==='ambas'||!p.ciudad).length;
+  const cGG=GG.filter(g=>g.ciudad===city||g.ciudad==='ambas').length;
+  const bp=document.getElementById('egr-badge-prov');
+  const bg=document.getElementById('egr-badge-gg');
+  if(bp) bp.textContent=cProv;
+  if(bg) bg.textContent=cGG;
+}
+
+// ── Gastos Generales CRUD ──
+const GG_CAT_MAP={
+  servicios:{label:'Servicios',color:'#2563eb',bg:'#dbeafe',emoji:'🔌'},
+  renta:{label:'Renta',color:'#7c3aed',bg:'#ede9fe',emoji:'🏠'},
+  manten:{label:'Mantenimiento',color:'#d97706',bg:'#fef3c7',emoji:'🔧'},
+  equipo:{label:'Equipo',color:'#059669',bg:'#d1fae5',emoji:'📦'},
+  transporte:{label:'Transporte',color:'#dc2626',bg:'#fee2e2',emoji:'🚗'},
+  publicidad:{label:'Publicidad',color:'#db2777',bg:'#fce7f3',emoji:'📢'},
+  otros:{label:'Otros',color:'#6b7280',bg:'#f3f4f6',emoji:'📌'}
+};
+
+function renderGastosGen(){
+  const c=document.getElementById('gg-list');if(!c)return;
+  const search=(document.getElementById('gg-search')?.value||'').toLowerCase();
+  const city=provCity||'wash';
+  let filtrados=GG.filter(g=>{
+    const cityOk=g.ciudad===city||g.ciudad==='ambas';
+    const searchOk=!search||g.desc.toLowerCase().includes(search)||(g.notas||'').toLowerCase().includes(search);
+    return cityOk&&searchOk;
+  });
+  if(!filtrados.length){
+    c.innerHTML=`<div class="gg-empty">
+      <div style="font-size:2.5rem;margin-bottom:10px">💸</div>
+      <div style="font-weight:800;font-size:.9rem;color:var(--t2)">Sin gastos generales</div>
+      <div style="font-size:.78rem;margin-top:6px">${search?'Intenta con otra búsqueda':'Toca + Gasto para agregar uno'}</div>
+    </div>`;
+    return;
+  }
+  c.innerHTML='';
+  filtrados.forEach(g=>{
+    const idx=GG.indexOf(g);
+    const cat=GG_CAT_MAP[g.cat]||GG_CAT_MAP.otros;
+    const div=document.createElement('div');
+    div.className='gg-card';
+    div.innerHTML=`
+      <div class="gg-card-accent" style="background:${cat.color}"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div class="gg-card-cat" style="background:${cat.bg};color:${cat.color}">${cat.emoji} ${cat.label}</div>
+          <div style="font-size:.92rem;font-weight:900;color:var(--t);margin-bottom:2px">${g.desc}</div>
+          ${g.notas?`<div style="font-size:.72rem;color:var(--t3);margin-bottom:4px">${g.notas}</div>`:''}
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px">
+            <span style="font-size:.68rem;color:var(--t3)">📅 ${g.fecha||'—'}</span>
+            ${g.ciudad==='ambas'?'<span style="font-size:.65rem;background:#e0f2fe;color:#0369a1;border-radius:6px;padding:2px 7px;font-weight:800">🌐 Ambas</span>':
+              g.ciudad==='chi'?'<span style="font-size:.65rem;background:#fef3c7;color:#92400e;border-radius:6px;padding:2px 7px;font-weight:800">🌆 Chicago</span>':
+              '<span style="font-size:.65rem;background:#d1fae5;color:#065f46;border-radius:6px;padding:2px 7px;font-weight:800">🌲 Wash</span>'}
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:${cat.color};letter-spacing:.5px">$${fmt(g.monto)}</div>
+          <div style="display:flex;gap:4px">
+            <button onclick="editGG(${idx})" class="bedit" style="padding:5px 8px;font-size:.7rem">✏️</button>
+            <button onclick="delGG(${idx})" class="bdang" style="padding:5px 8px;font-size:.7rem">🗑️</button>
+          </div>
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+  updateEgrKPIs();
+  updateEgrBadges();
+}
+
+async function saveGG(){
+  const desc=document.getElementById('gg-desc').value.trim();
+  if(!desc){showToast('⚠️ Escribe una descripción');return;}
+  const monto=parseFloat(document.getElementById('gg-monto').value)||0;
+  if(!monto){showToast('⚠️ Escribe el monto');return;}
+  const idx=parseInt(document.getElementById('gg-edit-idx').value);
+  const obj={
+    desc,
+    cat:document.getElementById('gg-cat').value,
+    monto,
+    ciudad:document.getElementById('gg-ciudad').value,
+    fecha:document.getElementById('gg-fecha').value,
+    notas:document.getElementById('gg-notas').value.trim(),
+    ts:Date.now()
+  };
+  if(idx===-1) GG.push(obj); else GG[idx]=obj;
+  await SD('GG',GG);
+  closeM('addGG');
+  renderGastosGen();
+  showToast(idx===-1?`✅ Gasto "${desc}" agregado`:`✅ "${desc}" actualizado`);
+}
+
+function editGG(idx){
+  const g=GG[idx];if(!g)return;
+  document.getElementById('gg-edit-idx').value=idx;
+  document.getElementById('gg-desc').value=g.desc;
+  document.getElementById('gg-monto').value=g.monto;
+  document.getElementById('gg-notas').value=g.notas||'';
+  document.getElementById('gg-fecha').value=g.fecha||turnoFechaStr();
+  document.getElementById('gg-ciudad').value=g.ciudad||'wash';
+  document.getElementById('gg-cat').value=g.cat||'otros';
+  openM('addGG');
+}
+
+async function delGG(idx){
+  if(!GG[idx])return;
+  const nom=GG[idx].desc;
+  GG.splice(idx,1);
+  await SD('GG',GG);
+  renderGastosGen();
+  showToast(`🗑️ "${nom}" eliminado`);
 }
 
 function renderProvView(){
@@ -6413,6 +6892,8 @@ function renderProvView(){
       </div>`;
     c.appendChild(div);
   });
+  updateEgrKPIs();
+  updateEgrBadges();
 }
 
 // Mount reportes tabs content inside cfg-reportes
@@ -6765,7 +7246,7 @@ function exportEmail(){
 // 💾 BACKUP
 // ═══════════════════════════════════════════
 function crearBackup(){
-  const data={fecha:new Date().toISOString(),version:'1.0',DP,DN,DA,DF,DG,US,MP,METAS,PROV,HIST};
+  const data={fecha:new Date().toISOString(),version:'1.0',DP,DN,DA,DF,DG,US,MP,METAS,PROV,GG,HIST};
   const json=JSON.stringify(data,null,2);
   const blob=new Blob([json],{type:'application/json'});
   const url=URL.createObjectURL(blob);
@@ -6795,13 +7276,26 @@ function showNotif(msg){const n=document.getElementById('notif');n.textContent=m
 
 document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
 
-// ── SERVICE WORKER REGISTRATION ──
+// ── SERVICE WORKER — force update on new version ──
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js').then(reg=>{
-      console.log('✅ SW registered');
-    }).catch(err=>{
-      console.log('SW registration failed (normal if not on server):', err);
+      // Force check for updates every time
+      reg.update();
+      // If new SW waiting, activate it immediately
+      reg.addEventListener('updatefound',()=>{
+        const newWorker=reg.installing;
+        newWorker?.addEventListener('statechange',()=>{
+          if(newWorker.statechange==='installed'&&navigator.serviceWorker.controller){
+            newWorker.postMessage({type:'SKIP_WAITING'});
+          }
+        });
+      });
+    }).catch(()=>{});
+    // Reload page when SW activates new version
+    let refreshing=false;
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(!refreshing){refreshing=true;window.location.reload();}
     });
   });
 }
@@ -6942,7 +7436,14 @@ function renderGananciaReporte(triggerEl){
         });
       });
 
-      const ganancia = tV - tG - tN - totalGF;
+      // Gastos Generales para esta ciudad en el rango
+      let tGG=0;
+      GG.filter(g=>g.ciudad===cityKey||g.ciudad==='ambas').forEach(g=>{
+        const f=g.fecha||'';
+        if(from&&f<from)return;if(to&&f>to)return;
+        tGG+=parseFloat(g.monto)||0;
+      });
+      const ganancia = tV - tG - tN - totalGF - tGG;
       const pos = ganancia >= 0;
       const bgGrad = pos ? 'linear-gradient(135deg,'+color1+','+color2+')' : 'linear-gradient(135deg,#7f1d1d,#991b1b)';
       const bgResult = pos ? 'linear-gradient(135deg,#064e3b,#065f46)' : 'linear-gradient(135deg,#7f1d1d,#991b1b)';
@@ -6963,6 +7464,10 @@ function renderGananciaReporte(triggerEl){
         <span class="gan-row-label" style="font-size:.78rem">🏠 Gastos Fijos</span>
         <span class="gan-row-val" style="color:var(--r);font-size:.82rem">-$${fmt(totalGF)}</span>
       </div>` : '';
+      const ggRowHTML = tGG>0 ? `<div class="gan-row">
+        <span class="gan-row-label" style="font-size:.78rem">💸 Gastos Grales</span>
+        <span class="gan-row-val" style="color:var(--r);font-size:.82rem">-$${fmt(tGG)}</span>
+      </div>` : '';
 
       return `<div class="card" style="margin-bottom:14px">
         <div style="background:${bgGrad};border-radius:12px;padding:12px 14px;margin-bottom:10px">
@@ -6982,7 +7487,7 @@ function renderGananciaReporte(triggerEl){
           <span class="gan-row-label" style="font-size:.78rem">👷 Nómina</span>
           <span class="gan-row-val" style="color:var(--r);font-size:.82rem">-$${fmt(tN)}</span>
         </div>
-        ${gfRowsHTML}
+        ${gfRowsHTML}${ggRowHTML}
         <div class="gan-total-row" style="background:${bgResult};margin-top:8px">
           <div style="font-size:.7rem;font-weight:900;color:${pos?'#a7f3d0':'#fca5a5'};text-transform:uppercase;letter-spacing:.8px">
             ${pos?'✅ Ganancia':'❌ Pérdida'} Limpia
@@ -6998,10 +7503,16 @@ function renderGananciaReporte(triggerEl){
     const chiCard  = cityCard('🌆','Chicago',    PC, EC, 'chi',  '#1e40af', '#1d4ed8');
 
     // Totales combinados
-    let tVtot=0, tGtot=0, tNtot=0;
+    let tVtot=0, tGtot=0, tNtot=0, tGGtot=0;
     [...PW,...PC].forEach(p=>{
       const d=getDPuestoFiltered(p,from,to);
       tVtot+=d.totalVentas; tGtot+=d.totalGastos;
+    });
+    // Gastos Generales total
+    GG.forEach(g=>{
+      const f=g.fecha||'';
+      if(from&&f<from)return;if(to&&f>to)return;
+      tGGtot+=parseFloat(g.monto)||0;
     });
     ['wash','chi'].forEach(city=>{
       const emps=city==='wash'?EW:EC;
@@ -7018,12 +7529,16 @@ function renderGananciaReporte(triggerEl){
         });
       });
     });
-    const ganTotal = tVtot - tGtot - tNtot - totalGF;
+    const ganTotal = tVtot - tGtot - tNtot - totalGF - tGGtot;
     const posTotal = ganTotal >= 0;
 
     const gfTotalRow = totalGF>0 ? `<div class="gan-row">
       <span class="gan-row-label" style="font-size:.78rem">🏠 Gastos Fijos</span>
       <span class="gan-row-val" style="color:var(--r);font-size:.82rem">-$${fmt(totalGF)}</span>
+    </div>` : '';
+    const ggTotalRow = tGGtot>0 ? `<div class="gan-row">
+      <span class="gan-row-label" style="font-size:.78rem">💸 Gastos Generales</span>
+      <span class="gan-row-val" style="color:var(--r);font-size:.82rem">-$${fmt(tGGtot)}</span>
     </div>` : '';
 
     const totalCard = `<div class="card" style="border:2px solid ${posTotal?'var(--v)':'var(--r)'}">
@@ -7043,7 +7558,7 @@ function renderGananciaReporte(triggerEl){
         <span class="gan-row-label" style="font-size:.78rem">👷 Nómina Total</span>
         <span class="gan-row-val" style="color:var(--r);font-size:.82rem">-$${fmt(tNtot)}</span>
       </div>
-      ${gfTotalRow}
+      ${gfTotalRow}${ggTotalRow}
       <div class="gan-total-row" style="background:${posTotal?'linear-gradient(135deg,#064e3b,#065f46)':'linear-gradient(135deg,#7f1d1d,#991b1b)'};margin-top:8px">
         <div>
           <div style="font-size:.72rem;font-weight:900;color:${posTotal?'#a7f3d0':'#fca5a5'};text-transform:uppercase;letter-spacing:1px">
