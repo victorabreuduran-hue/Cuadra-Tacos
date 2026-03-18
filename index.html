@@ -340,10 +340,41 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .venta-next-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,var(--n),var(--n2));border:none;border-radius:14px;padding:15px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;color:white;cursor:pointer;letter-spacing:.3px;box-shadow:0 4px 14px rgba(234,88,12,.3)}
 .venta-back-btn{background:var(--g3);border:none;border-radius:14px;padding:15px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:var(--t2);cursor:pointer;margin-top:12px}
 /* DARK MODE */
-body.dark{--bg:#111827;--t:#f9fafb;--t2:#e5e7eb;--t3:#9ca3af;--g2:#1f2937;--g3:#374151;--sh:0 2px 8px rgba(0,0,0,.4)}
-body.dark .card{background:#1f2937}
-body.dark .modal{background:#1f2937}
-body.dark input,body.dark select{background:#374151;color:#f9fafb;border-color:#4b5563}
+body.dark{
+  --g:#111827;--g2:#1f2937;--g3:#374151;
+  --t:#f9fafb;--t2:#e5e7eb;--t3:#9ca3af;
+  --W:#1f2937;
+  --sh:0 2px 8px rgba(0,0,0,.4);
+  --sh2:0 8px 32px rgba(0,0,0,.5);
+  --ns:#1f2937;--nm:#374151;
+  --rs:#3b1c1c;--vs:#1a3a2a;--azs:#1e2d4a;--ams:#3a2d00;
+  background:#111827;color:#f9fafb
+}
+body.dark .card{background:#1f2937;border-color:#374151}
+body.dark .modal{background:#1f2937;color:#f9fafb}
+body.dark .lc{background:#1f2937}
+body.dark input,body.dark select,body.dark textarea{background:#374151;color:#f9fafb;border-color:#4b5563}
+body.dark .minput,body.dark .msel{background:#374151;color:#f9fafb;border-color:#4b5563}
+body.dark .cfg-card{background:#1f2937;border-color:#374151;color:#f9fafb}
+body.dark .prov-card{background:#1f2937;border-color:#374151}
+body.dark .perm-row{background:#1f2937;border-color:#374151}
+body.dark .tab{background:#374151;color:#9ca3af}
+body.dark .tab.active{background:var(--n);color:white}
+body.dark #appContent{background:#111827}
+body.dark .hdr-top,body.dark .hdr{background:linear-gradient(135deg,#0d0500 0%,#1a0a00 100%)}
+body.dark .nav-bar{background:#1f2937;border-top:1px solid #374151}
+body.dark .nav-btn{color:#9ca3af}
+body.dark .nav-btn.active{color:var(--n)}
+body.dark .vstep-panel{background:#111827}
+body.dark .venta-inp-row{background:#1f2937;border-color:#374151}
+body.dark .gasto-row{background:#1f2937;border-color:#374151}
+body.dark [style*="background:white"],[style*="background:#fff"],[style*="background: white"]{background:#1f2937 !important}
+body.dark [style*="color:#1A0A00"],[style*="color:var(--t)"]{color:#f9fafb !important}
+body.dark .mlbl{color:#e5e7eb}
+body.dark .mtitle{color:#f9fafb}
+body.dark .boutl{background:#374151;color:#f9fafb;border-color:#4b5563}
+body.dark .bsave{background:var(--n)}
+body.dark #syncBar{background:#374151}
 /* ALERTA FALTANTES */
 .alerta-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--rs);border-radius:10px;margin-bottom:8px}
 /* CONFIG CARD GRID */
@@ -2456,13 +2487,22 @@ function showApp(){
 
 // INIT
 document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('.logo-img').forEach(img=>img.src=LOGO_B64);
-  initDarkMode();
-  initFaceIDStatus();
+  // ── Safety: si algo falla, mostrar login a los 7s de todos modos ──
+  const safetyTimer=setTimeout(()=>{
+    try{const s=document.getElementById('splash');if(s)s.style.display='none';}catch(e){}
+    try{document.getElementById('loginScreen').classList.add('show');}catch(e){}
+  },7000);
+
+  try{document.querySelectorAll('.logo-img').forEach(img=>img.src=LOGO_B64);}catch(e){}
+  try{initDarkMode();}catch(e){}
+  try{initFaceIDStatus();}catch(e){}
+
   setTimeout(()=>{
-    const s=document.getElementById('splash');s.style.opacity='0';
+    const s=document.getElementById('splash');
+    if(s) s.style.opacity='0';
     setTimeout(async ()=>{
-      s.style.display='none';
+      if(s) s.style.display='none';
+      clearTimeout(safetyTimer);
 
       // ── Sincronizar empleados y admin desde Sheets antes del login ──
       try{
@@ -2472,23 +2512,27 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(ewData&&ewData['EW']!==undefined){EW=ewData['EW'];SL('EW',EW);}
         if(ecData&&ecData['EC']!==undefined){EC=ecData['EC'];SL('EC',EC);}
         if(adminData&&adminData['ADMIN']!==undefined){ADMIN=adminData['ADMIN'];SL('ADMIN',ADMIN);}
-        refreshUS();
+        try{refreshUS();}catch(e2){}
       }catch(e){
         // Sin conexión — usa datos locales
-        refreshUS();
+        try{refreshUS();}catch(e2){}
       }
 
-      const saved=LL('session',null);
-      if(saved&&saved.user){
-        const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
-        if(valid){
-          CU=valid;
-          const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
-          if(checkPINLogin()){return;}
-          if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad) showPuestoSelector();
-          else showApp();
+      try{
+        const saved=LL('session',null);
+        if(saved&&saved.user){
+          const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
+          if(valid){
+            CU=valid;
+            const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
+            if(checkPINLogin()){return;}
+            if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad) showPuestoSelector();
+            else showApp();
+          } else document.getElementById('loginScreen').classList.add('show');
         } else document.getElementById('loginScreen').classList.add('show');
-      } else document.getElementById('loginScreen').classList.add('show');
+      }catch(e){
+        document.getElementById('loginScreen').classList.add('show');
+      }
     },500);
   },2000);
 });
@@ -5414,7 +5458,13 @@ function sendPushNotif(title,body){
 // ═══════════════════════════════════════════
 function initDarkMode(){
   const isDark=LL('DARK_MODE',false);
-  if(isDark){document.body.classList.add('dark');}
+  if(isDark){
+    document.body.classList.add('dark');
+    document.body.style.background='#111827';
+    document.body.style.color='#f9fafb';
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.content='#111827';
+  }
   const chk=document.getElementById('toggle-dark');
   if(chk) chk.checked=isDark;
   updateDarkSlider(isDark);
@@ -5424,6 +5474,12 @@ function toggleDarkMode(){
   const isDark=document.body.classList.toggle('dark');
   SL('DARK_MODE',isDark);
   updateDarkSlider(isDark);
+  // Force background refresh
+  document.body.style.background=isDark?'#111827':'';
+  document.body.style.color=isDark?'#f9fafb':'';
+  // Update meta theme-color
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.content=isDark?'#111827':'#EA580C';
   showToast(isDark?'🌙 Modo oscuro activado':'☀️ Modo claro activado');
 }
 
