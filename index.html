@@ -27,12 +27,12 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 @keyframes ripple{from{transform:scale(0);opacity:.6}to{transform:scale(4);opacity:0}}
 
 /* SPLASH */
-#splash{position:fixed;inset:0;background:var(--cb);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+#splash{position:fixed;inset:0;background:var(--cb);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .2s}
 .sl{font-size:80px;animation:bounceIn .6s ease;margin-bottom:12px}
 .sh1{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--n);letter-spacing:3px;animation:slideUp .6s ease .2s both}
 .sp{color:#a16207;font-size:.9rem;animation:slideUp .6s ease .4s both}
 .sb{width:200px;height:4px;background:#3D1500;border-radius:4px;margin-top:32px;overflow:hidden;animation:slideUp .6s ease .5s both}
-.sbf{height:100%;background:var(--n);border-radius:4px;animation:loadBar 1.8s ease .6s both}
+.sbf{height:100%;background:var(--n);border-radius:4px;animation:loadBar 2.4s ease .6s both}
 
 /* LOGIN */
 #loginScreen{position:fixed;inset:0;background:var(--cb);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:500;padding:24px;overflow-y:auto}
@@ -2497,44 +2497,59 @@ document.addEventListener('DOMContentLoaded',()=>{
   try{initDarkMode();}catch(e){}
   try{initFaceIDStatus();}catch(e){}
 
-  setTimeout(()=>{
+  // Función helper para ocultar el splash DESPUÉS de que la pantalla destino ya está visible
+  function hideSplash(){
     const s=document.getElementById('splash');
-    if(s) s.style.opacity='0';
-    setTimeout(async ()=>{
-      if(s) s.style.display='none';
-      clearTimeout(safetyTimer);
+    if(!s)return;
+    s.style.opacity='0';
+    setTimeout(()=>{ s.style.display='none'; },250);
+  }
 
-      // ── Sincronizar empleados y admin desde Sheets antes del login ──
-      try{
-        const [ewData,ecData,adminData]=await Promise.all([
-          gsG('EW'), gsG('EC'), gsG('ADMIN')
-        ]);
-        if(ewData&&ewData['EW']!==undefined){EW=ewData['EW'];SL('EW',EW);}
-        if(ecData&&ecData['EC']!==undefined){EC=ecData['EC'];SL('EC',EC);}
-        if(adminData&&adminData['ADMIN']!==undefined){ADMIN=adminData['ADMIN'];SL('ADMIN',ADMIN);}
-        try{refreshUS();}catch(e2){}
-      }catch(e){
-        // Sin conexión — usa datos locales
-        try{refreshUS();}catch(e2){}
-      }
+  setTimeout(async ()=>{
+    clearTimeout(safetyTimer);
 
-      try{
-        const saved=LL('session',null);
-        if(saved&&saved.user){
-          const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
-          if(valid){
-            CU=valid;
-            const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
-            if(checkPINLogin()){return;}
-            if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad) showPuestoSelector();
-            else showApp();
-          } else document.getElementById('loginScreen').classList.add('show');
-        } else document.getElementById('loginScreen').classList.add('show');
-      }catch(e){
+    // ── Sincronizar empleados y admin desde Sheets antes del login ──
+    try{
+      const [ewData,ecData,adminData]=await Promise.all([
+        gsG('EW'), gsG('EC'), gsG('ADMIN')
+      ]);
+      if(ewData&&ewData['EW']!==undefined){EW=ewData['EW'];SL('EW',EW);}
+      if(ecData&&ecData['EC']!==undefined){EC=ecData['EC'];SL('EC',EC);}
+      if(adminData&&adminData['ADMIN']!==undefined){ADMIN=adminData['ADMIN'];SL('ADMIN',ADMIN);}
+      try{refreshUS();}catch(e2){}
+    }catch(e){
+      // Sin conexión — usa datos locales
+      try{refreshUS();}catch(e2){}
+    }
+
+    try{
+      const saved=LL('session',null);
+      if(saved&&saved.user){
+        const valid=US.find(u=>u.user.toLowerCase()===saved.user.toLowerCase()&&u.pass===saved.pass);
+        if(valid){
+          CU=valid;
+          const hasCiudad=CU.perms?.['ciudad-wash']||CU.perms?.['ciudad-chi'];
+          if(checkPINLogin()){hideSplash();return;}
+          if(CU.rol==='encargado'&&!CU.puesto&&!hasCiudad){
+            showPuestoSelector();
+            hideSplash();
+          } else {
+            showApp();
+            hideSplash();
+          }
+        } else {
+          document.getElementById('loginScreen').classList.add('show');
+          hideSplash();
+        }
+      } else {
         document.getElementById('loginScreen').classList.add('show');
+        hideSplash();
       }
-    },500);
-  },2000);
+    }catch(e){
+      document.getElementById('loginScreen').classList.add('show');
+      hideSplash();
+    }
+  },3000);
 });
 
 function updateTip(){
