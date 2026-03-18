@@ -240,37 +240,37 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .kl{font-size:.68rem;color:var(--t2);margin-top:4px;font-weight:700}
 
 /* ── NEW DASHBOARD ── */
-.dash-hero{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 16px 12px;gap:10px}
-.dash-greeting{font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:.5px;color:var(--t);line-height:1.1}
-.dash-date-lbl{font-size:.7rem;color:var(--t3);font-weight:700;margin-top:3px}
+.dash-hero{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 16px 14px;gap:10px;background:linear-gradient(135deg,var(--cb),var(--cb2));margin:-12px -12px 0;border-radius:0 0 20px 20px;position:relative;overflow:hidden}
+.dash-greeting{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:.5px;color:white;line-height:1.1}
+.dash-date-lbl{font-size:.72rem;color:#fed7aa;font-weight:700;margin-top:3px}
 
-.dash-filter-row{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dash-filter-row{display:flex;gap:6px;padding:8px 16px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .dash-filter-row::-webkit-scrollbar{display:none}
-.dfilter-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1.5px solid var(--g3);background:white;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;color:var(--t3);cursor:pointer;transition:all .18s;white-space:nowrap}
-.dfilter-btn.active{background:var(--t);color:white;border-color:var(--t)}
+.dfilter-btn{flex-shrink:0;padding:7px 16px;border-radius:20px;border:1.5px solid var(--g3);background:var(--g2);font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;color:var(--t3);cursor:pointer;transition:all .18s;white-space:nowrap}
+.dfilter-btn.active{background:var(--n);color:white;border-color:var(--n);box-shadow:0 3px 10px rgba(234,88,12,.35)}
 .dash-date-inp{border:1.5px solid var(--g3);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:var(--t);outline:none;background:var(--g2)}
 
 /* KPI 2x2 grid */
-.dash-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--g3);margin:0 16px 16px;border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
-.dash-kpi{background:white;padding:16px 14px;display:flex;flex-direction:column;gap:2px}
-.dash-kpi-icon{font-size:1.1rem;margin-bottom:2px}
+.dash-kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 12px}
+.dash-kpi{background:var(--g2);border:1.5px solid var(--g3);padding:12px 12px;border-radius:14px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--sh)}
+.dash-kpi-icon{font-size:1.2rem;margin-bottom:4px}
 .dash-kpi-val{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.5px;line-height:1}
-.dash-kpi-lbl{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;opacity:.55}
-.dash-kpi-ventas .dash-kpi-val{color:var(--n)}
-.dash-kpi-util .dash-kpi-val{color:var(--v)}
-.dash-kpi-gastos .dash-kpi-val{color:var(--r)}
-.dash-kpi-nom .dash-kpi-val{color:var(--az)}
+.dash-kpi-lbl{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-top:2px}
+.dash-kpi-ventas{border-left:4px solid var(--n)}.dash-kpi-ventas .dash-kpi-val{color:var(--n)}
+.dash-kpi-util{border-left:4px solid var(--v)}.dash-kpi-util .dash-kpi-val{color:var(--v)}
+.dash-kpi-gastos{border-left:4px solid var(--r)}.dash-kpi-gastos .dash-kpi-val{color:var(--r)}
+.dash-kpi-nom{border-left:4px solid var(--az)}.dash-kpi-nom .dash-kpi-val{color:var(--az)}
 
 /* City card with tabs inside */
 .dash-city-card{margin:0 0 14px;padding:0;overflow:hidden}
-.dash-city-tabs{display:flex;border-bottom:1.5px solid var(--g2)}
-.dash-ctab{flex:1;padding:11px 6px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;color:var(--t3);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:2px solid transparent;margin-bottom:-1.5px}
-.dash-ctab.active{color:var(--t);border-bottom-color:var(--n)}
-.dash-ctab-total{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--n)}
-.dash-city-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px 14px 0}
-.dash-cstat{text-align:center}
-.dash-cstat-val{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.5px}
-.dash-cstat-lbl{font-size:.6rem;font-weight:800;text-transform:uppercase;color:var(--t3);margin-top:1px}
+.dash-city-tabs{display:flex;border-bottom:1.5px solid var(--g3);background:var(--g2)}
+.dash-ctab{flex:1;padding:12px 6px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;color:var(--t3);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:2px;border-bottom:3px solid transparent;margin-bottom:-1.5px}
+.dash-ctab.active{color:var(--t);border-bottom-color:var(--n);background:var(--g)}
+.dash-ctab-total{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--n)}
+.dash-city-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 10px 0}
+.dash-cstat{text-align:center;background:var(--g2);border-radius:10px;padding:8px 4px;border:1px solid var(--g3)}
+.dash-cstat-val{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.5px}
+.dash-cstat-lbl{font-size:.6rem;font-weight:800;text-transform:uppercase;color:var(--t3);margin-top:2px}
 #dash-panel-wash,#dash-panel-chi,#dash-panel-comp{padding:0 14px 14px}
 /* CALENDAR */
 .cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;font-size:.7rem;font-weight:800;position:relative}
@@ -283,12 +283,12 @@ body{font-family:'Nunito',sans-serif;background:var(--g);color:var(--t);min-heig
 .cal-day .cal-num{font-size:.75rem;font-weight:900;line-height:1}
 .cal-day .cal-amt{font-size:.5rem;font-weight:700;opacity:.9;margin-top:1px}
 /* CITY BARS */
-.city-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.city-bar-lbl{font-size:.72rem;font-weight:700;color:var(--t2);width:80px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.city-bar-track{flex:1;height:24px;background:var(--g2);border-radius:12px;overflow:hidden}
-.city-bar-fill{height:100%;border-radius:12px;transition:width .6s ease;display:flex;align-items:center;padding:0 8px;min-width:4px}
-.city-bar-fill span{font-size:.62rem;font-weight:800;color:white;white-space:nowrap}
-.city-bar-pct{font-size:.65rem;font-weight:800;color:var(--t3);width:34px;text-align:right;flex-shrink:0}
+.city-bar-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.city-bar-lbl{font-size:.68rem;font-weight:700;color:var(--t2);width:72px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.city-bar-track{flex:1;height:18px;background:var(--g2);border-radius:9px;overflow:hidden}
+.city-bar-fill{height:100%;border-radius:9px;transition:width .6s ease;display:flex;align-items:center;padding:0 6px;min-width:4px}
+.city-bar-fill span{font-size:.58rem;font-weight:800;color:white;white-space:nowrap}
+.city-bar-pct{font-size:.62rem;font-weight:800;color:var(--t3);width:30px;text-align:right;flex-shrink:0}
 .mp-row{display:grid;grid-template-columns:1fr 56px 56px 56px 56px;gap:3px;align-items:start;padding:10px 2px;border-bottom:1px solid var(--g2)}
 .mp-row:last-child{border-bottom:none}
 .mp-inp-sal{text-align:center;border:1.5px solid var(--azs);border-radius:8px;padding:7px 3px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:#eff6ff;outline:none;color:var(--az);width:100%;transition:all .15s}
@@ -383,8 +383,13 @@ body.dark .mtitle{color:#f9fafb}
 body.dark .boutl{background:#374151;color:#f9fafb;border-color:#4b5563}
 body.dark .bsave{background:var(--n)}
 body.dark #syncBar{background:#374151}
-body.dark .dash-greeting{color:#f9fafb}
-body.dark .dash-date-lbl{color:#9ca3af}
+#tipT,#dp-tip{transition:opacity .18s ease}
+body.dark .dash-greeting{color:white}
+body.dark .dash-date-lbl{color:#fed7aa}
+body.dark .dash-kpi{background:#1f2937;border-color:#374151}
+body.dark .dash-city-tabs{background:#1f2937;border-color:#374151}
+body.dark .dash-ctab.active{background:#111827}
+body.dark .dash-cstat{background:#111827;border-color:#374151}
 /* ALERTA FALTANTES */
 .alerta-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--rs);border-radius:10px;margin-bottom:8px}
 /* CONFIG CARD GRID */
@@ -517,12 +522,18 @@ body.dark .dash-date-lbl{color:#9ca3af}
 
   <!-- ① HERO HEADER — saludo + fecha + periodo -->
   <div class="dash-hero">
-    <div class="dash-hero-left">
+    <div style="position:absolute;right:-15px;top:-15px;font-size:110px;opacity:.05;transform:rotate(-8deg)">🌮</div>
+    <div class="dash-hero-left" style="flex:1">
       <div class="dash-greeting" id="tipG">¡Bienvenido!</div>
       <div class="dash-date-lbl" id="dash-period-label">Todos los registros</div>
     </div>
-    <div class="dash-hero-right">
-      <p id="tipT" style="font-size:.7rem;color:var(--t3);margin:0;text-align:right;max-width:140px;line-height:1.4"></p>
+    <div class="dash-hero-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:175px">
+      <p id="tipT" style="font-size:.72rem;color:rgba(255,255,255,.75);margin:0;text-align:right;line-height:1.5;font-weight:600"></p>
+      <div style="display:flex;align-items:center;gap:5px;margin-top:4px">
+        <button onclick="tipAnterior()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 10px;font-family:'Nunito',sans-serif;font-size:.62rem;font-weight:800;color:rgba(255,255,255,.8);cursor:pointer">◀</button>
+        <span id="tip-countdown-admin" style="font-size:.58rem;font-weight:900;color:rgba(255,255,255,.5);min-width:34px;text-align:center">15:00</span>
+        <button onclick="tipSiguiente()" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 10px;font-family:'Nunito',sans-serif;font-size:.62rem;font-weight:800;color:rgba(255,255,255,.8);cursor:pointer">▶</button>
+      </div>
     </div>
   </div>
 
@@ -601,8 +612,13 @@ body.dark .dash-date-lbl{color:#9ca3af}
           <div class="dash-cstat-lbl">Utilidad</div>
         </div>
       </div>
-      <div id="dash-wash-bars" style="margin-top:10px"></div>
-      <div id="lwash" style="margin-top:2px"></div>
+      <div id="dash-wash-bars" style="margin-top:10px;padding:0 14px 4px"></div>
+      <!-- Collapsible puestos list -->
+      <button id="lwash-toggle" onclick="toggleDashList('wash')"
+        style="width:100%;background:none;border:none;border-top:1px solid var(--g3);margin-top:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+        <span>📋 Ver detalle de puestos</span><span id="lwash-icon">▼</span>
+      </button>
+      <div id="lwash" style="display:none;margin-top:2px"></div>
     </div>
 
     <!-- Chicago panel -->
@@ -621,8 +637,13 @@ body.dark .dash-date-lbl{color:#9ca3af}
           <div class="dash-cstat-lbl">Utilidad</div>
         </div>
       </div>
-      <div id="dash-chi-bars" style="margin-top:10px"></div>
-      <div id="lchi" style="margin-top:2px"></div>
+      <div id="dash-chi-bars" style="margin-top:10px;padding:0 14px 4px"></div>
+      <!-- Collapsible puestos list -->
+      <button id="lchi-toggle" onclick="toggleDashList('chi')"
+        style="width:100%;background:none;border:none;border-top:1px solid var(--g3);margin-top:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;color:var(--t3);cursor:pointer;display:flex;align-items:center;justify-content:space-between">
+        <span>📋 Ver detalle de puestos</span><span id="lchi-icon">▼</span>
+      </button>
+      <div id="lchi" style="display:none;margin-top:2px"></div>
     </div>
 
     <!-- Comparativa panel -->
@@ -707,7 +728,11 @@ body.dark .dash-date-lbl{color:#9ca3af}
   <div class="card" style="margin-top:12px;background:linear-gradient(135deg,var(--ns),var(--g));border:1.5px solid var(--nm)">
     <div style="font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:var(--n);margin-bottom:8px">💡 Consejo del Día</div>
     <div id="dp-tip" style="font-size:.9rem;color:var(--t);font-weight:600;line-height:1.5;min-height:1.5em"></div>
-    <button onclick="renderPersonalDash()" style="margin-top:10px;background:none;border:1px solid var(--nm);border-radius:8px;padding:5px 12px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:700;color:var(--n);cursor:pointer">🔄 Otro consejo</button>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:10px">
+      <button onclick="tipAnterior()" style="flex:1;background:none;border:1px solid var(--nm);border-radius:8px;padding:6px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:900;color:var(--n);cursor:pointer">◀ Anterior</button>
+      <span id="tip-countdown-dp" style="font-size:.7rem;font-weight:900;color:var(--t3);min-width:38px;text-align:center">15:00</span>
+      <button onclick="tipSiguiente()" style="flex:1;background:none;border:1px solid var(--nm);border-radius:8px;padding:6px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:900;color:var(--n);cursor:pointer">Siguiente ▶</button>
+    </div>
   </div>
 
   <!-- Asistencia semana -->
@@ -2227,6 +2252,15 @@ const DEFAULT_TIPS=[
   '🌶️ Al chile hay que agarrarlo con respeto — y a las ventas también.',
   '😂 El quesillo estira y estira... igual que mi paciencia cuando no registran.',
   '🍖 Carnitas al pastor o suadero — lo que importa es meterle con todo.',
+  // 🌄 Ayuujk (Mixe) — Sierra Norte de Oaxaca
+  '🌄 Nëëj yë\'ëy pëjkëm tu\'uk mëët jëts të\'n — el que madruga y trabaja fuerte, siempre llega lejos.',
+  '🌽 Ja mëët pëjkëm ax ka\'ap ya\'ajt — jëts ko\'om — el trabajo duro no se pierde, siempre da fruto.',
+  '🤝 Tëk jyëkëm tu\'uk mëët — ax jyaapy ëxpëjkëm — juntos trabajamos, así nunca nos cansamos.',
+  '⭐ Ko\'om yë\'ëy të\'n — nëëj mëët ja ko\'om — haz las cosas bien, así crece lo que siembras.',
+  '🌮 Ja taco yë\'ëy jëts ja mëët pëjkëm — ko\'om mëët — un buen taco y el trabajo honesto nutren igual.',
+  '🦅 Yë\'ëy tu\'uk ax ka\'ap myaty — lo que haces con honestidad nunca se borra.',
+  '🌧️ Nëëj ja\'aj pëjkëm — ax ka\'ap myiny — después de la lluvia, el trabajo sigue creciendo.',
+  '🔥 Ja mëët tu\'uk ko\'om — nëëj të\'n jyëkëm — el esfuerzo de hoy es la cosecha de mañana.',
 ];
 let TIPS=LL('TIPS',[...DEFAULT_TIPS]);
 let empPosFilter='todos';
@@ -2379,6 +2413,16 @@ function setDot(s){const d=document.getElementById('sdot');if(!d)return;d.classN
 
 // DATE HELPERS
 function todayStr(){return new Date().toISOString().split('T')[0];}
+// Si son las 12am–4:59am, se considera turno nocturno del día anterior
+function turnoFechaStr(){
+  const h=new Date().getHours();
+  if(h>=0&&h<5){
+    const d=new Date();d.setDate(d.getDate()-1);
+    return d.toISOString().split('T')[0];
+  }
+  return todayStr();
+}
+function esTurnoNocturno(){const h=new Date().getHours();return h>=0&&h<5;}
 function fmtFecha(str){if(!str)return '';const d=new Date(str+'T12:00:00');return d.toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
 function dpKey(puesto,fecha){return `${puesto}__${fecha||currentFecha}`;}
 
@@ -2546,9 +2590,24 @@ function showApp(){
   populateEditSel();updateTip();
   renderMPRows();
   document.getElementById('hdrDate').textContent=new Date().toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'});
-  currentFecha=todayStr();currentFechaNomina=todayStr();
+  currentFecha=turnoFechaStr();currentFechaNomina=todayStr();
   calYear=new Date().getFullYear();calMonth=new Date().getMonth();
-  const fp=document.getElementById('fechaVentas');if(fp) fp.value=currentFecha;
+  const fp=document.getElementById('fechaVentas');
+  if(fp){
+    fp.value=currentFecha;
+    const isAdminLogin=(CU&&CU.rol==='admin');
+    fp.disabled=!isAdminLogin;
+    fp.style.opacity=isAdminLogin?'1':'0.5';
+    fp.style.cursor=isAdminLogin?'pointer':'not-allowed';
+    fp.title=isAdminLogin?'':'Solo el admin puede cambiar la fecha';
+    // Aviso turno nocturno para encargados
+    if(esTurnoNocturno()&&!isAdminLogin){
+      setTimeout(()=>{
+        const h=new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+        showToast('🌙 Turno nocturno ('+h+') — fecha del reporte: '+fmtFecha(currentFecha));
+      },1500);
+    }
+  }
   const fn=document.getElementById('fechaNomina');if(fn){fn.value=currentFechaNomina;updateNomSemanaLabel();}
   loadVF(CP);
   renderVentaMeta();
@@ -2608,13 +2667,101 @@ document.addEventListener('DOMContentLoaded',()=>{
   },2400);
 });
 
-function updateTip(){
-  const tips=['Datos sincronizados cada 3 segundos en tiempo real.','Registra las ventas antes de cerrar el puesto.','Un dato preciso hoy = mejor decisión mañana.','¡El mejor taco es el que se registra bien! 🌮','Tus encargados pueden entrar desde su celular.'];
-  const h=new Date().getHours();const g=h<12?'¡Buenos días':h<18?'¡Buenas tardes':'¡Buenas noches';
-  const e1=document.getElementById('tipG');const e2=document.getElementById('tipT');
-  if(e1)e1.textContent=`${g}, ${CU?.user||''}! 🔥`;
-  if(e2)e2.textContent=tips[Math.floor(Math.random()*tips.length)];
+// ── TIP ENGINE — shared for admin + encargado, 15 min countdown ──
+let _tipPool=[];
+let _tipIdx=0;
+let _tipTimer=null;      // main 15-min interval
+let _cdTimer=null;       // countdown tick (every second)
+let _cdSecs=15;          // 15 seconds
+
+function _buildTipPool(){
+  const base=TIPS&&TIPS.length?[...TIPS]:[...DEFAULT_TIPS];
+  for(let i=base.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [base[i],base[j]]=[base[j],base[i]];
+  }
+  _tipPool=base; _tipIdx=0;
 }
+function _getTip(offset){
+  if(!_tipPool.length) _buildTipPool();
+  _tipIdx=(_tipIdx+offset+_tipPool.length)%_tipPool.length;
+  return _tipPool[_tipIdx]||'¡Échale ganas! 💪';
+}
+function _fmtCd(s){
+  if(s<60) return `0:${String(s).padStart(2,'0')}`;
+  const m=Math.floor(s/60);const sc=s%60;
+  return `${m}:${String(sc).padStart(2,'0')}`;
+}
+function _updateCdDisplay(){
+  const t=_fmtCd(_cdSecs);
+  const a=document.getElementById('tip-countdown-admin');
+  const d=document.getElementById('tip-countdown-dp');
+  if(a) a.textContent=t;
+  if(d) d.textContent=t;
+}
+function _renderTip(tip){
+  const e2=document.getElementById('tipT');
+  if(e2){e2.style.opacity='0';setTimeout(()=>{e2.textContent=tip;e2.style.opacity='1';},180);}
+  const dp=document.getElementById('dp-tip');
+  if(dp){dp.style.opacity='0';setTimeout(()=>{dp.textContent=tip;dp.style.opacity='1';},180);}
+}
+function _startTipTimer(){
+  // Clear existing timers
+  if(_tipTimer) clearInterval(_tipTimer);
+  if(_cdTimer) clearInterval(_cdTimer);
+  _cdSecs=15;
+  _updateCdDisplay();
+  // Countdown tick every second
+  _cdTimer=setInterval(()=>{
+    _cdSecs--;
+    if(_cdSecs<=0){
+      _cdSecs=15;
+      tipSiguiente();
+    }
+    _updateCdDisplay();
+  },1000);
+}
+function tipSiguiente(){
+  _renderTip(_getTip(1));
+  // Reset countdown on manual nav
+  _cdSecs=15;
+  _updateCdDisplay();
+  if(_cdTimer){clearInterval(_cdTimer);}
+  _cdTimer=setInterval(()=>{
+    _cdSecs--;
+    if(_cdSecs<=0){_cdSecs=15;tipSiguiente();}
+    _updateCdDisplay();
+  },1000);
+}
+function tipAnterior(){
+  _renderTip(_getTip(-1));
+  _cdSecs=15;
+  _updateCdDisplay();
+  if(_cdTimer){clearInterval(_cdTimer);}
+  _cdTimer=setInterval(()=>{
+    _cdSecs--;
+    if(_cdSecs<=0){_cdSecs=15;tipSiguiente();}
+    _updateCdDisplay();
+  },1000);
+}
+function _restartCd(){
+  if(_cdTimer) clearInterval(_cdTimer);
+  _cdSecs=15; _updateCdDisplay();
+  _cdTimer=setInterval(()=>{
+    _cdSecs--;
+    if(_cdSecs<=0){_cdSecs=15;tipSiguiente();}
+    _updateCdDisplay();
+  },1000);
+}
+function updateTip(){
+  const h=new Date().getHours();const g=h<12?'¡Buenos días':h<18?'¡Buenas tardes':'¡Buenas noches';
+  const e1=document.getElementById('tipG');
+  if(e1)e1.textContent=`${g}, ${CU?.user||''}! 🔥`;
+  _buildTipPool();
+  _renderTip(_getTip(0));
+  _startTipTimer();
+}
+function rotarTipAdmin(){tipSiguiente();}
 
 // PUESTO SELECTOR
 // Get which cities the current user can access
@@ -2672,13 +2819,19 @@ function showV(id,btn){
   if(psel) psel.style.display=VIEWS_WITH_PSEL.includes(id)?'flex':'none';
   if(id==='ventas'){
     renderVentaMeta(); mpSectionOpen=false; goVStep(0);
+    // Refresh currentFecha in case midnight passed during session
+    if(CU&&CU.rol!=='admin') currentFecha=turnoFechaStr();
     const fp=document.getElementById('fechaVentas');
     if(fp){
+      fp.value=currentFecha;
       const isAdminUser=(CU&&CU.rol==='admin');
       fp.disabled=!isAdminUser;
       fp.style.opacity=isAdminUser?'1':'0.5';
       fp.style.cursor=isAdminUser?'pointer':'not-allowed';
       fp.title=isAdminUser?'':'Solo el admin puede cambiar la fecha';
+      if(esTurnoNocturno()&&!isAdminUser){
+        setTimeout(()=>showToast('🌙 Turno nocturno — registrando en: '+fmtFecha(currentFecha)),400);
+      }
     }
   }
 }
@@ -3220,9 +3373,9 @@ function renderPersonalDash(){
   document.getElementById('dp-ventas-hoy').textContent='$'+fmt(ventasHoy);
   document.getElementById('dp-ventas-semana').textContent='$'+fmt(ventasSem);
 
-  // Tip aleatorio
-  const tip=TIPS[Math.floor(Math.random()*TIPS.length)]||'¡Sigue adelante! 💪';
-  document.getElementById('dp-tip').textContent=tip;
+  // Tip — usa el motor compartido (ya inicializado en updateTip)
+  if(_tipPool.length) _renderTip(_tipPool[_tipIdx]);
+  else{const tip=TIPS&&TIPS.length?TIPS[Math.floor(Math.random()*TIPS.length)]:'¡Sigue adelante! 💪';const dp=document.getElementById('dp-tip');if(dp)dp.textContent=tip;}
 
   // Asistencia semana
   renderDpAsistencia(puesto);
@@ -3959,6 +4112,18 @@ function renderDash(){
 
   // Meta bar + alertas
   setTimeout(()=>{renderMetasEnDash();checkFaltantes();},100);
+}
+
+// Toggle puestos detail list
+function toggleDashList(city){
+  const list=document.getElementById('l'+city);
+  const icon=document.getElementById('l'+city+'-icon');
+  const btn=document.getElementById('l'+city+'-toggle');
+  if(!list) return;
+  const isOpen=list.style.display!=='none';
+  list.style.display=isOpen?'none':'block';
+  if(icon) icon.textContent=isOpen?'▼':'▲';
+  if(btn) btn.style.color=isOpen?'var(--t3)':'var(--n)';
 }
 
 // City bar chart
@@ -6335,12 +6500,16 @@ async function saveProv(){
   const idx=parseInt(document.getElementById('prov-edit-idx').value);
   const nombre=document.getElementById('prov-nombre').value.trim();
   if(!nombre){showToast('⚠️ Escribe el nombre del proveedor');return;}
+  const existing=idx>=0?PROV[idx]:{};
   const obj={nombre,
     ciudad:document.getElementById('prov-ciudad').value,
     producto:document.getElementById('prov-producto').value.trim(),
     tel:document.getElementById('prov-tel').value.trim(),
     precio:document.getElementById('prov-precio').value.trim(),
-    notas:document.getElementById('prov-notas').value.trim()};
+    notas:document.getElementById('prov-notas').value.trim(),
+    // Preserve invoice data — never overwrite with edit
+    ...(existing.invoice?{invoice:existing.invoice}:{}),
+    ...(existing.invoiceFecha?{invoiceFecha:existing.invoiceFecha}:{})};
   if(idx===-1) PROV.push(obj); else PROV[idx]=obj;
   await SD('PROV',PROV);
   await logChange('Proveedores',idx===-1?`Nuevo: ${nombre}`:`Editado: ${nombre}`,null,`Producto: ${obj.producto}`);
