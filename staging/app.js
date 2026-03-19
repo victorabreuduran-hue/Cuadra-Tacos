@@ -226,7 +226,7 @@ Object.entries(raw).forEach(([k,v])=>{
 try{res[k]=typeof v==='string'?JSON.parse(v):v;}
 catch{res[k]=v;}
 });
-return t==='DP' ? sanitizeDPMap(res) : res;
+return t==='DP' ? normalizeDPFromSheets(raw) : res;
 }catch{return null;}
 }
 function _validarDato(tabla, valor){
@@ -406,8 +406,8 @@ const _dataVersions={};
 function _bumpVersion(k){ _dataVersions[k]=(_dataVersions[k]||0)+1; return _dataVersions[k]; }
 function _getVersion(k){ return _dataVersions[k]||0; }
 async function SDp(puestoFechaKey, registro){
-DP[puestoFechaKey]=registro;
-DP=sanitizeDPMap(DP);
+if(registro?.deleted===true) delete DP[puestoFechaKey];
+else DP[puestoFechaKey]=registro;
 DP=sanitizeDPMap(DP);
 SL('DP',DP);
 _bumpVersion('DP');
@@ -567,30 +567,8 @@ PROV:v=>{PROV=v;},GG:v=>{GG=v;},POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
 loaded.forEach(({t,data})=>{
 if(!data) return;
 if(t==='DP'){
-let merged=false;
-Object.entries(data).forEach(([k,v])=>{
-if(!v) return;
-if(k.startsWith('DP__')){
-const pf=k.replace('DP__','');
-if(v?.deleted===true){ delete DP[pf]; merged=true; return; }
-const localEntry=DP[pf];
-const sheetsTS=v.fechaGuardado||v.deletedFecha||'';
-const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
-if(!localEntry||sheetsTS>=localTS) DP[pf]=v;
-merged=true;
-} else if(k==='DP'&&typeof v==='object'&&!Array.isArray(v)){
-Object.entries(v).forEach(([pk,pv])=>{
-if(!pv) return;
-if(pv?.deleted===true){ delete DP[pk]; return; }
-const localEntry=DP[pk];
-const sheetsTS=pv.fechaGuardado||pv.deletedFecha||'';
-const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
-if(!localEntry||sheetsTS>=localTS) DP[pk]=pv;
-});
-merged=true;
-}
-});
-if(merged) SL('DP',DP);
+DP=normalizeDPFromSheets(data);
+SL('DP',DP);
 } else {
 if(data[t]!==undefined) _aplicarDatoSeguro(t,data[t],applyMap);
 }
@@ -826,30 +804,8 @@ Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data})).catch(()=>({t,data:null}))
 results.forEach(({t,data})=>{
 if(!data) return;
 if(t==='DP'){
-let merged=false;
-Object.entries(data).forEach(([k,v])=>{
-if(!v) return;
-if(k.startsWith('DP__')){
-const pf=k.replace('DP__','');
-if(v?.deleted===true){ delete DP[pf]; merged=true; return; }
-const localEntry=DP[pf];
-const sheetsTS=v.fechaGuardado||v.deletedFecha||'';
-const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
-if(!localEntry||sheetsTS>=localTS) DP[pf]=v;
-merged=true;
-} else if(k==='DP'&&typeof v==='object'&&!Array.isArray(v)){
-Object.entries(v).forEach(([pk,pv])=>{
-if(!pv) return;
-if(pv?.deleted===true){ delete DP[pk]; return; }
-const localEntry=DP[pk];
-const sheetsTS=pv.fechaGuardado||pv.deletedFecha||'';
-const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
-if(!localEntry||sheetsTS>=localTS) DP[pk]=pv;
-});
-merged=true;
-}
-});
-if(merged) SL('DP',DP);
+DP=normalizeDPFromSheets(data);
+SL('DP',DP);
 } else {
 if(data[t]!==undefined) _aplicarDatoSeguro(t,data[t],apply);
 }
@@ -3955,11 +3911,10 @@ async function reactivarVenta(key,puesto,fecha){
 async function eliminarVenta(key,puesto,fecha){
 if(!confirm(`⚠️ ELIMINAR PERMANENTEMENTE\n\nEsto borrará el registro de "${puesto}" del ${fmtFecha(fecha)} para siempre.\n\n¿Estás seguro? Esta acción NO se puede deshacer.`)) return;
 const antes=`$${fmt(DP[key]?.totalVentas||0)} ventas`;
-// Guardar con flag deleted=true en lugar de borrar — así el sync no lo restaura
-const deletedEntry={deleted:true,deletedPor:CU?.user||'admin',deletedFecha:new Date().toLocaleString('es')};
-DP[key]=deletedEntry;
-SL('DP',DP);
-// Sincronizar la eliminación con Sheets
+const deletedEntry={deleted:true,deletedPor:CU?.user||'admin',deletedFecha:new Date().toISOString()};
+delete DP[key];
+SL('DP',sanitizeDPMap(DP));
+// Sincronizar la eliminación con Sheets como tumba remota
 await SDp(key,deletedEntry);
 await logChange('Ventas',`ELIMINADO: ${puesto} — ${fmtFecha(fecha)}`,antes,'ELIMINADO PERMANENTE');
 renderRegistrosVentas();
@@ -5498,7 +5453,7 @@ reg.update();
 reg.addEventListener('updatefound',()=>{
 const newWorker=reg.installing;
 newWorker?.addEventListener('statechange',()=>{
-if(newWorker.statechange==='installed'&&navigator.serviceWorker.controller){
+if(newWorker.state==='installed'&&navigator.serviceWorker.controller){
 newWorker.postMessage({type:'SKIP_WAITING'});
 }
 });
