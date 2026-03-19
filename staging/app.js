@@ -5380,6 +5380,11 @@ document.getElementById('prov-savebtn').innerHTML='💾 GUARDAR CAMBIOS';
 document.getElementById('m-addProv').classList.add('open');
 }
 async function saveProv(){
+const saveBtn=document.getElementById('prov-savebtn');
+const cancelBtn=document.querySelector('#m-addProv .bmcancel');
+if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.7';saveBtn.textContent='⏳ GUARDANDO...';}
+if(cancelBtn){cancelBtn.disabled=true;cancelBtn.style.opacity='.7';}
+try{
 const idx=parseInt(document.getElementById('prov-edit-idx').value);
 const nombre=document.getElementById('prov-nombre').value.trim();
 if(!nombre){showToast('⚠️ Escribe el nombre del proveedor');return;}
@@ -5393,10 +5398,28 @@ notas:document.getElementById('prov-notas').value.trim(),
 ...(existing.invoice?{invoice:existing.invoice}:{}),
 ...(existing.invoiceFecha?{invoiceFecha:existing.invoiceFecha}:{})};
 if(idx===-1) PROV.push(obj); else PROV[idx]=obj;
-await SD('PROV',PROV);
-await logChange('Proveedores',idx===-1?`Nuevo: ${nombre}`:`Editado: ${nombre}`,null,`Producto: ${obj.producto}`);
+
+// refresco inmediato antes del sync remoto
+SL('PROV',PROV);
 renderCfgProv();renderProvView();closeM('addProv');
 showToast(idx===-1?`✅ "${nombre}" agregado`:`✅ "${nombre}" actualizado`);
+
+const ok=await SD('PROV',PROV);
+try{
+await logChange('Proveedores',idx===-1?`Nuevo: ${nombre}`:`Editado: ${nombre}`,null,`Producto: ${obj.producto}`);
+}catch(err){
+console.warn('logChange proveedores falló', err);
+}
+if(!ok){
+showToast('⚠️ Proveedor guardado localmente; pendiente de subir a Sheets');
+}
+}catch(err){
+console.error('saveProv error', err);
+showToast('⚠️ No se pudo guardar el proveedor');
+}finally{
+if(saveBtn){saveBtn.disabled=false;saveBtn.style.opacity='';saveBtn.innerHTML='✅ GUARDAR';}
+if(cancelBtn){cancelBtn.disabled=false;cancelBtn.style.opacity='';}
+}
 }
 async function delProv(idx){
 const nom=PROV[idx]?.nombre;
