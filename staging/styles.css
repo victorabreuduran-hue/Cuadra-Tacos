@@ -400,3 +400,34 @@ body.dark .macts{background:#1f2937;border-top-color:#374151;position:sticky;bot
   flex:1;
   margin-top:0;
 }
+
+
+/* V14: footers de modales de empleados alineados abajo */
+#m-addE .modal,
+#m-addU .modal{
+  display:flex;
+  flex-direction:column;
+  max-height:min(92vh,900px);
+}
+#m-addE .modal-scroll,
+#m-addU .modal-scroll{
+  flex:1 1 auto;
+  overflow-y:auto;
+}
+#m-addE .macts,
+#m-addU .macts{
+  position:sticky;
+  bottom:0;
+  display:flex;
+  gap:12px;
+  padding:14px 20px 18px;
+  background:#1f2937;
+  border-top:1px solid var(--g3);
+}
+#m-addE .bmcancel,
+#m-addE .bsave,
+#m-addU .bmcancel,
+#m-addU .bsave{
+  flex:1;
+  margin-top:0;
+}
