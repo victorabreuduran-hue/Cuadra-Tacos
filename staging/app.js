@@ -3811,9 +3811,20 @@ if(CECity==='wash')EW.splice(idx,1);else EC.splice(idx,1);
 
 // refresco inmediato y cierre del modal antes del sync remoto
 SL('EW',EW); SL('EC',EC);
-renderNomina();renderCfg();
+renderNomina();
+try{if(typeof renderCfgE==='function') renderCfgE();}catch{}
 try{if(typeof renderCfgU==='function') renderCfgU();}catch{}
 closeM('confirm');
+// mantener vista/submódulo de empleados sin brincar a configuración general
+try{
+  const sec=document.getElementById('cfg-empleados');
+  if(sec){
+    document.querySelectorAll('[id^="cfg-"]').forEach(el=>{
+      if(el.id!=='cfg-empleados' && el.closest('#view-config')) el.style.display='none';
+    });
+    sec.style.display='block';
+  }
+}catch{}
 showToast(`🗑️ ${nom} eliminado`);
 
 const okEW=await SD('EW',EW);const okEC=await SD('EC',EC);
