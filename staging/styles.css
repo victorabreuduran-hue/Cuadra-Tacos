@@ -457,3 +457,39 @@ body.dark .macts{background:#1f2937;border-top-color:#374151;position:sticky;bot
   flex:1;
   margin-top:0;
 }
+
+
+/* V21: footers alineados para modales de egresos */
+#m-foto .modal,
+#m-provFoto .modal,
+#m-addGG .modal{
+  display:flex;
+  flex-direction:column;
+  max-height:min(92vh,900px);
+}
+#m-foto .modal-scroll,
+#m-provFoto .modal-scroll,
+#m-addGG .modal-scroll{
+  flex:1 1 auto;
+  overflow-y:auto;
+}
+#m-foto .macts,
+#m-provFoto .macts,
+#m-addGG .macts{
+  position:sticky;
+  bottom:0;
+  display:flex;
+  gap:12px;
+  padding:14px 20px 18px;
+  background:#1f2937;
+  border-top:1px solid var(--g3);
+}
+#m-foto .bmcancel,
+#m-foto .bsave,
+#m-provFoto .bmcancel,
+#m-provFoto .bsave,
+#m-addGG .bmcancel,
+#m-addGG .bsave{
+  flex:1;
+  margin-top:0;
+}
