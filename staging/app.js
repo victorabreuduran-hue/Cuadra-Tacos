@@ -3955,18 +3955,6 @@ const isOpen=body.classList.contains('open');
 document.querySelectorAll('.rv-body.open').forEach(b=>b.classList.remove('open'));
 if(!isOpen) body.classList.add('open');
 }
-function refreshVentaUI(key){
-try{
-  renderRegistrosVentas();
-  if(typeof renderDash==='function') renderDash();
-  if(typeof renderReportes==='function') renderReportes();
-  requestAnimationFrame(()=>{
-    try{ toggleRV(key); }catch{}
-  });
-}catch(err){
-  console.warn('refreshVentaUI error', err);
-}
-}
 function abrirEditarVenta(key,puesto,fecha){
 const d=DP[key]||{};
 const isA=CU?.rol==='admin';
@@ -4052,15 +4040,20 @@ document.addEventListener('input',e=>{if(e.target.id===id)calcEvTotal();});
 async function guardarEdicionModal(){
 const key=document.getElementById('edit-venta-key').value;if(!key)return;
 if(CU?.rol!=='admin'){showToast('⛔ Solo el admin puede editar registros');return;}
+const saveBtn=document.querySelector('#m-editVenta .bsave');
+const cancelBtn=document.querySelector('#m-editVenta .bmcancel');
+if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.7';saveBtn.textContent='⏳ GUARDANDO...';}
+if(cancelBtn){cancelBtn.disabled=true;cancelBtn.style.opacity='.7';}
+try{
 const parts=key.split('__');
 const puesto=parts[0];const fecha=parts[1]||currentFecha;
-const d=DP[key]||{};
+const current=DP[key]||{};
+const d={...current};
 const ef=parseFloat(document.getElementById('ev-ef').value||0);
 const tj=parseFloat(document.getElementById('ev-tj').value||0);
 const motivo=document.getElementById('ev-motivo').value.trim();
 d['ve-ef']=ef;d['ve-tj']=tj;d['ve-ot']=0;
 ['gas','hie','rep','otr'].forEach(k=>{d[`g-${k}`]=parseFloat(document.getElementById(`ev-${k}`)?.value||0);});
-// Guardar productos editados
 const ciudad=PW.includes(puesto)?'wash':PC.includes(puesto)?'chi':'wash';
 const mpList=ciudad==='chi'?MP_C:MP;
 mpList.forEach((item,i)=>{
@@ -4077,20 +4070,40 @@ d['mp-cos-'+i]=vendido*item.precio;
 d['mp-des-cos-'+i]=parseFloat(des.value||0)*item.precio;
 }
 });
-const antes=DP[key]?`$${fmt(DP[key].totalVentas||0)} ventas`:null;
+const antes=current?`$${fmt(current.totalVentas||0)} ventas`:null;
 d.totalVentas=ef+tj;
 d.totalGastos=['gas','hie','rep','otr'].reduce((k2,k)=>k2+(d[`g-${k}`]||0),0);
 d.fechaGuardado=new Date().toLocaleString('es');
 d.fechaRegistro=fecha;
 d.editadoPor=CU?.user||'admin';
 if(motivo) d.motivoEdicion=motivo;
+
+// actualizar memoria y UI INMEDIATAMENTE
 DP[key]=d;
-SL('DP', sanitizeDPMap(DP));
-await SDp(key,d);
-await logChange('Ventas',`Edición: ${puesto} — ${fmtFecha(fecha)}${motivo?' — '+motivo:''}`,antes,`$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos`);
+SL('DP',DP);
 closeM('editVenta');
-refreshVentaUI(key);
+renderRegistrosVentas();
+try{if(typeof renderDash==='function') renderDash();}catch{}
+try{if(typeof renderReportes==='function') renderReportes();}catch{}
 showToast(`✅ "${puesto}" actualizado`);
+
+// sync y auditoría después, sin bloquear la UI
+const syncOk=await SDp(key,d);
+try{
+await logChange('Ventas',`Edición: ${puesto} — ${fmtFecha(fecha)}${motivo?' — '+motivo:''}`,antes,`$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos`);
+}catch(err){
+console.warn('logChange edit venta falló', err);
+}
+if(!syncOk){
+showToast('⚠️ Editado localmente; pendiente de subir a Sheets');
+}
+}catch(err){
+console.error('guardarEdicionModal error', err);
+showToast('⚠️ No se pudo completar la edición');
+}finally{
+if(saveBtn){saveBtn.disabled=false;saveBtn.style.opacity='';saveBtn.innerHTML='💾 GUARDAR';}
+if(cancelBtn){cancelBtn.disabled=false;cancelBtn.style.opacity='';}
+}
 }
 function loadEditForm(){}
 async function guardarEdicion(){ await guardarEdicionModal(); }
