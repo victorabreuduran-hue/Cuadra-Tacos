@@ -407,6 +407,8 @@ function _bumpVersion(k){ _dataVersions[k]=(_dataVersions[k]||0)+1; return _data
 function _getVersion(k){ return _dataVersions[k]||0; }
 async function SDp(puestoFechaKey, registro){
 DP[puestoFechaKey]=registro;
+DP=sanitizeDPMap(DP);
+DP=sanitizeDPMap(DP);
 SL('DP',DP);
 _bumpVersion('DP');
 _touchTS('DP');
@@ -570,17 +572,19 @@ Object.entries(data).forEach(([k,v])=>{
 if(!v) return;
 if(k.startsWith('DP__')){
 const pf=k.replace('DP__','');
+if(v?.deleted===true){ delete DP[pf]; merged=true; return; }
 const localEntry=DP[pf];
-const sheetsTS=v.fechaGuardado||'';
-const localTS=localEntry?.fechaGuardado||'';
+const sheetsTS=v.fechaGuardado||v.deletedFecha||'';
+const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
 if(!localEntry||sheetsTS>=localTS) DP[pf]=v;
 merged=true;
 } else if(k==='DP'&&typeof v==='object'&&!Array.isArray(v)){
 Object.entries(v).forEach(([pk,pv])=>{
 if(!pv) return;
+if(pv?.deleted===true){ delete DP[pk]; return; }
 const localEntry=DP[pk];
-const sheetsTS=pv.fechaGuardado||'';
-const localTS=localEntry?.fechaGuardado||'';
+const sheetsTS=pv.fechaGuardado||pv.deletedFecha||'';
+const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
 if(!localEntry||sheetsTS>=localTS) DP[pk]=pv;
 });
 merged=true;
@@ -827,17 +831,19 @@ Object.entries(data).forEach(([k,v])=>{
 if(!v) return;
 if(k.startsWith('DP__')){
 const pf=k.replace('DP__','');
+if(v?.deleted===true){ delete DP[pf]; merged=true; return; }
 const localEntry=DP[pf];
-const sheetsTS=v.fechaGuardado||'';
-const localTS=localEntry?.fechaGuardado||'';
+const sheetsTS=v.fechaGuardado||v.deletedFecha||'';
+const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
 if(!localEntry||sheetsTS>=localTS) DP[pf]=v;
 merged=true;
 } else if(k==='DP'&&typeof v==='object'&&!Array.isArray(v)){
 Object.entries(v).forEach(([pk,pv])=>{
 if(!pv) return;
+if(pv?.deleted===true){ delete DP[pk]; return; }
 const localEntry=DP[pk];
-const sheetsTS=pv.fechaGuardado||'';
-const localTS=localEntry?.fechaGuardado||'';
+const sheetsTS=pv.fechaGuardado||pv.deletedFecha||'';
+const localTS=localEntry?.fechaGuardado||localEntry?.deletedFecha||'';
 if(!localEntry||sheetsTS>=localTS) DP[pk]=pv;
 });
 merged=true;
