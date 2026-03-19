@@ -3587,6 +3587,11 @@ const ciudad=idxEl.dataset.ciudad;
 const empIdxData=idxEl.dataset.empIdx;
 const isEmpEdit=ciudad!==undefined;
 const isNew=idx===-1&&!isEmpEdit;
+const saveBtn=document.getElementById('mu-savebtn');
+const cancelBtn=document.querySelector('#m-addU .bmcancel');
+if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.7';saveBtn.textContent='⏳ GUARDANDO...';}
+if(cancelBtn){cancelBtn.disabled=true;cancelBtn.style.opacity='.7';}
+try{
 const user=document.getElementById('mu-user').value.trim();
 const usernameRaw=(document.getElementById('mu-username')?.value?.trim()||'');
 const username=usernameRaw.toLowerCase()||user.split(' ')[0].toLowerCase();
@@ -3600,9 +3605,11 @@ if(pass&&pass.length<4){showToast('⚠️ Contraseña mínimo 4 caracteres');ret
 if(rol==='admin'||idx===-1&&!isEmpEdit){
 ADMIN.user=user||ADMIN.user;
 if(pass) ADMIN.pass=pass;
-SL('ADMIN',ADMIN);await gsS('ADMIN','ADMIN',ADMIN).catch(()=>{});
+SL('ADMIN',ADMIN);
 refreshUS();renderCfgE();closeM('addU');
-showToast('✅ Admin actualizado');return;
+showToast('✅ Admin actualizado');
+await gsS('ADMIN','ADMIN',ADMIN).catch(()=>{});
+return;
 }
 const emps=ciudad==='wash'?EW:EC;
 let emp=empIdxData!==undefined&&empIdxData!==''
@@ -3628,11 +3635,34 @@ if(!ciudad||ciudad==='wash') EW.push(newEmp); else EC.push(newEmp);
 }
 delete idxEl.dataset.ciudad;
 delete idxEl.dataset.empIdx;
-await SD('EW',EW);await SD('EC',EC);
+
+// refresco inmediato de UI antes del sync remoto
+SL('EW',EW); SL('EC',EC);
 refreshUS();
-await logChange('Usuarios',esNuevoAcceso?`Acceso activado: ${user}`:`Editado: ${user}`,null,`@${username}`);
-renderCfgE();closeM('addU');
+renderCfgE();
+try{if(typeof renderCfgU==='function') renderCfgU();}catch{}
+try{if(typeof renderNomina==='function') renderNomina();}catch{}
+closeM('addU');
 showToast(esNuevoAcceso?`🔓 Acceso activado — @${username}`:`✅ "${user}" actualizado`);
+
+// sync y auditoría después, sin bloquear UI
+const okEW=await SD('EW',EW);
+const okEC=await SD('EC',EC);
+try{
+await logChange('Usuarios',esNuevoAcceso?`Acceso activado: ${user}`:`Editado: ${user}`,null,`@${username}`);
+}catch(err){
+console.warn('logChange usuarios falló', err);
+}
+if(!(okEW&&okEC)){
+showToast('⚠️ Empleado/usuario guardado localmente; pendiente de subir a Sheets');
+}
+} catch(err){
+console.error('saveUsuario error', err);
+showToast('⚠️ No se pudo guardar el empleado');
+} finally {
+if(saveBtn){saveBtn.disabled=false;saveBtn.style.opacity='';saveBtn.innerHTML='✅ GUARDAR';}
+if(cancelBtn){cancelBtn.disabled=false;cancelBtn.style.opacity='';}
+}
 }
 async function addPuesto(){
 const nom=document.getElementById('np-nom').value.trim();const ciu=document.getElementById('np-ciu').value;
@@ -3643,13 +3673,36 @@ buildPSel();renderDash();renderCfg();populateEditSel();
 document.getElementById('np-nom').value='';closeM('addP');showToast(`✅ "${nom}" agregado`);
 }
 async function addEmpleado(){
+const saveBtn=document.getElementById('ne-savebtn');
+const cancelBtn=document.querySelector('#m-addE .bmcancel');
+if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.7';saveBtn.textContent='⏳ GUARDANDO...';}
+if(cancelBtn){cancelBtn.disabled=true;cancelBtn.style.opacity='.7';}
+try{
 const nom=document.getElementById('ne-nom').value.trim();const pos=document.getElementById('ne-pos').value;const ciu=document.getElementById('ne-ciu').value;
 if(!nom){showToast('⚠️ Escribe el nombre');return;}
 if(ciu==='wash')EW.push({n:nom,p:pos,s:0,t:'semana'});else EC.push({n:nom,p:pos,s:0,t:'semana'});
-await SD('EW',EW);await SD('EC',EC);
-await logChange('Empleados',`Nuevo empleado: ${nom}`,null,`Posición: ${pos}, Ciudad: ${ciu==='wash'?'Washington':'Chicago'}`);
+
+// refresco inmediato de UI antes del sync remoto
+SL('EW',EW); SL('EC',EC);
 renderNomina();renderCfg();
 document.getElementById('ne-nom').value='';closeM('addE');showToast(`✅ ${nom} agregado`);
+
+const okEW=await SD('EW',EW);const okEC=await SD('EC',EC);
+try{
+await logChange('Empleados',`Nuevo empleado: ${nom}`,null,`Posición: ${pos}, Ciudad: ${ciu==='wash'?'Washington':'Chicago'}`);
+}catch(err){
+console.warn('logChange empleados falló', err);
+}
+if(!(okEW&&okEC)){
+showToast('⚠️ Empleado guardado localmente; pendiente de subir a Sheets');
+}
+} catch(err){
+console.error('addEmpleado error', err);
+showToast('⚠️ No se pudo agregar el empleado');
+} finally {
+if(saveBtn){saveBtn.disabled=false;saveBtn.style.opacity='';saveBtn.innerHTML='✅ AGREGAR';}
+if(cancelBtn){cancelBtn.disabled=false;cancelBtn.style.opacity='';}
+}
 }
 async function eliminarTodosUsuarios(){
 if(!confirm('¿Eliminar acceso de TODOS los empleados?\nSolo quedará el admin.'))return;
