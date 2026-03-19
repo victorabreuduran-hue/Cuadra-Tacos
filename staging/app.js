@@ -1273,19 +1273,6 @@ const permKey=cardMap[id];
 if(permKey) btn.style.display=p[permKey]?'':'none';
 });
 }
-function stayInCfgEmpleados(){
-try{
-  const cfgBtn=document.querySelector('.nbtn[onclick*="config"]');
-  if(typeof showV==='function') showV('config', cfgBtn||null);
-  if(typeof goCfg==='function') goCfg('empleados');
-  const city = CECity || 'wash';
-  const tab = document.getElementById('emp-tab-'+city);
-  if(typeof setCEC==='function' && tab) setCEC(city, tab);
-}catch(err){
-  console.warn('stayInCfgEmpleados fallback', err);
-}
-}
-
 function goCfgHome(){
 document.getElementById('cfg-home').style.display='block';
 document.getElementById('cfg-section').style.display='none';
@@ -3244,10 +3231,9 @@ const sueldo=parseFloat(inp.value||0);
 const emps=city==='wash'?EW:EC;
 if(emps[idx]){emps[idx].s=sueldo;emps[idx].t='semana';}
 });
-SL('EW',EW); SL('EC',EC);
-renderCfgE();renderNomina();stayInCfgEmpleados();
-showToast('✅ Sueldos guardados correctamente');
 await SD('EW',EW);await SD('EC',EC);
+renderCfgE();renderNomina();
+showToast('✅ Sueldos guardados correctamente');
 }
 let _mpCiudad='wash'; // ciudad activa en cfg-mp
 function setMPCiudad(ciudad,btn){
@@ -3620,7 +3606,7 @@ if(rol==='admin'||idx===-1&&!isEmpEdit){
 ADMIN.user=user||ADMIN.user;
 if(pass) ADMIN.pass=pass;
 SL('ADMIN',ADMIN);
-refreshUS();renderCfgE();stayInCfgEmpleados();closeM('addU');
+refreshUS();renderCfgE();closeM('addU');
 showToast('✅ Admin actualizado');
 await gsS('ADMIN','ADMIN',ADMIN).catch(()=>{});
 return;
@@ -3654,7 +3640,6 @@ delete idxEl.dataset.empIdx;
 SL('EW',EW); SL('EC',EC);
 refreshUS();
 renderCfgE();
-stayInCfgEmpleados();
 try{if(typeof renderCfgU==='function') renderCfgU();}catch{}
 try{if(typeof renderNomina==='function') renderNomina();}catch{}
 closeM('addU');
@@ -3699,7 +3684,7 @@ if(ciu==='wash')EW.push({n:nom,p:pos,s:0,t:'semana'});else EC.push({n:nom,p:pos,
 
 // refresco inmediato de UI antes del sync remoto
 SL('EW',EW); SL('EC',EC);
-renderNomina();renderCfgE();stayInCfgEmpleados();
+renderNomina();renderCfg();
 document.getElementById('ne-nom').value='';closeM('addE');showToast(`✅ ${nom} agregado`);
 
 const okEW=await SD('EW',EW);const okEC=await SD('EC',EC);
@@ -3724,7 +3709,7 @@ if(!confirm('¿Eliminar acceso de TODOS los empleados?\nSolo quedará el admin.'
 EW.forEach(e=>{delete e.pass;delete e.rol;delete e.perms;});
 EC.forEach(e=>{delete e.pass;delete e.rol;delete e.perms;});
 await SD('EW',EW);await SD('EC',EC);
-refreshUS();renderCfgE();renderCfgU();stayInCfgEmpleados();
+refreshUS();renderCfgE();renderCfgU();
 showToast('🗑️ Accesos eliminados');
 }
 function openBulkPerms(){
@@ -3822,30 +3807,18 @@ closeM('confirm');showToast(`🗑️ "${nom}" eliminado`);
 const emps=CECity==='wash'?EW:EC;const nom=emps[idx]?.n;const pos=emps[idx]?.p;
 title='⚠️ Eliminar Empleado';msg=`¿Eliminar a "${nom}" del equipo?`;
 action=async()=>{
-const currentCity = CECity==='chi' ? 'chi' : 'wash';
-if(currentCity==='wash') EW.splice(idx,1); else EC.splice(idx,1);
+if(CECity==='wash')EW.splice(idx,1);else EC.splice(idx,1);
 
 // refresco inmediato y cierre del modal antes del sync remoto
 SL('EW',EW); SL('EC',EC);
+renderNomina();renderCfg();
+try{if(typeof renderCfgU==='function') renderCfgU();}catch{}
 closeM('confirm');
-
-// esperar un tick para que el DOM termine de cerrar el modal y luego redibujar
-requestAnimationFrame(()=>{
-  try{ if(typeof showV==='function') showV('config', document.querySelector('.nbtn[onclick*="config"]')||null); }catch{}
-  try{ if(typeof goCfg==='function') goCfg('empleados'); }catch{}
-  try{ if(typeof renderNomina==='function') renderNomina(); }catch{}
-  try{ if(typeof renderCfgE==='function') renderCfgE(); }catch{}
-  try{ if(typeof renderCfgU==='function') renderCfgU(); }catch{}
-  try{
-    const tab = document.getElementById('emp-tab-'+currentCity);
-    if(typeof setCEC==='function' && tab) setCEC(currentCity, tab);
-  }catch{}
-  showToast(`🗑️ ${nom} eliminado`);
-});
+showToast(`🗑️ ${nom} eliminado`);
 
 const okEW=await SD('EW',EW);const okEC=await SD('EC',EC);
 try{
-await logChange('Empleados',`Empleado eliminado: ${nom}`,`${pos} — ${currentCity==='wash'?'Washington':'Chicago'}`,null);
+await logChange('Empleados',`Empleado eliminado: ${nom}`,`${pos} — ${CECity==='wash'?'Washington':'Chicago'}`,null);
 }catch(err){
 console.warn('logChange eliminar empleado falló', err);
 }
