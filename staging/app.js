@@ -4366,25 +4366,52 @@ document.getElementById('m-addMP').classList.add('open');
 async function saveMP(){
 const idx=parseInt(document.getElementById('mp-edit-idx').value);
 const isNew=idx===-1;
+const saveBtn=document.getElementById('mp-savebtn');
+const cancelBtn=document.querySelector('#m-addMP .bmcancel');
+if(saveBtn){saveBtn.disabled=true;saveBtn.style.opacity='.7';saveBtn.textContent='⏳ GUARDANDO...';}
+if(cancelBtn){cancelBtn.disabled=true;cancelBtn.style.opacity='.7';}
+try{
 const imgData=document.getElementById('mp-img-data').value;
 const emoji=imgData?'📦':document.getElementById('mp-emoji').value.trim()||'📦';
 const nombre=document.getElementById('mp-nombre').value.trim();
 const precio=parseFloat(document.getElementById('mp-precio').value||0);
 const unidad=document.getElementById('mp-unidad').value;
 if(!nombre){showToast('⚠️ Escribe el nombre del producto');return;}
-const antes=!isNew?`$${MP[idx]?.precio}/${MP[idx]?.unidad}`:null;
+const currentList=getCurrentMP();
+const antes=!isNew&&currentList[idx]?`$${currentList[idx].precio}/${currentList[idx].unidad}`:null;
 const item={emoji,nombre,precio,unidad};
 if(imgData) item.imgData=imgData;
-const mpRef=getCurrentMP();
-if(isNew){mpRef.push(item);}
-else{mpRef[idx]=item;}
-if(_mpCiudad==='chi'){MP_C=[...mpRef];await SD('MP_C',MP_C);}
-else{MP=[...mpRef];await SD('MP',MP);}
+
+let nextList=[...currentList];
+if(isNew){nextList.push(item);} else {nextList[idx]=item;}
+
 const ciudadNombre=_mpCiudad==='chi'?'Chicago':'Washington';
-await logChange('Productos',`[${ciudadNombre}] `+(isNew?`Nuevo: ${nombre}`:`Precio actualizado: ${nombre}`),
-antes,`$${precio}/${unidad}`);
-renderMPRows();renderCfgMP();closeM('addMP');
+if(_mpCiudad==='chi'){MP_C=nextList; SL('MP_C',MP_C);}
+else{MP=nextList; SL('MP',MP);}
+
+// refresco inmediato de UI antes del sync remoto
+renderMPRows();
+renderCfgMP();
+closeM('addMP');
 showToast(isNew?`✅ "${nombre}" agregado en ${ciudadNombre}`:`✅ "${nombre}" — $${precio} actualizado en todos los puestos de ${ciudadNombre}`);
+
+// sync y auditoría después, sin bloquear la UI
+const syncOk = _mpCiudad==='chi' ? await SD('MP_C',MP_C) : await SD('MP',MP);
+try{
+await logChange('Productos',`[${ciudadNombre}] `+(isNew?`Nuevo: ${nombre}`:`Precio actualizado: ${nombre}`),antes,`$${precio}/${unidad}`);
+}catch(err){
+console.warn('logChange productos falló', err);
+}
+if(!syncOk){
+showToast('⚠️ Producto guardado localmente; pendiente de subir a Sheets');
+}
+}catch(err){
+console.error('saveMP error', err);
+showToast('⚠️ No se pudo guardar el producto');
+}finally{
+if(saveBtn){saveBtn.disabled=false;saveBtn.style.opacity='';saveBtn.innerHTML='✅ GUARDAR';}
+if(cancelBtn){cancelBtn.disabled=false;cancelBtn.style.opacity='';}
+}
 }
 async function delMP(idx){
 const mpRef=getCurrentMP();
