@@ -214,6 +214,35 @@ showToast(`⏸️ "${nombre}" pausado`);
 }
 renderCfgP();buildPSel();renderDash();renderEgresosView();
 }
+
+function normalizeDAFromSheets(raw){
+  try{
+    const normalized={};
+    const mergeRecord=(k,v)=>{
+      if(!k || !String(k).startsWith('asist-city__')) return;
+      if(!v || typeof v!=='object' || Array.isArray(v)) return;
+      normalized[k]=v;
+    };
+
+    // Formato viejo posible:
+    // { DA: { DA: {...}, "asist-city__...": {...} }, "asist-city__...": {...} }
+    if(raw && raw.DA && typeof raw.DA==='object' && !Array.isArray(raw.DA)){
+      const inner = raw.DA;
+      if(inner.DA && typeof inner.DA==='object' && !Array.isArray(inner.DA)){
+        Object.entries(inner.DA).forEach(([k,v])=>mergeRecord(k,v));
+      }
+      Object.entries(inner).forEach(([k,v])=>mergeRecord(k,v));
+    }
+
+    // Formato correcto nuevo:
+    Object.entries(raw||{}).forEach(([k,v])=>mergeRecord(k,v));
+
+    return normalized;
+  }catch{
+    return {};
+  }
+}
+
 async function gsG(t){
 try{
 const r=await fetch(`${GS}?tabla=${t}&token=${encodeURIComponent((window.APP_CONFIG&&window.APP_CONFIG.APP_TOKEN)||'')}&ts=${Date.now()}`);
@@ -226,7 +255,7 @@ Object.entries(raw).forEach(([k,v])=>{
 try{res[k]=typeof v==='string'?JSON.parse(v):v;}
 catch{res[k]=v;}
 });
-return t==='DP' ? normalizeDPFromSheets(raw) : res;
+return t==='DP' ? normalizeDPFromSheets(raw) : (t==='DA' ? normalizeDAFromSheets(raw) : res);
 }catch{return null;}
 }
 function _validarDato(tabla, valor){
@@ -278,6 +307,9 @@ Object.keys(_syncQueue||{}).forEach(k=>{
   const v=_syncQueue[k];
   if(k.startsWith('DP__') && (!v || typeof v!=='object' || !v.__tabla)){
     _syncQueue[k]={__tabla:'DP',__clave:k,__valor:v};
+  }
+  if(k==='DA' && v && typeof v==='object' && !Array.isArray(v)){
+    delete _syncQueue[k];
   }
 });
 _savePending(_syncQueue);
@@ -441,6 +473,32 @@ if(directOk){
 // Fallback: dejarlo en cola si falla el guardado directo
 try{toast('⚠️ Venta guardada localmente; pendiente de subir a Sheets');}catch{}
 _syncQueue[sheetsKey]={__tabla:'DP',__clave:sheetsKey,__valor:registro};
+_savePending(_syncQueue);
+_updatePendingBadge();
+clearTimeout(_syncTimer);
+_syncTimer=setTimeout(()=>_flushSyncQueue(),800);
+return false;
+}
+async function SDA(asistKey, record){
+DA[asistKey]=record;
+SL('DA',DA);
+_bumpVersion('DA');
+_touchTS('DA');
+const f=document.getElementById('syncBarFill');
+if(f){f.style.width='100%';setTimeout(()=>{f.style.width='0%';},400);}
+
+const directOk=await gsS('DA', asistKey, record);
+if(directOk){
+  delete _syncQueue['DA'];
+  delete _syncQueue[asistKey];
+  _savePending(_syncQueue);
+  _updatePendingBadge();
+  return true;
+}
+
+try{showToast('⚠️ Asistencia guardada localmente; pendiente de subir a Sheets');}catch{}
+delete _syncQueue['DA'];
+_syncQueue[asistKey]={__tabla:'DA',__clave:asistKey,__valor:record};
 _savePending(_syncQueue);
 _updatePendingBadge();
 clearTimeout(_syncTimer);
@@ -1914,7 +1972,8 @@ const data=JSON.parse(JSON.stringify(AS));
 data.fechaGuardado=new Date().toLocaleString('es');
 data.guardadoPor=CU?.user||'—';
 DA[key]=data;
-await SD('DA',DA);
+SL('DA',DA);
+const syncOk=await SDA(key,data);
 const ciudad=asistCity==='wash'?'Washington':'Chicago';
 await logChange('Asistencia',`${ciudad} — ${fmtFecha(currentAsistFecha)}`,
 antes?`${Object.values(antes).filter(v=>v==='P').length} presentes`:null,
@@ -1922,6 +1981,9 @@ antes?`${Object.values(antes).filter(v=>v==='P').length} presentes`:null,
 const status=document.getElementById('asistFechaStatus');
 if(status) status.textContent=`Guardado: ${new Date().toLocaleString('es')}`;
 showToast(`✅ Asistencia guardada — ${ciudad} · ${fmtFecha(currentAsistFecha)}`);
+if(!syncOk){
+  showToast('⚠️ Asistencia pendiente de subir a Sheets');
+}
 }
 function nomKey(city,fecha){return `${city}__${fecha||currentFechaNomina}`;}
 function getLunes(fecha){
