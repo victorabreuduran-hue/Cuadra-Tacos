@@ -91,7 +91,7 @@ if(CU?.rol==='admin') return NCity;
 return 'wash';
 }
 function getPuestoCiudad(){ return _detectCPCiudad(); }
-let DP=LL('DP',{}),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG=LL('DG',{});
+let DP=sanitizeDPMap(LL('DP',{})),DN=LL('DN',{wash:{},chi:{}}),DA=LL('DA',{}),DF=LL('DF',{}),DG=LL('DG',{});
 let HIST=LL('HIST',[]);
 let METAS=LL('METAS',{});
 let PROV=LL('PROV',[]);
@@ -213,7 +213,7 @@ Object.entries(raw).forEach(([k,v])=>{
 try{res[k]=typeof v==='string'?JSON.parse(v):v;}
 catch{res[k]=v;}
 });
-return res;
+return t==='DP' ? sanitizeDPMap(res) : res;
 }catch{return null;}
 }
 function _validarDato(tabla, valor){
@@ -247,6 +247,7 @@ return true;
 return true;
 }
 function _aplicarDatoSeguro(t, valor, apply){
+if(t==='DP') valor=sanitizeDPMap(valor);
 if(!_validarDato(t, valor)){
 console.warn(`⚠️ Dato inválido para ${t} — manteniendo local`);
 return false;
@@ -448,11 +449,20 @@ if(!CU||_isSyncing) return;
 try{
 const tabs=['DP','DN','DA','PROV','GG'];
 const results=await Promise.all(tabs.map(t=>gsG(t).then(d=>({t,d})).catch(()=>({t,d:null}))));
-const apply={DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;}};
-const safeApply={DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;}};
+const safeApply={
+DP:v=>{DP=sanitizeDPMap(v);},
+DN:v=>{DN=v;},
+DA:v=>{DA=v;},
+PROV:v=>{PROV=v;},
+GG:v=>{GG=v;}
+};
 results.forEach(({t,d})=>{
-if(d&&d[t]!==undefined) _aplicarDatoSeguro(t,d[t],safeApply);
+if(d!==null&&d!==undefined) _aplicarDatoSeguro(t,d,safeApply);
 });
+DP=sanitizeDPMap(DP);
+SL('DP',DP);
+if(typeof renderRegistrosVentas==='function') renderRegistrosVentas();
+if(typeof renderReportes==='function') renderReportes();
 if(CU?.rol==='admin') renderDash();
 else renderPersonalDash();
 }catch{}
@@ -3744,6 +3754,7 @@ return `<div style="margin-bottom:10px">
 }catch(e){return '';}
 }
 function renderRegistrosVentas(){
+DP=sanitizeDPMap(DP); SL('DP',DP);
 const c=document.getElementById('edit-registros-list');if(!c)return;
 c.innerHTML=''; // Limpiar siempre primero
 const q=(document.getElementById('edit-search')?.value||'').toLowerCase();
