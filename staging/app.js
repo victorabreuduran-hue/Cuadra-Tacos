@@ -3955,6 +3955,18 @@ const isOpen=body.classList.contains('open');
 document.querySelectorAll('.rv-body.open').forEach(b=>b.classList.remove('open'));
 if(!isOpen) body.classList.add('open');
 }
+function refreshVentaUI(key){
+try{
+  renderRegistrosVentas();
+  if(typeof renderDash==='function') renderDash();
+  if(typeof renderReportes==='function') renderReportes();
+  requestAnimationFrame(()=>{
+    try{ toggleRV(key); }catch{}
+  });
+}catch(err){
+  console.warn('refreshVentaUI error', err);
+}
+}
 function abrirEditarVenta(key,puesto,fecha){
 const d=DP[key]||{};
 const isA=CU?.rol==='admin';
@@ -4073,11 +4085,11 @@ d.fechaRegistro=fecha;
 d.editadoPor=CU?.user||'admin';
 if(motivo) d.motivoEdicion=motivo;
 DP[key]=d;
+SL('DP', sanitizeDPMap(DP));
 await SDp(key,d);
 await logChange('Ventas',`Edición: ${puesto} — ${fmtFecha(fecha)}${motivo?' — '+motivo:''}`,antes,`$${fmt(d.totalVentas)} ventas / $${fmt(d.totalGastos)} gastos`);
 closeM('editVenta');
-renderRegistrosVentas();
-renderDash();renderReportes();
+refreshVentaUI(key);
 showToast(`✅ "${puesto}" actualizado`);
 }
 function loadEditForm(){}
