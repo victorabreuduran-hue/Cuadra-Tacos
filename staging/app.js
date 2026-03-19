@@ -274,6 +274,13 @@ const LAST_BACKUP_KEY='lct_last_backup_date';
 function _loadPending(){try{return JSON.parse(localStorage.getItem(PENDING_KEY)||'{}')}catch{return {}}}
 function _savePending(q){try{localStorage.setItem(PENDING_KEY,JSON.stringify(q))}catch{}}
 let _syncQueue=_loadPending();
+Object.keys(_syncQueue||{}).forEach(k=>{
+  const v=_syncQueue[k];
+  if(k.startsWith('DP__') && (!v || typeof v!=='object' || !v.__tabla)){
+    _syncQueue[k]={__tabla:'DP',__clave:k,__valor:v};
+  }
+});
+_savePending(_syncQueue);
 let _syncTimer=null;
 let _autoSyncInterval=null;
 let _isSyncing=false;
@@ -337,8 +344,11 @@ clearTimeout(timer);
 if(!resp.ok){_checkSheetsHealth(false);return false;}
 try{
 const j=await resp.json();
-if(j.status==='error'){_checkSheetsHealth(false);return false;}
-}catch{}
+if(!j || j.ok===false || j.status==='error' || j.error){_checkSheetsHealth(false); return false;}
+}catch{
+_checkSheetsHealth(false);
+return false;
+}
 _checkSheetsHealth(true);
 return true;
 }catch{_checkSheetsHealth(false);return false;}
@@ -375,7 +385,10 @@ if(f){f.style.width='30%';}
 const failed={};
 let done=0;
 await Promise.all(entries.map(async([k,v])=>{
-const ok=await gsS(k,k,v);
+const tabla=(v&&typeof v==='object'&&v.__tabla)?v.__tabla:k;
+const clave=(v&&typeof v==='object'&&v.__clave)?v.__clave:k;
+const valor=(v&&typeof v==='object'&&Object.prototype.hasOwnProperty.call(v,'__valor'))?v.__valor:v;
+const ok=await gsS(tabla,clave,valor);
 done++;
 if(f) f.style.width=`${Math.round((done/entries.length)*100)}%`;
 if(!ok){
@@ -415,7 +428,7 @@ _touchTS('DP');
 const f=document.getElementById('syncBarFill');
 if(f){f.style.width='100%';setTimeout(()=>{f.style.width='0%';},400);}
 const sheetsKey='DP__'+puestoFechaKey;
-_syncQueue[sheetsKey]=registro;
+_syncQueue[sheetsKey]={__tabla:'DP',__clave:sheetsKey,__valor:registro};
 _savePending(_syncQueue);
 _updatePendingBadge();
 clearTimeout(_syncTimer);
