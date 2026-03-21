@@ -225,14 +225,9 @@ function normalizeDPFromSheets(raw){
       if(key==='DP') return;
       if(key.startsWith('DP__')) key=key.slice(4);
       if(!key.includes('__')) return;
-
-      let value=v;
-      if(typeof value==='string'){
-        try{ value=JSON.parse(value); }catch{}
-      }
-      if(!value || typeof value!=='object' || Array.isArray(value)) return;
-      if(value.deleted===true) return;
-      normalized[key]=value;
+      if(!v || typeof v!=='object' || Array.isArray(v)) return;
+      if(v.deleted===true) return;
+      normalized[key]=v;
     };
 
     if(raw && raw.DP && typeof raw.DP==='object' && !Array.isArray(raw.DP)){
@@ -503,6 +498,7 @@ if(directOk){
   delete _syncQueue[sheetsKey];
   _savePending(_syncQueue);
   _updatePendingBadge();
+  await _refreshAuthoritativeFromSheets({showStatus:false,showToastMsg:false});
   return true;
 }
 
@@ -581,24 +577,7 @@ _silentRefresh();
 async function _silentRefresh(){
 if(!CU||_isSyncing) return;
 try{
-const tabs=['DP','DN','DA','PROV','GG'];
-const results=await Promise.all(tabs.map(t=>gsG(t).then(d=>({t,d})).catch(()=>({t,d:null}))));
-const safeApply={
-DP:v=>{DP=sanitizeDPMap(v);},
-DN:v=>{DN=v;},
-DA:v=>{DA=v;},
-PROV:v=>{PROV=v;},
-GG:v=>{GG=v;}
-};
-results.forEach(({t,d})=>{
-if(d!==null&&d!==undefined) _aplicarDatoSeguro(t,d,safeApply);
-});
-DP=sanitizeDPMap(DP);
-SL('DP',DP);
-if(typeof renderRegistrosVentas==='function') renderRegistrosVentas();
-if(typeof renderReportes==='function') renderReportes();
-if(CU?.rol==='admin') renderDash();
-else renderPersonalDash();
+await _refreshAuthoritativeFromSheets({showStatus:false,showToastMsg:false});
 }catch{}
 }
 let _lastVisibleTime=Date.now();
@@ -665,45 +644,62 @@ _limpiarDPAntiguo();
 }catch(e){console.warn('Backup diario falló:',e);}
 }
 if(Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(),3000);
-async function syncNow(){
-setST('🔄 Cargando...');setDot('orange');
-showToast('🔄 Cargando datos...');
+
+async function _refreshAuthoritativeFromSheets(opts={}){
+const {showStatus=false, showToastMsg=false}=opts||{};
+if(showStatus){setST('🔄 Cargando nube...');setDot('orange');}
+try{
 const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','MP','MP_C','HIST','METAS','PROV','GG','PI','POSICIONES','TIPS'];
-const results=await Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data}))));
-const apply={
-DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},DF:v=>{DF=v;},DG:v=>{DG=v;},
-PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
-MP:v=>{MP=v;renderMPRows();},MP_C:v=>{MP_C=v;},HIST:v=>{HIST=v;},METAS:v=>{METAS=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;},PI:v=>{PI=v;},
-POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
-};
-const loaded=results.filter(r=>r.data);
-const applyMap={
-DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},DF:v=>{DF=v;},DG:v=>{DG=v;},
-PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
-MP:v=>{MP=v;renderMPRows();},HIST:v=>{HIST=v;},METAS:v=>{METAS=v;},
-PROV:v=>{PROV=v;},GG:v=>{GG=v;},POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
-};
-loaded.forEach(({t,data})=>{
-if(!data) return;
-if(t==='DP'){
-DP=sanitizeDPMap(data);
-SL('DP',DP);
-} else if(t==='DA'){
-_aplicarDatoSeguro('DA',data,applyMap);
-} else if(data[t]!==undefined){
-_aplicarDatoSeguro(t,data[t],applyMap);
-} else {
-_aplicarDatoSeguro(t,data,applyMap);
-}
+const results=await Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data})).catch(()=>({t,data:null}))));
+results.forEach(({t,data})=>{
+if(data===null||data===undefined) return;
+if(t==='DP'){DP=sanitizeDPMap(data);SL('DP',DP);return;}
+if(t==='DA'){DA=data;SL('DA',DA);return;}
+if(t==='DN'){DN=data;SL('DN',DN);return;}
+if(t==='DF'){DF=data;SL('DF',DF);return;}
+if(t==='DG'){DG=data;SL('DG',DG);return;}
+if(t==='PW'){PW=data;SL('PW',PW);return;}
+if(t==='PC'){PC=data;SL('PC',PC);return;}
+if(t==='EW'){EW=data;SL('EW',EW);return;}
+if(t==='EC'){EC=data;SL('EC',EC);return;}
+if(t==='MP'){MP=data;SL('MP',MP);return;}
+if(t==='MP_C'){MP_C=data;SL('MP_C',MP_C);return;}
+if(t==='HIST'){HIST=data;SL('HIST',HIST);return;}
+if(t==='METAS'){METAS=data;SL('METAS',METAS);return;}
+if(t==='PROV'){PROV=data;SL('PROV',PROV);return;}
+if(t==='GG'){GG=data;SL('GG',GG);return;}
+if(t==='PI'){PI=data;SL('PI',PI);return;}
+if(t==='POSICIONES'){POSICIONES=data;SL('POSICIONES',POSICIONES);return;}
+if(t==='TIPS'){TIPS=data;SL('TIPS',TIPS);return;}
 });
 refreshUS();
-buildPSel();renderDash();renderReportes();renderAsist();renderNomina();renderEgresosView();
-if(loaded.length===tabs.length){
-_crearBackupLocal('Sync completo');
+buildPSel();
+try{renderMPRows();}catch{}
+try{renderVentaMeta();}catch{}
+try{renderRegistrosVentas();}catch{}
+try{renderReportes();}catch{}
+try{renderAsist();}catch{}
+try{renderNomina();}catch{}
+try{renderEgresosView();}catch{}
+try{if(CU?.rol==='admin') renderDash(); else renderPersonalDash();}catch{}
+if(showStatus){setST('✅ Actualizado');setDot('green');setTimeout(()=>{const e=document.getElementById('stxt');if(e&&e.textContent==='✅ Actualizado')e.textContent='🔄 Actualizar';},2000);}
+if(showToastMsg) showToast('✅ Datos bajados desde Sheets');
+return true;
+}catch(err){
+console.warn('_refreshAuthoritativeFromSheets error', err);
+if(showStatus){setST('⚠️ Sin conexión');setDot('red');}
+return false;
 }
-setST('✅ Actualizado');setDot('green');
-showToast(`✅ Datos actualizados (${loaded.length}/${tabs.length} tablas)`);
-logChange('Sistema','Sincronización manual',null,`${loaded.length}/${tabs.length} tablas`).catch(()=>{});
+}
+
+async function syncNow(){
+showToast('🔄 Cargando datos...');
+const ok=await _refreshAuthoritativeFromSheets({showStatus:true,showToastMsg:false});
+if(ok){
+_crearBackupLocal('Sync completo');
+showToast('✅ Datos actualizados desde Sheets');
+logChange('Sistema','Sincronización manual',null,'Sheets → dispositivo').catch(()=>{});
+}
 if(Object.keys(_syncQueue).length>0) setTimeout(()=>_flushSyncQueue(true),500);
 }
 function _crearBackupLocal(motivo='Auto'){
@@ -720,25 +716,24 @@ SL('AUTO_BACKUPS',backups.slice(0,3));
 }
 function setST(t){const el=document.getElementById('stxt');if(el)el.textContent=t;}
 function setDot(s){const d=document.getElementById('sdot');if(!d)return;d.className='sdot '+s;}
-function todayStr(){
-const d=new Date();
+function _dateLocalStr(d){
 const y=d.getFullYear();
 const m=String(d.getMonth()+1).padStart(2,'0');
 const day=String(d.getDate()).padStart(2,'0');
 return `${y}-${m}-${day}`;
+}
+function todayStr(){
+return _dateLocalStr(new Date());
 }
 function turnoFechaStr(){
 const now=new Date();
 const h=now.getHours();
 if(h>=0&&h<5){
 const d=new Date(now);
- d.setDate(d.getDate()-1);
-const y=d.getFullYear();
-const m=String(d.getMonth()+1).padStart(2,'0');
-const day=String(d.getDate()).padStart(2,'0');
-return `${y}-${m}-${day}`;
+d.setDate(d.getDate()-1);
+return _dateLocalStr(d);
 }
-return todayStr();
+return _dateLocalStr(now);
 }
 function esTurnoNocturno(){const h=new Date().getHours();return h>=0&&h<5;}
 
@@ -878,6 +873,7 @@ else document.getElementById('hdrSub').textContent=`Puesto: ${CU.puesto||'—'}`
 const userPuestos=isA?allP():getUserPuestos();
 CP=userPuestos[0]||'';
 buildPSel();
+await _refreshAuthoritativeFromSheets({showStatus:true,showToastMsg:false});
 const empData=[...EW,...EC].find(e=>e.n===CU.user||e.user===CU.user);
 const dashTipo=isA?'completo':(empData?.dashTipo||'completo');
 if(isA||can('dashboard')){
@@ -934,35 +930,7 @@ setTimeout(()=>_backupDiario(), 10000);
 // Registrar inicio de sesión en historial
 setTimeout(()=>logChange('Sistema',`Inicio de sesión — ${CU?.rol==='admin'?'Admin':'Encargado'}`,null,`@${CU?.user||'—'}`).catch(()=>{}), 2000);
 _updatePendingBadge();
-setTimeout(()=>{
-setST('🔄 Actualizando...');setDot('orange');
-const tabs=['DP','DN','DA','DF','DG','PW','PC','EW','EC','MP','MP_C','METAS','PROV','GG','TIPS'];
-const apply={
-DP:v=>{DP=v;},DN:v=>{DN=v;},DA:v=>{DA=v;},DF:v=>{DF=v;},DG:v=>{DG=v;},
-PW:v=>{PW=v;},PC:v=>{PC=v;},EW:v=>{EW=v;},EC:v=>{EC=v;},
-MP:v=>{MP=v;},MP_C:v=>{MP_C=v;},METAS:v=>{METAS=v;},PROV:v=>{PROV=v;},GG:v=>{GG=v;},TIPS:v=>{TIPS=v;}
-};
-Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data})).catch(()=>({t,data:null}))))
-.then(results=>{
-results.forEach(({t,data})=>{
-if(!data) return;
-if(t==='DP'){
-DP=sanitizeDPMap(data);
-SL('DP',DP);
-} else if(t==='DA'){
-_aplicarDatoSeguro('DA',data,apply);
-} else if(data[t]!==undefined){
-_aplicarDatoSeguro(t,data[t],apply);
-} else {
-_aplicarDatoSeguro(t,data,apply);
-}
-});
-refreshUS();
-buildPSel();renderDash();renderReportes();renderAsist();renderNomina();renderEgresosView();
-setST('✅ Al día');setDot('green');
-setTimeout(()=>{const e=document.getElementById('stxt');if(e&&e.textContent==='✅ Al día')e.textContent='🔄 Actualizar';},2000);
-}).catch(()=>{setST('⚠️ Sin conexión');setDot('red');});
-}, 800);
+
 currentFecha=turnoFechaStr();currentFechaNomina=todayStr();
 calYear=new Date().getFullYear();calMonth=new Date().getMonth();
 const fp=document.getElementById('fechaVentas');
