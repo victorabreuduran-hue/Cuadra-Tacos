@@ -225,9 +225,14 @@ function normalizeDPFromSheets(raw){
       if(key==='DP') return;
       if(key.startsWith('DP__')) key=key.slice(4);
       if(!key.includes('__')) return;
-      if(!v || typeof v!=='object' || Array.isArray(v)) return;
-      if(v.deleted===true) return;
-      normalized[key]=v;
+
+      let value=v;
+      if(typeof value==='string'){
+        try{ value=JSON.parse(value); }catch{}
+      }
+      if(!value || typeof value!=='object' || Array.isArray(value)) return;
+      if(value.deleted===true) return;
+      normalized[key]=value;
     };
 
     if(raw && raw.DP && typeof raw.DP==='object' && !Array.isArray(raw.DP)){
@@ -681,10 +686,14 @@ PROV:v=>{PROV=v;},GG:v=>{GG=v;},POSICIONES:v=>{POSICIONES=v;},TIPS:v=>{TIPS=v;}
 loaded.forEach(({t,data})=>{
 if(!data) return;
 if(t==='DP'){
-DP=normalizeDPFromSheets(data);
+DP=sanitizeDPMap(data);
 SL('DP',DP);
+} else if(t==='DA'){
+_aplicarDatoSeguro('DA',data,applyMap);
+} else if(data[t]!==undefined){
+_aplicarDatoSeguro(t,data[t],applyMap);
 } else {
-if(data[t]!==undefined) _aplicarDatoSeguro(t,data[t],applyMap);
+_aplicarDatoSeguro(t,data,applyMap);
 }
 });
 refreshUS();
@@ -719,10 +728,15 @@ const day=String(d.getDate()).padStart(2,'0');
 return `${y}-${m}-${day}`;
 }
 function turnoFechaStr(){
-const h=new Date().getHours();
+const now=new Date();
+const h=now.getHours();
 if(h>=0&&h<5){
-const d=new Date();d.setDate(d.getDate()-1);
-return d.toISOString().split('T')[0];
+const d=new Date(now);
+ d.setDate(d.getDate()-1);
+const y=d.getFullYear();
+const m=String(d.getMonth()+1).padStart(2,'0');
+const day=String(d.getDate()).padStart(2,'0');
+return `${y}-${m}-${day}`;
 }
 return todayStr();
 }
@@ -933,10 +947,14 @@ Promise.all(tabs.map(t=>gsG(t).then(data=>({t,data})).catch(()=>({t,data:null}))
 results.forEach(({t,data})=>{
 if(!data) return;
 if(t==='DP'){
-DP=normalizeDPFromSheets(data);
+DP=sanitizeDPMap(data);
 SL('DP',DP);
+} else if(t==='DA'){
+_aplicarDatoSeguro('DA',data,apply);
+} else if(data[t]!==undefined){
+_aplicarDatoSeguro(t,data[t],apply);
 } else {
-if(data[t]!==undefined) _aplicarDatoSeguro(t,data[t],apply);
+_aplicarDatoSeguro(t,data,apply);
 }
 });
 refreshUS();
