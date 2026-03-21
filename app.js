@@ -214,7 +214,91 @@ showToast(`⏸️ "${nombre}" pausado`);
 }
 renderCfgP();buildPSel();renderDash();renderEgresosView();
 }
+function normalizeDPFromSheets(raw){
+  try{
+    const normalized = {};
 
+    const mergeVenta = (k, v) => {
+      if (!k || v === undefined || v === null) return;
+
+      let finalKey = String(k).trim();
+
+      // Ignorar contenedor viejo "DP"
+      if (finalKey === 'DP') return;
+
+      // Formato nuevo por fila: DP__North Gate__2026-03-21
+      if (finalKey.startsWith('DP__')) {
+        finalKey = finalKey.slice(4); // North Gate__2026-03-21
+      }
+
+      // Solo aceptar formato puesto__fecha
+      if (!finalKey.includes('__')) return;
+
+      let value = v;
+
+      // Si viene como JSON string, parsearlo
+      if (typeof value === 'string') {
+        try { value = JSON.parse(value); } catch {}
+      }
+
+      // Ignorar eliminados
+      if (value && typeof value === 'object' && value.deleted === true) return;
+
+      normalized[finalKey] = value;
+    };
+
+    // 1) Formato viejo:
+    // { DP: { "North Gate__2026-03-18": {...}, ... } }
+    if (raw && raw.DP) {
+      let legacy = raw.DP;
+      if (typeof legacy === 'string') {
+        try { legacy = JSON.parse(legacy); } catch {}
+      }
+      if (legacy && typeof legacy === 'object' && !Array.isArray(legacy)) {
+        Object.entries(legacy).forEach(([k, v]) => mergeVenta(k, v));
+      }
+    }
+
+    // 2) Formato nuevo:
+    // { "DP__North Gate__2026-03-21": {...}, ... }
+    Object.entries(raw || {}).forEach(([k, v]) => {
+      mergeVenta(k, v);
+    });
+
+    return normalized;
+  } catch (err) {
+    console.warn('normalizeDPFromSheets error', err);
+    return {};
+  }
+}
+
+function normalizeDAFromSheets(raw){
+  try{
+    const normalized={};
+    const mergeRecord=(k,v)=>{
+      if(!k || !String(k).startsWith('asist-city__')) return;
+      if(!v || typeof v!=='object' || Array.isArray(v)) return;
+      normalized[k]=v;
+    };
+
+    // Formato viejo posible:
+    // { DA: { DA: {...}, "asist-city__...": {...} }, "asist-city__...": {...} }
+    if(raw && raw.DA && typeof raw.DA==='object' && !Array.isArray(raw.DA)){
+      const inner = raw.DA;
+      if(inner.DA && typeof inner.DA==='object' && !Array.isArray(inner.DA)){
+        Object.entries(inner.DA).forEach(([k,v])=>mergeRecord(k,v));
+      }
+      Object.entries(inner).forEach(([k,v])=>mergeRecord(k,v));
+    }
+
+    // Formato correcto nuevo:
+    Object.entries(raw||{}).forEach(([k,v])=>mergeRecord(k,v));
+
+    return normalized;
+  }catch{
+    return {};
+  }
+}
 function normalizeDAFromSheets(raw){
   try{
     const normalized={};
