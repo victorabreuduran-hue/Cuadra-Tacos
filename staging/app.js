@@ -215,6 +215,37 @@ showToast(`⏸️ "${nombre}" pausado`);
 renderCfgP();buildPSel();renderDash();renderEgresosView();
 }
 
+
+function normalizeDPFromSheets(raw){
+  try{
+    const normalized={};
+    const mergeRecord=(k,v)=>{
+      if(!k) return;
+      let key=String(k).trim();
+      if(key==='DP') return;
+      if(key.startsWith('DP__')) key=key.slice(4);
+      if(!key.includes('__')) return;
+      if(!v || typeof v!=='object' || Array.isArray(v)) return;
+      if(v.deleted===true) return;
+      normalized[key]=v;
+    };
+
+    if(raw && raw.DP && typeof raw.DP==='object' && !Array.isArray(raw.DP)){
+      const inner=raw.DP;
+      if(inner.DP && typeof inner.DP==='object' && !Array.isArray(inner.DP)){
+        Object.entries(inner.DP).forEach(([k,v])=>mergeRecord(k,v));
+      }
+      Object.entries(inner).forEach(([k,v])=>mergeRecord(k,v));
+    }
+
+    Object.entries(raw||{}).forEach(([k,v])=>mergeRecord(k,v));
+    return sanitizeDPMap(normalized);
+  }catch(err){
+    console.warn('normalizeDPFromSheets error', err);
+    return {};
+  }
+}
+
 function normalizeDAFromSheets(raw){
   try{
     const normalized={};
@@ -471,7 +502,7 @@ if(directOk){
 }
 
 // Fallback: dejarlo en cola si falla el guardado directo
-try{showToast('⚠️ Venta guardada localmente; pendiente de subir a Sheets');showNotif('⚠️ Venta guardada en este dispositivo — falta subirla a Sheets');}catch{}
+try{toast('⚠️ Venta guardada localmente; pendiente de subir a Sheets');}catch{}
 _syncQueue[sheetsKey]={__tabla:'DP',__clave:sheetsKey,__valor:registro};
 _savePending(_syncQueue);
 _updatePendingBadge();
@@ -521,7 +552,7 @@ return true;
 function _limpiarDPAntiguo(){
 const cutoff=new Date();
 cutoff.setDate(cutoff.getDate()-90);
-const cutoffStr=localDateStr(cutoff);
+const cutoffStr=cutoff.toISOString().split('T')[0];
 let borrados=0;
 Object.keys(DP).forEach(k=>{
 const fecha=k.split('__')[1]||'';
@@ -680,25 +711,31 @@ SL('AUTO_BACKUPS',backups.slice(0,3));
 }
 function setST(t){const el=document.getElementById('stxt');if(el)el.textContent=t;}
 function setDot(s){const d=document.getElementById('sdot');if(!d)return;d.className='sdot '+s;}
-function localDateStr(date=new Date()){
-const d=date instanceof Date?date:new Date(date);
+function todayStr(){
+const d=new Date();
 const y=d.getFullYear();
 const m=String(d.getMonth()+1).padStart(2,'0');
 const day=String(d.getDate()).padStart(2,'0');
 return `${y}-${m}-${day}`;
 }
-function todayStr(){return localDateStr();}
 function turnoFechaStr(){
-const now=new Date();
-const h=now.getHours();
+const h=new Date().getHours();
 if(h>=0&&h<5){
-const d=new Date(now);
-d.setDate(d.getDate()-1);
-return localDateStr(d);
+const d=new Date();d.setDate(d.getDate()-1);
+return d.toISOString().split('T')[0];
 }
 return todayStr();
 }
 function esTurnoNocturno(){const h=new Date().getHours();return h>=0&&h<5;}
+
+function nowLocalStr(){
+return new Date().toLocaleString('es',{
+year:'numeric',month:'2-digit',day:'2-digit',
+hour:'2-digit',minute:'2-digit',second:'2-digit',
+hour12:false
+});
+}
+
 function fmtFecha(str){if(!str)return '';const d=new Date(str+'T12:00:00');return d.toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short',year:'numeric'});}
 function dpKey(puesto,fecha){return `${puesto}__${fecha||currentFecha}`;}
 async function logChange(seccion,detalle,valorAntes,valorDespues){
@@ -1156,7 +1193,7 @@ const el=document.getElementById('tab-'+t);
 if(el) el.style.cssText=t===id?'display:block':'display:none';
 });
 if(id==='exportar'){renderBackupList();const t=todayStr();const from=document.getElementById('exp-from');const to=document.getElementById('exp-to');if(from&&!from.value){const d=new Date();d.setDate(1);from.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;}if(to&&!to.value)to.value=t;}
-if(id==='nomina-rep'){const t=todayStr();const from=document.getElementById('nom-rep-from');const to=document.getElementById('nom-rep-to');if(from&&!from.value){const d=new Date();d.setDate(d.getDate()-30);from.value=localDateStr(d);}if(to&&!to.value)to.value=t;}
+if(id==='nomina-rep'){const t=todayStr();const from=document.getElementById('nom-rep-from');const to=document.getElementById('nom-rep-to');if(from&&!from.value){const d=new Date();d.setDate(d.getDate()-30);from.value=d.toISOString().split('T')[0];}if(to&&!to.value)to.value=t;}
 if(id==='ganancia'){
 const tabEl=document.getElementById('tab-ganancia');
 if(tabEl){tabEl.style.cssText='display:block';}
@@ -1651,7 +1688,7 @@ d[`mp-des-cos-${i}`]=des*item.precio;
 });
 d.totalVentas=d['ve-ef']+d['ve-tj']+d['ve-ot'];
 d.totalGastos=['gas','hie','rep','otr'].reduce((a,k)=>a+(d[`g-${k}`]||0),0);
-d.fechaGuardado=new Date().toLocaleString('es');
+d.fechaGuardado=nowLocalStr();
 d.fechaRegistro=currentFecha;
 d.guardadoPor=encargadoNombre;
 const vxPanelEl=document.getElementById('vx-panel');
@@ -1665,7 +1702,7 @@ d.check_danos=document.getElementById('check-danos')?.checked||false;
 const key=dpKey(CP,currentFecha);
 const antes=DP[key];
 DP[key]=d;
-const syncOk=await SDp(key,d);
+await SDp(key,d);
 _crearBackupLocal('Ventas guardadas');
 const mpResumen=MP.map((item,i)=>{
 const sal=d[`mp-sal-${i}`]||0;const reg=d[`mp-reg-${i}`]||0;
@@ -1683,11 +1720,11 @@ antes?`$${fmt(antes.totalVentas||0)} ventas`:null,
 renderDash();renderReportes();renderVentaMeta();
 checkMetaCumplida(CP, d.totalVentas);
 sendPushNotif(`✅ ${CP} registró ventas`,`$${fmt(d.totalVentas)} — ${fmtFecha(currentFecha)}`);
-setST(syncOk?'✅ Venta guardada':'⚠️ Venta pendiente de subir');
-setDot(syncOk?'green':'orange');
-showToast((syncOk?'✅ Guardado — ':'⚠️ Guardado local — ')+CP+' · '+fmtFecha(currentFecha));
-showNotif(syncOk?`✅ Venta guardada en ${CP}`:`⚠️ Venta guardada en ${CP}, pero sigue pendiente de subir a Sheets`);
-setTimeout(()=>{const e=document.getElementById('stxt');if(e&&(e.textContent==='✅ Venta guardada'||e.textContent==='⚠️ Venta pendiente de subir'))e.textContent='🔄 Actualizar';},3500);
+if(syncOk){
+showToast('✅ Guardado y sincronizado — '+CP+' · '+fmtFecha(currentFecha));
+} else {
+showToast('⚠️ Guardado localmente — pendiente de subir a Sheets');
+}
 }
 function irMiCuenta(btn){
 const nombre=document.getElementById('mc-nombre');
@@ -1836,7 +1873,7 @@ const offsets=[0,1,2,3,4,5,6];
 c.innerHTML='';
 offsets.forEach((off,di)=>{
 const fecha=new Date(lunes);fecha.setDate(lunes.getDate()+off);
-const fechaStr=localDateStr(fecha);
+const fechaStr=fecha.toISOString().split('T')[0];
 const key=`asist-city__${ciudad}__${fechaStr}`;
 const rec=DA[key];
 const dayKeys=['mar','mie','jue','vie','sab','dom'];
@@ -1982,7 +2019,7 @@ async function guardarAsist(){
 const key=`asist-city__${asistCity}__${currentAsistFecha}`;
 const antes=DA[key];
 const data=JSON.parse(JSON.stringify(AS));
-data.fechaGuardado=new Date().toLocaleString('es');
+data.fechaGuardado=nowLocalStr();
 data.guardadoPor=CU?.user||'—';
 DA[key]=data;
 SL('DA',DA);
@@ -2016,7 +2053,7 @@ const dom=new Date(lunesDate);dom.setDate(lunesDate.getDate()+6);
 const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 return `Lun ${lunesDate.getDate()} ${meses[lunesDate.getMonth()]} — Dom ${dom.getDate()} ${meses[dom.getMonth()]}`;
 }
-function dateToStr(d){return localDateStr(d);}
+function dateToStr(d){return d.toISOString().split('T')[0];}
 function updateAsistSemanaUI(){
 const lunes=getLunes(currentAsistFecha);
 const label=document.getElementById('asistSemanaLabel');
@@ -2076,7 +2113,7 @@ const offsets=[1,2,3,4,5,6];
 const dias={};
 offsets.forEach((offset,di)=>{
 const fecha=new Date(mon);fecha.setDate(mon.getDate()+offset);
-const fechaStr=localDateStr(fecha);
+const fechaStr=fecha.toISOString().split('T')[0];
 const key=`asist-city__${city}__${fechaStr}`;
 const record=DA[key];
 if(record){
@@ -2292,7 +2329,7 @@ s[i]={sueldo,tipo:'semana',dias,diasTrab,pago};
 const totalNuevo=Object.values(s).reduce((a,v)=>a+(v.pago||0),0);
 const keyAntes=DN[key];
 const totalAntes=keyAntes?Object.values(keyAntes).filter(v=>typeof v==='object'&&v.pago).reduce((a,v)=>a+(v.pago||0),0):0;
-s.fechaGuardado=new Date().toLocaleString('es');
+s.fechaGuardado=nowLocalStr();
 s.guardadoPor=CU?.user||'—';
 s.fechaRegistro=currentFechaNomina;
 DN[key]=s;
@@ -2351,7 +2388,7 @@ if(dashPeriod==='week'){
 const d=new Date();const day=d.getDay();
 const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
 const sun=new Date(mon);sun.setDate(mon.getDate()+6);
-return{from:localDateStr(mon),to:localDateStr(sun)};
+return{from:mon.toISOString().split('T')[0],to:sun.toISOString().split('T')[0]};
 }
 if(dashPeriod==='month'){
 const d=new Date();
@@ -4041,7 +4078,7 @@ async function anularVenta(key,puesto,fecha){
   const d=DP[key]||{};
   d.anulado=true;
   d.anuladoPor=CU?.user||'admin';
-  d.anuladoFecha=new Date().toLocaleString('es');
+  d.anuladoFecha=nowLocalStr();
   if(motivo) d.anuladoMotivo=motivo;
   DP[key]=d;
   await SDp(key,d);
@@ -4215,7 +4252,7 @@ d['mp-des-cos-'+i]=parseFloat(des.value||0)*item.precio;
 const antes=current?`$${fmt(current.totalVentas||0)} ventas`:null;
 d.totalVentas=ef+tj;
 d.totalGastos=['gas','hie','rep','otr'].reduce((k2,k)=>k2+(d[`g-${k}`]||0),0);
-d.fechaGuardado=new Date().toLocaleString('es');
+d.fechaGuardado=nowLocalStr();
 d.fechaRegistro=fecha;
 d.editadoPor=CU?.user||'admin';
 if(motivo) d.motivoEdicion=motivo;
@@ -4924,8 +4961,8 @@ return parseFloat(DP[key]?.totalVentas||0);
 const d=new Date();const day=d.getDay();
 const mon=new Date(d);mon.setDate(d.getDate()-((day+6)%7));
 const sun=new Date(mon);sun.setDate(mon.getDate()+6);
-const from=localDateStr(mon);
-const to=localDateStr(sun);
+const from=mon.toISOString().split('T')[0];
+const to=sun.toISOString().split('T')[0];
 return getDPuestoFiltered(p,from,to).totalVentas;
 }
 }
@@ -5004,7 +5041,7 @@ container.parentNode.insertBefore(div,container);
 function checkFaltantes(){
 const today=todayStr();
 const ayer=new Date();ayer.setDate(ayer.getDate()-1);
-const ayerStr=localDateStr(ayer);
+const ayerStr=ayer.toISOString().split('T')[0];
 const puestos=CU?.rol==='admin'?allP():getUserPuestos();
 const faltantes=[];
 puestos.forEach(p=>{
@@ -5706,7 +5743,7 @@ rows.forEach(r=>csv+=headers.map(h=>JSON.stringify(r[h]||'')).join(',')+'\n');
 const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
 const url=URL.createObjectURL(blob);
 const a=document.createElement('a');a.href=url;
-a.download=`CuadraTacos_${localDateStr()}.csv`;
+a.download=`CuadraTacos_${new Date().toISOString().split('T')[0]}.csv`;
 a.click();URL.revokeObjectURL(url);
 showToast('📊 Descargando Excel (CSV)...');
 }
@@ -5775,7 +5812,7 @@ const json=JSON.stringify(data,null,2);
 const blob=new Blob([json],{type:'application/json'});
 const url=URL.createObjectURL(blob);
 const a=document.createElement('a');
-a.href=url;a.download=`CuadraTacos_backup_${localDateStr()}.json`;
+a.href=url;a.download=`CuadraTacos_backup_${new Date().toISOString().split('T')[0]}.json`;
 a.click();URL.revokeObjectURL(url);
 const log={fecha:new Date().toLocaleString('es'),user:CU?.user||'admin'};
 BACKUPS.unshift(log);if(BACKUPS.length>10)BACKUPS.pop();
