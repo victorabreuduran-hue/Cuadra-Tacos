@@ -5345,12 +5345,16 @@ if(el) el.style.display=t===id?'block':'none';
 });
 if(id==='exportar'){
 renderBackupList();
-const today=todayStr();
 const from=document.getElementById('exp-from');const to=document.getElementById('exp-to');
-if(from&&!from.value){const d=new Date();d.setDate(1);from.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;}
-if(to&&!to.value) to.value=today;
+if(from&&!from.value){
+  const d=new Date();d.setDate(1);
+  from.value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`;
+}
+if(to&&!to.value) to.value='';
+EXPORT_RANGE.fromTouched=!!(from?.value);
+EXPORT_RANGE.toTouched=false;
 syncExportDate('from', from?.value||'');
-syncExportDate('to', to?.value||'');
+syncExportDate('to', '');
 }
 if(id==='ganancia') renderGananciaReporte();
 }
@@ -5583,11 +5587,12 @@ tot.innerHTML=`<div class="ftot b" style="color:white"><span>💰 TOTAL DEL PERI
 c.appendChild(tot);
 }
 
-let EXPORT_RANGE={from:'',to:''};
+let EXPORT_RANGE={from:'',to:'',fromTouched:false,toTouched:false};
 function syncExportDate(which,val){
 try{
   if(which!=='from'&&which!=='to') return;
   EXPORT_RANGE[which]=String(val||'');
+  EXPORT_RANGE[which+'Touched']=!!val;
 }catch(err){
   console.warn('syncExportDate', err);
 }
@@ -5602,6 +5607,11 @@ try{
 
   let from=(fromEl?.value||EXPORT_RANGE.from||'').trim();
   let to=(toEl?.value||EXPORT_RANGE.to||'').trim();
+
+  // Si "Hasta" no fue tocado explícitamente, tratarlo como vacío
+  // para evitar que Safari/WebKit deje el valor por defecto (hoy)
+  if(!EXPORT_RANGE.toTouched) to='';
+  if(!EXPORT_RANGE.fromTouched && fromEl?.value) EXPORT_RANGE.fromTouched=true;
 
   // Si solo escogieron un día, usarlo como rango exacto
   if(from && !to) to=from;
